@@ -14,6 +14,10 @@
   <name>Dorset Framework</name>
   <description>Framework for building intelligent assistants</description>
   <url>https://github.com/DorsetProject/dorset_framework</url>
+  <issueManagement>
+    <system>Github</system>
+    <url>https://github.com/DorsetProject/dorset_framework/issues</url>
+  </issueManagement>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
