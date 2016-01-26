@@ -18,16 +18,33 @@ package edu.jhuapl.dorset.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/echo/{message}")
-public class EchoResource {
+import edu.jhuapl.dorset.Application;
+import edu.jhuapl.dorset.Request;
+import edu.jhuapl.dorset.Response;
 
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String echo(@PathParam("message") String message) {
-        return message;
-    }
+@Path("/")
+public class WebService {
+	@GET
+	@Path("/process/{text}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response process(@PathParam("text") String text) {
+		Request request = new Request();
+		request.text = text;
+		
+		Application app = new Application();
+		Response response = app.process(request);
+		
+		return response;
+	}
+
+	@GET
+	@Path("/echo/{message}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String echo(@PathParam("message") String message) {
+		return message;
+	}
 }

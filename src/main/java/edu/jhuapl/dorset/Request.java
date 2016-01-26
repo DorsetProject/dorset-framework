@@ -16,14 +16,6 @@
  */
 package edu.jhuapl.dorset;
 
-/**
- * Dorset Application
- *
- */
-public class Application {
-	public Response process(Request request) {
-		Response response = new Response();
-		response.text = "42";
-		return response;
-	}
+public class Request {
+	public String text;
 }
