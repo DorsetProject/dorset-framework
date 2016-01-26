@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>edu.jhuapl.dorset</groupId>
+    <artifactId>dorset-project</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>edu.jhuapl.dorset</groupId>
+  <artifactId>dorset-api</artifactId>
+  <packaging>jar</packaging>
+  <name>dorset-api</name>
+  <description>Dorset web api</description>
+
+  <properties>
+    <jersey.version>2.22.1</jersey.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>edu.jhuapl.dorset</groupId>
+      <artifactId>dorset-core</artifactId>
+      <version>${dorset.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-server</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet-core</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-moxy</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+    </plugins>
+  </build>
+</project>

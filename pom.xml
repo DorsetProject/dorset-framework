@@ -3,21 +3,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.jhuapl.dorset</groupId>
-  <artifactId>dorset-framework</artifactId>
+  <artifactId>dorset-project</artifactId>
   <version>0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jdk.version>1.7</jdk.version>
-    <jersey.version>2.22.1</jersey.version>
-  </properties>
+  <packaging>pom</packaging>
 
   <name>Dorset Framework</name>
   <description>Framework for building intelligent assistants</description>
-  <url>https://github.com/DorsetProject/dorset_framework</url>
+  <url>https://github.com/DorsetProject/dorset-framework</url>
   <issueManagement>
     <system>Github</system>
-    <url>https://github.com/DorsetProject/dorset_framework/issues</url>
+    <url>https://github.com/DorsetProject/dorset-framework/issues</url>
   </issueManagement>
   <licenses>
     <license>
@@ -31,22 +26,18 @@
     <url>http://www.jhuapl.edu/</url>
   </organization>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jdk.version>1.7</jdk.version>
+    <dorset.version>${project.version}</dorset.version>
+  </properties>
+
+  <modules>
+    <module>dorset-core</module>
+    <module>dorset-api</module>
+  </modules>
+
   <dependencies>
-    <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-server</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-servlet-core</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-moxy</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

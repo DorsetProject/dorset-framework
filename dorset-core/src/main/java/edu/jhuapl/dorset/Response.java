@@ -17,5 +17,5 @@
 package edu.jhuapl.dorset;
 
 public class Response {
-	public String text;
+    public String text;
 }
