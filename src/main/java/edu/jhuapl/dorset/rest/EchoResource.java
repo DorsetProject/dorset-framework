@@ -14,12 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset;
+package edu.jhuapl.dorset.rest;
 
-/**
- * Dorset Application
- *
- */
-public class Application {
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
 
+@Path("/echo/{message}")
+public class EchoResource {
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String echo(@PathParam("message") String message) {
+        return message;
+    }
 }
