@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset;
+package edu.jhuapl.dorset.agent;
 
-public class Response {
+/**
+ *
+ */
+public class AgentResponse {
     public String text;
-    
-    public Response(String text) {
+
+    public AgentResponse(String text) {
         this.text = text;
     }
 }

@@ -14,12 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset;
+package edu.jhuapl.dorset.routing;
 
-public class Response {
-    public String text;
-    
-    public Response(String text) {
-        this.text = text;
-    }
+import edu.jhuapl.dorset.Request;
+import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agent.AgentRegistry;
+
+/**
+ *
+ */
+public interface Router {
+
+    public void initialize(AgentRegistry registry);
+
+    public Agent[] getAgents(Request request);
 }

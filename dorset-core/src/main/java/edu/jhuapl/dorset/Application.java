@@ -16,14 +16,52 @@
  */
 package edu.jhuapl.dorset;
 
+import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agent.AgentRegistry;
+import edu.jhuapl.dorset.agent.AgentRequest;
+import edu.jhuapl.dorset.agent.AgentResponse;
+import edu.jhuapl.dorset.routing.Router;
+
 /**
  * Dorset Application
  *
  */
 public class Application {
-	public Response process(Request request) {
-		Response response = new Response();
-		response.text = "42";
-		return response;
-	}
+    protected AgentRegistry agentRegistry;
+    protected Router router;
+
+    private static Application app;
+
+    public Application(AgentRegistry agentRegistry, Router router) {
+        this.agentRegistry = agentRegistry;
+        this.router = router;
+    }
+
+    public Response process(Request request) {
+        Response response = new Response("no response");
+
+        Agent[] agents = router.getAgents(request);
+        if (agents.length == 0) {
+            return response;
+        }
+
+        for (Agent agent : agents) {
+            AgentResponse agentResponse = agent.process(new AgentRequest(request.text));
+            if (agentResponse != null) {
+                // take first answer
+                response.text = agentResponse.text;
+                break;
+            }
+        }
+
+        return response;
+    }
+
+    public static void setApplication(Application app) {
+        Application.app = app;
+    }
+
+    public static Application getApplication() {
+        return Application.app;
+    }
 }

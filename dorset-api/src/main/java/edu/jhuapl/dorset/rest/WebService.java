@@ -32,10 +32,12 @@ public class WebService {
 	@Path("/process/{text}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response process(@PathParam("text") String text) {
-		Request request = new Request();
-		request.text = text;
+		Request request = new Request(text);
 		
-		Application app = new Application();
+		Application app = Application.getApplication();
+		if (app == null) {
+		    return new Response("Dorset application not set");
+		}
 		Response response = app.process(request);
 		
 		return response;

@@ -14,12 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset;
+package edu.jhuapl.dorset.agent;
 
-public class Response {
-    public String text;
-    
-    public Response(String text) {
-        this.text = text;
+import java.util.Properties;
+
+/**
+ *
+ */
+public class AgentRegistryEntry {
+    public Agent agent;
+    public Properties details;
+    public Boolean isActive;
+
+    public AgentRegistryEntry(Agent agent, Properties details) {
+        this.agent = agent;
+        this.details = details;
+        this.isActive = true;
     }
 }
