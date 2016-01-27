@@ -35,6 +35,7 @@ public class Application {
     public Application(AgentRegistry agentRegistry, Router router) {
         this.agentRegistry = agentRegistry;
         this.router = router;
+        router.initialize(agentRegistry);
     }
 
     public Response process(Request request) {

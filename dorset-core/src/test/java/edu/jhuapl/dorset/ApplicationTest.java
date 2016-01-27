@@ -18,8 +18,60 @@ package edu.jhuapl.dorset;
 
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agent.AgentRequest;
+import edu.jhuapl.dorset.agent.AgentResponse;
+import edu.jhuapl.dorset.routing.Router;
+
 public class ApplicationTest {
-  @Test
-  public void testInjection() {
-  }
+    @Test
+    public void testProcessWithNoAgents() {
+        Request request = new Request("test");
+        Router router = mock(Router.class);
+        when(router.getAgents(request)).thenReturn(new Agent[0]);
+        Application app = new Application(null, router);
+
+        Response response = app.process(request);
+
+        assertEquals("no response", response.text);
+    }
+
+    @Test
+    public void testProcessWithAgentWithResponse() {
+        Request request = new Request("test");
+        Agent agent = mock(Agent.class);
+        when(agent.process((AgentRequest)anyObject())).thenReturn(new AgentResponse("the answer"));
+
+        Agent rtn[] = new Agent[1];
+        rtn[0] = agent;
+        Router router = mock(Router.class);
+        when(router.getAgents(request)).thenReturn(rtn);
+        Application app = new Application(null, router);
+
+        Response response = app.process(request);
+
+        assertEquals("the answer", response.text);
+        verify(router, times(1)).initialize(null);
+    }
+
+    @Test
+    public void testProcessWithAgentWithNoResponse() {
+        Request request = new Request("test");
+        Agent agent = mock(Agent.class);
+        when(agent.process((AgentRequest)anyObject())).thenReturn(null);
+
+        Agent rtn[] = new Agent[1];
+        rtn[0] = agent;
+        Router router = mock(Router.class);
+        when(router.getAgents(request)).thenReturn(rtn);
+        Application app = new Application(null, router);
+
+        Response response = app.process(request);
+
+        assertEquals("no response", response.text);
+    }
+
 }
