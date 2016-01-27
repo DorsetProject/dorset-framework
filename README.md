@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/DorsetProject/dorset_framework.svg?branch=master)](https://travis-ci.org/DorsetProject/dorset_framework)
+[![Build Status](https://travis-ci.org/DorsetProject/dorset-framework.svg?branch=master)](https://travis-ci.org/DorsetProject/dorset-framework)
 
 Dorset
 ================
