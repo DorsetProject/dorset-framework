@@ -35,6 +35,7 @@
   <modules>
     <module>dorset-core</module>
     <module>dorset-api</module>
+    <module>dorset-components</module>
   </modules>
 
   <dependencies>
