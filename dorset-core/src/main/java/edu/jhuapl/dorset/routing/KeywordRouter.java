@@ -47,7 +47,7 @@ public class KeywordRouter implements Router {
      */
     @Override
     public Agent[] getAgents(Request request) {
-        String quest = request.text.toLowerCase();
+        String quest = request.getText().toLowerCase();
         String wordArray[] = quest.split(" ", 2);
 
         List<Agent> agents = new ArrayList<Agent>();

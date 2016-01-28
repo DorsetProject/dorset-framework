@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Response {
-    public String text;
+    private String text;
 
     public Response() {
         

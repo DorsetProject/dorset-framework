@@ -17,9 +17,21 @@
 package edu.jhuapl.dorset;
 
 public class Request {
-    public String text;
+    private String text;
+
+    public Request() {
+
+    }
 
     public Request(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
         this.text = text;
     }
 }

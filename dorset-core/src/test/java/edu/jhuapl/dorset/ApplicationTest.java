@@ -36,7 +36,7 @@ public class ApplicationTest {
 
         Response response = app.process(request);
 
-        assertEquals("no response", response.text);
+        assertEquals("no response", response.getText());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ApplicationTest {
 
         Response response = app.process(request);
 
-        assertEquals("the answer", response.text);
+        assertEquals("the answer", response.getText());
         verify(router, times(1)).initialize(null);
     }
 
@@ -71,7 +71,7 @@ public class ApplicationTest {
 
         Response response = app.process(request);
 
-        assertEquals("no response", response.text);
+        assertEquals("no response", response.getText());
     }
 
 }

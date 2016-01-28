@@ -53,10 +53,10 @@ public class Application {
         }
 
         for (Agent agent : agents) {
-            AgentResponse agentResponse = agent.process(new AgentRequest(request.text));
+            AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
             if (agentResponse != null) {
                 // take first answer
-                response.text = agentResponse.text;
+                response.setText(agentResponse.text);
                 break;
             }
         }
