@@ -23,6 +23,7 @@ import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRegistry;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
+import edu.jhuapl.dorset.record.Record;
 import edu.jhuapl.dorset.routing.Router;
 
 /**
@@ -44,22 +45,30 @@ public class Application {
     }
 
     public Response process(Request request) {
-        logger.info("Processing request");
+        logger.info("Processing request: " + request.getText());
         Response response = new Response("no response");
+        Record record = new Record(request);
 
+        long startTime = System.nanoTime();
         Agent[] agents = router.getAgents(request);
+        record.setRouteTime(startTime, System.nanoTime());
+        record.setAgents(agents);
         if (agents.length == 0) {
             return response;
         }
 
+        startTime = System.nanoTime();
         for (Agent agent : agents) {
             AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
             if (agentResponse != null) {
                 // take first answer
                 response.setText(agentResponse.text);
+                record.setSelectedAgent(agent);
+                record.setResponse(response);
                 break;
             }
         }
+        record.setAgentTime(startTime, System.nanoTime());
 
         return response;
     }

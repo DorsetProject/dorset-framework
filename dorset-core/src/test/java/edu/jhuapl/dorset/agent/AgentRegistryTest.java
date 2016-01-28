@@ -27,8 +27,9 @@ public class AgentRegistryTest {
     public void testRegisterNameCase() {
         AgentRegistry registry = new AgentRegistry();
         Agent agent = mock(Agent.class);
+        when(agent.getName()).thenReturn("test");
 
-        registry.register("test", agent, null);
+        registry.register(agent, null);
 
         assertEquals(agent, registry.getAgent("Test"));
         assertNull(registry.getAgent("unknown"));
@@ -38,10 +39,12 @@ public class AgentRegistryTest {
     public void testRegisterOverwriteAgent() {
         AgentRegistry registry = new AgentRegistry();
         Agent agent1 = mock(Agent.class);
+        when(agent1.getName()).thenReturn("test");
         Agent agent2 = mock(Agent.class);
+        when(agent2.getName()).thenReturn("test");
 
-        registry.register("test", agent1, null);
-        registry.register("test", agent2, null);
+        registry.register(agent1, null);
+        registry.register(agent2, null);
 
         assertEquals(agent2, registry.getAgent("test"));
     }

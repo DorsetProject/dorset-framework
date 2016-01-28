@@ -12,8 +12,9 @@ public class FixedAgentRouterTest {
     @Test
     public void testGetAgents() {
         Agent agent = mock(Agent.class);
+        when(agent.getName()).thenReturn("test");
         AgentRegistry registry = new AgentRegistry();
-        registry.register("test", agent, null);
+        registry.register(agent, null);
         Router router = new FixedAgentRouter("test");
         router.initialize(registry);
 
