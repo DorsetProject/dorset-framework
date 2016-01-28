@@ -16,6 +16,9 @@
  */
 package edu.jhuapl.dorset;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRegistry;
 import edu.jhuapl.dorset.agent.AgentRequest;
@@ -27,6 +30,8 @@ import edu.jhuapl.dorset.routing.Router;
  *
  */
 public class Application {
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+
     protected AgentRegistry agentRegistry;
     protected Router router;
 
@@ -39,6 +44,7 @@ public class Application {
     }
 
     public Response process(Request request) {
+        logger.info("Processing request");
         Response response = new Response("no response");
 
         Agent[] agents = router.getAgents(request);
@@ -59,6 +65,7 @@ public class Application {
     }
 
     public static void setApplication(Application app) {
+        logger.info("Registering dorset application");
         Application.app = app;
     }
 
