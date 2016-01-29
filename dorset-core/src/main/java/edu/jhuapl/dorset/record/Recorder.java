@@ -14,30 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset.agent;
+package edu.jhuapl.dorset.record;
 
 /**
- * An agent answers a question or performs an action.
- * 
- * An agent must have name set in its constructor. 
+ *
  */
-public interface Agent {
-    /**
-     * Get the name of the agent
-     * @return name
-     */
-    public String getName();
-
-    /**
-     * Override the default name of the agent
-     * @param name New name for the agent
-     */
-    public void setName(String name);
-
-    /**
-     * Process a request
-     * @param request Request object
-     * @return response to the request
-     */
-    public AgentResponse process(AgentRequest request);
+public interface Recorder {
+    public void store(Record record);
 }

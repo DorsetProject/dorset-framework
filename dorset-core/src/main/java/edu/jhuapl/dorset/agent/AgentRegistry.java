@@ -38,15 +38,14 @@ public class AgentRegistry {
      * 
      * If an agent already exists with that name, it is replaced.
      * 
-     * @param name The name of the agent
      * @param agent The agent object
      * @param details Any additional information about the agent. This could be
      *                information that the router needs to know.
      */
-    public void register(String name, Agent agent, Properties details) {
-        name = name.toLowerCase();
+    public void register(Agent agent, Properties details) {
+        String name = agent.getName().toLowerCase();
         if (registry.containsKey(name)) {
-            logger.warn("Replacing registry entry with name: " + name);
+            logger.warn("Replacing agent registry entry with name: " + name);
         }
         registry.put(name, new AgentRegistryEntry(agent, details));
     }
