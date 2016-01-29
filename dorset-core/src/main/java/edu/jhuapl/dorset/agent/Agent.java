@@ -35,6 +35,18 @@ public interface Agent {
     public void setName(String name);
 
     /**
+     * Get the description of the agent for human consumption
+     * @return Description of the agent
+     */
+    public Description getDescription();
+
+    /**
+     * Override the default description
+     * @param description
+     */
+    public void setDescription(Description description);
+    
+    /**
      * Process a request
      * @param request Request object
      * @return response to the request

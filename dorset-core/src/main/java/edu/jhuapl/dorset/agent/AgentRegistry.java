@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class AgentRegistry {
     private final Logger logger = LoggerFactory.getLogger(AgentRegistry.class);
 
-    private Map<String, AgentRegistryEntry> registry = new HashMap<String, AgentRegistryEntry>();
+    private Map<String, RegistryEntry> registry = new HashMap<String, RegistryEntry>();
 
     /**
      * Register an agent
@@ -47,7 +47,7 @@ public class AgentRegistry {
         if (registry.containsKey(name)) {
             logger.warn("Replacing agent registry entry with name: " + name);
         }
-        registry.put(name, new AgentRegistryEntry(agent, details));
+        registry.put(name, new RegistryEntry(agent, details));
     }
 
     /**
@@ -55,11 +55,11 @@ public class AgentRegistry {
      * 
      * This returns a shallow copy of the registry.
      * 
-     * @return map of name -> agent registry entry
-     * @see AgentRegistryEntry
+     * @return map of name -> registry entry
+     * @see RegistryEntry
      */
-    public Map<String, AgentRegistryEntry> asMap() {
-        return new HashMap<String, AgentRegistryEntry>(registry);
+    public Map<String, RegistryEntry> asMap() {
+        return new HashMap<String, RegistryEntry>(registry);
     }
 
     /**
@@ -68,7 +68,7 @@ public class AgentRegistry {
      * @param name Name of the agent
      * @return agent registry entry or null if it does not exist
      */
-    public AgentRegistryEntry getAgentEntry(String name) {
+    public RegistryEntry getAgentEntry(String name) {
         name = name.toLowerCase();
         return registry.get(name);
     }
@@ -80,9 +80,9 @@ public class AgentRegistry {
      * @return agent or null if it does not exist
      */
     public Agent getAgent(String name) {
-        AgentRegistryEntry entry = getAgentEntry(name);
+        RegistryEntry entry = getAgentEntry(name);
         if (entry != null) {
-            return entry.agent;
+            return entry.getAgent();
         } else {
             return null;
         }

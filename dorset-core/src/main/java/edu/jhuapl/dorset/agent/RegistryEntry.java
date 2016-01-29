@@ -19,16 +19,35 @@ package edu.jhuapl.dorset.agent;
 import java.util.Properties;
 
 /**
- *
+ * Agent registry entry
  */
-public class AgentRegistryEntry {
-    public Agent agent;
-    public Properties details;
-    public Boolean isActive;
+public class RegistryEntry {
+    private Agent agent;
+    private Properties details;
+    private Boolean isActive;
 
-    public AgentRegistryEntry(Agent agent, Properties details) {
+    /**
+     * Constructor an entry for the agent registry
+     * @param agent The agent
+     * @param details Details about the agent that could be used for routing
+     */
+    public RegistryEntry(Agent agent, Properties details) {
         this.agent = agent;
         this.details = details;
         this.isActive = true;
+    }
+
+    /**
+     * @return the agent
+     */
+    public Agent getAgent() {
+        return agent;
+    }
+
+    /**
+     * @return the details
+     */
+    public Properties getDetails() {
+        return details;
     }
 }

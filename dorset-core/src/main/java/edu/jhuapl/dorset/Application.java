@@ -16,6 +16,8 @@
  */
 package edu.jhuapl.dorset;
 
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +25,7 @@ import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRegistry;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
+import edu.jhuapl.dorset.agent.RegistryEntry;
 import edu.jhuapl.dorset.record.Record;
 import edu.jhuapl.dorset.routing.Router;
 
@@ -42,6 +45,17 @@ public class Application {
         this.agentRegistry = agentRegistry;
         this.router = router;
         router.initialize(agentRegistry);
+    }
+
+    public Agent[] getAgents() {
+        Collection<RegistryEntry> entries = agentRegistry.asMap().values();
+        Agent[] agents = new Agent[entries.size()];
+        int index = 0;
+        for (RegistryEntry entry : entries) {
+            agents[index] = entry.getAgent();
+            index++;
+        }
+        return agents;
     }
 
     public Response process(Request request) {
