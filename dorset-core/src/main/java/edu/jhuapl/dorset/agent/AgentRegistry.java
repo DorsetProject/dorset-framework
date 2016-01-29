@@ -82,7 +82,7 @@ public class AgentRegistry {
     public Agent getAgent(String name) {
         RegistryEntry entry = getAgentEntry(name);
         if (entry != null) {
-            return entry.agent;
+            return entry.getAgent();
         } else {
             return null;
         }

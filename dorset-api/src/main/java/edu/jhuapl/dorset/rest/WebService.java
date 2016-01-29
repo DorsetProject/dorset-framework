@@ -22,31 +22,59 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhuapl.dorset.Application;
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.Response;
+import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agent.Description;
 
 @Path("/")
 public class WebService {
-	@GET
-	@Path("/process/{text}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response process(@PathParam("text") String text) {
-		Request request = new Request(text);
-		
-		Application app = Application.getApplication();
-		if (app == null) {
-		    return new Response("Dorset application not set");
-		}
-		Response response = app.process(request);
-		
-		return response;
-	}
+    private static final Logger logger = LoggerFactory.getLogger(WebService.class);
 
-	@GET
-	@Path("/echo/{message}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String echo(@PathParam("message") String message) {
-		return message;
-	}
+    @GET
+    @Path("/process/{text}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response process(@PathParam("text") String text) {
+        Request request = new Request(text);
+
+        Application app = Application.getApplication();
+        if (app == null) {
+            return new Response("Dorset application not set");
+        }
+        Response response = app.process(request);
+
+        return response;
+    }
+
+    @GET
+    @Path("/agents")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Description[] getAgents() {
+        Application app = Application.getApplication();
+        if (app == null) {
+            return new Description[0];
+        }
+
+        Agent[] agents = app.getAgents();
+        Description[] descriptions = new Description[agents.length];
+        for (int i=0; i<agents.length; i++) {
+            descriptions[i] = agents[i].getDescription();
+            if (descriptions[i] == null) {
+                logger.warn("Null description object for agent " + agents[i].getName());
+            }
+        }
+
+        return descriptions;
+    }
+
+    @GET
+    @Path("/echo/{message}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String echo(@PathParam("message") String message) {
+        return message;
+    }
 }
