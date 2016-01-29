@@ -21,12 +21,12 @@ import java.util.Properties;
 /**
  *
  */
-public class AgentRegistryEntry {
+public class RegistryEntry {
     public Agent agent;
     public Properties details;
     public Boolean isActive;
 
-    public AgentRegistryEntry(Agent agent, Properties details) {
+    public RegistryEntry(Agent agent, Properties details) {
         this.agent = agent;
         this.details = details;
         this.isActive = true;
