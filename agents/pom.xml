@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>edu.jhuapl.dorset</groupId>
+    <artifactId>dorset</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>dorset-agents</artifactId>
+  <packaging>pom</packaging>
+  <name>Dorset Agents</name>
+  <description>A library of agents that can be used with the Dorset framework</description>
+
+  <modules>
+    <module>all-agents</module>
+    <module>calculator</module>
+    <module>rotten-tomatoes</module>
+  </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>edu.jhuapl.dorset</groupId>
+      <artifactId>dorset-core</artifactId>
+      <version>${dorset.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhuapl.dorset</groupId>
+      <artifactId>dorset-components</artifactId>
+      <version>${dorset.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+    </plugins>
+  </build>
+</project>

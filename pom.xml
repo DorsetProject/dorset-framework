@@ -36,6 +36,7 @@
     <module>core</module>
     <module>components</module>
     <module>api</module>
+    <module>agents</module>
   </modules>
 
   <dependencies>
