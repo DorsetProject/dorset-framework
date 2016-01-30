@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.jhuapl.dorset</groupId>
-  <artifactId>dorset-project</artifactId>
+  <artifactId>dorset</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -33,9 +33,9 @@
   </properties>
 
   <modules>
-    <module>dorset-core</module>
-    <module>dorset-api</module>
-    <module>dorset-components</module>
+    <module>core</module>
+    <module>components</module>
+    <module>api</module>
   </modules>
 
   <dependencies>

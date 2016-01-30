@@ -4,14 +4,13 @@
 
   <parent>
     <groupId>edu.jhuapl.dorset</groupId>
-    <artifactId>dorset-project</artifactId>
+    <artifactId>dorset</artifactId>
     <version>0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>edu.jhuapl.dorset</groupId>
   <artifactId>dorset-core</artifactId>
   <packaging>jar</packaging>
-  <name>dorset-core</name>
+  <name>Dorset Core</name>
   <description>Dorset core implementation</description>
 
   <dependencies>
