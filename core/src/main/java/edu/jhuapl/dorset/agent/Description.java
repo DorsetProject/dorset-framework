@@ -16,13 +16,15 @@
  */
 package edu.jhuapl.dorset.agent;
 
+import java.util.Arrays;
+
 /**
  * Agent description for public consumption
  */
 public class Description {
     private String name;
     private String summary;
-    private String example;
+    private String[] examples;
 
     public Description() {
         
@@ -41,6 +43,18 @@ public class Description {
     }
 
     /**
+     * Constructor
+     * 
+     * @param summary A user-facing description of the agent's capabilities
+     * @param example An example question or command
+     */
+    public Description(String name, String summary, String[] examples) {
+        this.setName(name);
+        this.setSummary(summary);
+        this.setExamples(examples);
+    }
+
+    /**
      * @return the summary
      */
     public String getSummary() {
@@ -55,17 +69,25 @@ public class Description {
     }
 
     /**
-     * @return example of using the agent
+     * @return examples of using the agent
      */
-    public String getExample() {
-        return example;
+    public String[] getExamples() {
+        return examples;
     }
 
     /**
-     * @param example An example request that the agent can handle
+     * @param examples Array of example requests that the agent can handle
+     */
+    public void setExamples(String[] examples) {
+        this.examples = Arrays.copyOf(examples, examples.length);
+    }
+
+    /**
+     * @param example A single example request that the agent can handle
      */
     public void setExample(String example) {
-        this.example = example;
+        this.examples = new String[1];
+        this.examples[0] = example;
     }
 
     /**
