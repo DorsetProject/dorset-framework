@@ -8,6 +8,7 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
+  <groupId>edu.jhuapl.dorset.agents</groupId>
   <artifactId>dorset-agents</artifactId>
   <packaging>pom</packaging>
   <name>Dorset Agents</name>

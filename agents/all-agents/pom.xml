@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>edu.jhuapl.dorset</groupId>
+    <groupId>edu.jhuapl.dorset.agents</groupId>
     <artifactId>dorset-agents</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dorset-agents-all</artifactId>
+  <artifactId>agents-all</artifactId>
   <packaging>pom</packaging>
   <name>All Agents</name>
   <description>All Dorset agents from the main Dorset agents repository.</description>
