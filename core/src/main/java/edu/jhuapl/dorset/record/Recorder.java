@@ -17,8 +17,20 @@
 package edu.jhuapl.dorset.record;
 
 /**
- *
+ * Records the request to response cycle for a Dorset Application.
+ * 
+ * The records support debugging, tuning, and metrics.
  */
 public interface Recorder {
+    /**
+     * Store a record
+     * @param record The record to store
+     */
     public void store(Record record);
+
+    /**
+     * Retrieve recent records
+     * @return Array of records
+     */
+    public Record[] retrieve();
 }
