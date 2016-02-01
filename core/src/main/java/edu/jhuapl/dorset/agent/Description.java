@@ -33,6 +33,7 @@ public class Description {
     /**
      * Constructor
      * 
+     * @param name Name of the agent
      * @param summary A user-facing description of the agent's capabilities
      * @param example An example question or command
      */
@@ -45,8 +46,9 @@ public class Description {
     /**
      * Constructor
      * 
+     * @param name Name of the agent
      * @param summary A user-facing description of the agent's capabilities
-     * @param example An example question or command
+     * @param examples Array of example questions or commands
      */
     public Description(String name, String summary, String[] examples) {
         this.setName(name);
@@ -107,7 +109,7 @@ public class Description {
     /**
      * Get a default description
      * @param name The name of the agent
-     * @return
+     * @return Default description
      */
     public static Description getUninitializedDescription(String name) {
         return new Description(name, "Summary is not set.", "Example is not set.");

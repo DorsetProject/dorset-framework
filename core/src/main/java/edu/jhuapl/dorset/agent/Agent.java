@@ -42,7 +42,8 @@ public interface Agent {
 
     /**
      * Override the default description
-     * @param description
+     * @param description Description of the agent
+     * @see Description
      */
     public void setDescription(Description description);
     

@@ -55,7 +55,7 @@ public class AgentRegistry {
      * 
      * This returns a shallow copy of the registry.
      * 
-     * @return map of name -> registry entry
+     * @return map of name : registry entry
      * @see RegistryEntry
      */
     public Map<String, RegistryEntry> asMap() {
