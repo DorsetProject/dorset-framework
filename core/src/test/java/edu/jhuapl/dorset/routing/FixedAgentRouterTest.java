@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2016 The Johns Hopkins University Applied Physics Laboratory LLC
  * All rights reserved.
  *
