@@ -26,11 +26,6 @@
       <artifactId>dorset-core</artifactId>
       <version>${dorset.version}</version>
     </dependency>
-    <dependency>
-      <groupId>edu.jhuapl.dorset</groupId>
-      <artifactId>dorset-components</artifactId>
-      <version>${dorset.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
