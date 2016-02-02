@@ -9,11 +9,16 @@
   </parent>
 
   <artifactId>dorset-components</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <name>Dorset Components</name>
   <description>Components for use with the Dorset framework</description>
 
   <dependencies>
+    <dependency>
+      <groupId>edu.jhuapl.dorset</groupId>
+      <artifactId>dorset-core</artifactId>
+      <version>${dorset.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
