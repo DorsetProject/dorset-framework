@@ -29,8 +29,9 @@ public interface Recorder {
     public void store(Record record);
 
     /**
-     * Retrieve recent records
+     * Retrieve records
+     * @param query Query object
      * @return Array of records
      */
-    public Record[] retrieve();
+    public Record[] retrieve(RecordQuery query);
 }
