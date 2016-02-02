@@ -8,10 +8,15 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
+  <groupId>edu.jhuapl.dorset.components</groupId>
   <artifactId>dorset-components</artifactId>
   <packaging>pom</packaging>
   <name>Dorset Components</name>
   <description>Components for use with the Dorset framework</description>
+
+  <modules>
+    <module>recorders</module>
+  </modules>
 
   <dependencies>
     <dependency>
@@ -19,10 +24,12 @@
       <artifactId>dorset-core</artifactId>
       <version>${dorset.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>18.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-    </plugins>
-  </build>
 </project>

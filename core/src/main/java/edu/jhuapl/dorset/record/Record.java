@@ -34,19 +34,72 @@ public class Record {
     private String selectedAgentName;
     private String responseText;
 
+    /**
+     * Record of handling a request
+     * @param request Request object
+     */
     public Record(Request request) {
         timestamp = new Date();
         requestText = request.getText();
+        routeTime = 0;
+        agentTime = 0;
+        agentNames = new String[0];
+        selectedAgentName = "";
+        responseText = "";
     }
-    
+
+    /**
+     * Get the text of the response
+     * @return text of the response
+     */
+    public String getRequestText() {
+        return requestText;
+    }
+
+    /**
+     * Set the length of time that the routing took
+     * 
+     * Use System.nanoTime() to get the start and stop times.
+     * 
+     * @param start The time the routing started
+     * @param stop The time the routing stopped
+     */
     public void setRouteTime(long start, long stop) {
         routeTime = stop - start;
     }
 
+    /**
+     * Get the length of time that the routing took
+     * @return time in nano-seconds
+     */
+    public long getRouteTime() {
+        return routeTime;
+    }
+
+    /**
+     * Set the length of time the agent took to handle the request
+     * 
+     * Use System.nanoTime() to get the start and stop times.
+     * 
+     * @param start The time the agent started
+     * @param stop The time the agent stopped
+     */
     public void setAgentTime(long start, long stop) {
         agentTime = stop - start;
     }
 
+    /**
+     * Get the length of time the agent took to handle the request
+     * @return time in nano-seconds
+     */
+    public long getAgentTime() {
+        return agentTime;
+    }
+
+    /**
+     * Set the agents the router nominated to handle the request
+     * @param agents Array of Agent objects
+     */
     public void setAgents(Agent[] agents) {
         agentNames = new String[agents.length];
         for (int i=0; i<agents.length; i++) {
@@ -54,14 +107,50 @@ public class Record {
         }
     }
 
+    /**
+     * Set the agent that handled the request
+     * @param agent Agent object
+     */
     public void setSelectedAgent(Agent agent) {
         selectedAgentName = agent.getName();
     }
 
+    /**
+     * Get the agent that handled the request
+     * @return name of the agent
+     */
+    public String getSelectedAgentName() {
+        return selectedAgentName;
+    }
+
+    /**
+     * Set the text of the response
+     * @param response Response object
+     */
     public void setResponse(Response response) {
         responseText = response.getText();
     }
 
+    /**
+     * Set the text of the response
+     * @param text Text of the response
+     */
+    public void setResponseText(String text) {
+        responseText = text;
+    }
+
+    /**
+     * Get the text of the response
+     * @return text of the response
+     */
+    public String getResponseText() {
+        return responseText;
+    }
+
+    /**
+     * Get the timestamp of the record
+     * @return Date of the record
+     */
     public Date getTimestamp() {
         return timestamp;
     }
