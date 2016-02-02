@@ -26,7 +26,9 @@ import edu.jhuapl.dorset.agent.AgentRegistry;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.RegistryEntry;
+import edu.jhuapl.dorset.record.NullRecorder;
 import edu.jhuapl.dorset.record.Record;
+import edu.jhuapl.dorset.record.Recorder;
 import edu.jhuapl.dorset.routing.Router;
 
 /**
@@ -38,12 +40,18 @@ public class Application {
 
     protected AgentRegistry agentRegistry;
     protected Router router;
+    protected Recorder recorder;
 
     private static Application app;
 
     public Application(AgentRegistry agentRegistry, Router router) {
+        this(agentRegistry, router, new NullRecorder());
+    }
+
+    public Application(AgentRegistry agentRegistry, Router router, Recorder recorder) {
         this.agentRegistry = agentRegistry;
         this.router = router;
+        this.recorder = recorder;
         router.initialize(agentRegistry);
     }
 

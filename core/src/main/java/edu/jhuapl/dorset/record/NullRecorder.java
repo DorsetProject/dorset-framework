@@ -17,21 +17,17 @@
 package edu.jhuapl.dorset.record;
 
 /**
- * Records the request to response cycle for a Dorset Application.
- * 
- * The records support debugging, tuning, and metrics.
+ * A stub recorder that does nothing
  */
-public interface Recorder {
-    /**
-     * Store a record
-     * @param record The record to store
-     */
-    public void store(Record record);
+public class NullRecorder implements Recorder {
 
-    /**
-     * Retrieve records
-     * @param query Query object
-     * @return Array of records
-     */
-    public Record[] retrieve(RecordQuery query);
+    @Override
+    public void store(Record record) {
+    }
+
+    @Override
+    public Record[] retrieve(RecordQuery query) {
+        return new Record[0];
+    }
+
 }
