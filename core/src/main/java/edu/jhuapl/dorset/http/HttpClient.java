@@ -28,6 +28,11 @@ import org.slf4j.LoggerFactory;
 public class HttpClient {
     private final Logger logger = LoggerFactory.getLogger(HttpClient.class);
 
+    /**
+     * Get the http response using a GET request
+     * @param url The URL to get
+     * @return the http response text
+     */
     public String get(String url) {
         StringBuffer response = null;
         HttpURLConnection con;

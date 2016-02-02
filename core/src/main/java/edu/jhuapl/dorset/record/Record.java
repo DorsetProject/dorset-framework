@@ -102,7 +102,7 @@ public class Record {
      */
     public void setAgents(Agent[] agents) {
         agentNames = new String[agents.length];
-        for (int i=0; i<agents.length; i++) {
+        for (int i = 0; i < agents.length; i++) {
             agentNames[i] = agents[i].getName();
         }
     }

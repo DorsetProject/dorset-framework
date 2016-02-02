@@ -25,6 +25,11 @@ public class Config {
         props = properties;
     }
 
+    /**
+     * Get the properties for a particular class
+     * @param clazz The class
+     * @return Properties object
+     */
     public Properties getConfig(Class<?> clazz) {
         String className = clazz.getCanonicalName().toLowerCase();
         Properties filteredProps = new Properties();

@@ -24,8 +24,8 @@ import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRegistry;
 
 /**
- * This looks at the first word of the request and gets the corresponding agent based on the agent name.
- * Agent names must be lower case. 
+ * This looks at the first word of the request and gets the corresponding agent 
+ * based on the agent name. Agent names must be lower case. 
  */
 public class KeywordRouter implements Router {
     private AgentRegistry registry;
@@ -34,26 +34,20 @@ public class KeywordRouter implements Router {
    
     }
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.routing.Router#initialize(edu.jhuapl.dorset.agent.AgentRegistry)
-     */
     @Override
     public void initialize(AgentRegistry registry) {
         this.registry = registry;
     }
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.routing.Router#getAgents(edu.jhuapl.dorset.Request)
-     */
     @Override
     public Agent[] getAgents(Request request) {
         String quest = request.getText().toLowerCase();
-        String wordArray[] = quest.split(" ", 2);
+        String[] wordArray = quest.split(" ", 2);
 
         List<Agent> agents = new ArrayList<Agent>();
         Agent outAgent = registry.getAgent(wordArray[0]);
         if (outAgent != null) {
-        	agents.add(outAgent);
+            agents.add(outAgent);
         }   
         
         return agents.toArray(new Agent[agents.size()]);

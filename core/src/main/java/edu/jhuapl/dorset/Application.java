@@ -55,6 +55,10 @@ public class Application {
         router.initialize(agentRegistry);
     }
 
+    /**
+     * Get the active agents in the registry
+     * @return array of Agent objects
+     */
     public Agent[] getAgents() {
         Collection<RegistryEntry> entries = agentRegistry.asMap().values();
         Agent[] agents = new Agent[entries.size()];
@@ -66,6 +70,11 @@ public class Application {
         return agents;
     }
 
+    /**
+     * Process a request
+     * @param request Request object
+     * @return Response object
+     */
     public Response process(Request request) {
         logger.info("Processing request: " + request.getText());
         Response response = new Response("no response");
@@ -95,11 +104,22 @@ public class Application {
         return response;
     }
 
+    /**
+     * Set the shared application object
+     * 
+     * This is useful for web-based use cases.
+     * 
+     * @param app Application object
+     */
     public static void setApplication(Application app) {
         logger.info("Registering dorset application");
         Application.app = app;
     }
 
+    /**
+     * Get the shared application object
+     * @return Application object
+     */
     public static Application getApplication() {
         return Application.app;
     }
