@@ -27,8 +27,8 @@ public class ConfigTest {
     @Test
     public void testGetConfig() {
         Properties props = new Properties();
-        props.setProperty("edu.jhuapl.dorset.config.dorsetconfigtest.username", "admin");
-        props.setProperty("edu.jhuapl.dorset.config.dorsetconfigtest.port", "8080");
+        props.setProperty("edu.jhuapl.dorset.config.configtest.username", "admin");
+        props.setProperty("edu.jhuapl.dorset.config.configtest.port", "8080");
         props.setProperty("edu.jhuapl.dorset.debug", "false");
         Config config = new Config(props);
 
