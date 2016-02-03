@@ -20,7 +20,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Rule;
@@ -36,23 +41,31 @@ import edu.jhuapl.dorset.agent.Agent;
 public class FileRecorderTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    
+
+    private String header = "timestamp,requestText,selectedAgentName,responseText,routeTime,agentTime";
+
+    private int fileCounter = 1;
+    private File getTempFile() {
+        File tmpFolder = testFolder.getRoot();
+        String filename = String.format("csv_writer_test%d.csv", fileCounter);
+        File file = new File(tmpFolder.getAbsolutePath(), filename);
+        fileCounter++;
+        return file;
+    }
+
     @Test
     public void testCreatingCSV() throws IOException {
-        File tmpFolder = testFolder.getRoot();
-        File file = new File(tmpFolder.getAbsolutePath(), "csv_writer_test.csv");
+        File file = getTempFile();
 
         Recorder recorder = new FileRecorder(file.toString());
 
-        String expected = "timestamp,requestText,selectedAgentName,responseText,routeTime,agentTime";
         String actual = Files.readFirstLine(file, Charsets.UTF_8);
-        assertEquals(expected, actual);
+        assertEquals(header, actual);
     }
 
     @Test
     public void testWritingCSV() throws IOException {
-        File tmpFolder = testFolder.getRoot();
-        File file = new File(tmpFolder.getAbsolutePath(), "csv_writer_test2.csv");
+        File file = getTempFile();
         Request req = new Request("What is today's date?");
         Agent agent = mock(Agent.class);
         when(agent.getName()).thenReturn("date");
@@ -73,4 +86,23 @@ public class FileRecorderTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void testSimpleReadingCSV() throws FileNotFoundException {
+        File file = getTempFile();
+        PrintWriter out = new PrintWriter(file.toString());
+        out.println(header);
+        DateFormat df = new SimpleDateFormat(FileRecorder.ISO_8601);
+        String line = df.format(new Date()) + ",Why?,all,because,87,123456789";
+        out.println(line);
+        out.close();
+ 
+        Recorder fr = new FileRecorder(file.toString());
+        Record[] records = fr.retrieve(new RecordQuery());
+        assertEquals(1, records.length);
+        assertEquals("Why?", records[0].getRequestText());
+        assertEquals("all", records[0].getSelectedAgentName());
+        assertEquals("because", records[0].getResponseText());
+        assertEquals(87, records[0].getRouteTime());
+        assertEquals(123456789, records[0].getAgentTime());
+    }
 }
