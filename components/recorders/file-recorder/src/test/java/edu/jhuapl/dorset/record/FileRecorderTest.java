@@ -44,7 +44,7 @@ public class FileRecorderTest {
 
         Recorder recorder = new FileRecorder(file.toString());
 
-        String expected = "requestText,selectedAgentName";
+        String expected = "timestamp,requestText,selectedAgentName,responseText,routeTime,agentTime";
         String actual = Files.readFirstLine(file, Charsets.UTF_8);
         assertEquals(expected, actual);
     }
@@ -58,13 +58,19 @@ public class FileRecorderTest {
         when(agent.getName()).thenReturn("date");
         Record r = new Record(req);
         r.setSelectedAgent(agent);
+        r.setRouteTime(30, 47);
+        r.setAgentTime(78, 450000);
+        r.setResponseText("yesterday");
 
         Recorder recorder = new FileRecorder(file.toString());
         recorder.store(r);
 
-        String expected = "What is today's date?,date";
+        String expected = "What is today's date?,date,yesterday,17,449922";
         List<String> lines = Files.readLines(file, Charsets.UTF_8);
-        assertEquals(expected, lines.get(1));
+        String actual = lines.get(1);
+        // skip timestamp to make check easier
+        actual = actual.substring(actual.indexOf(',') + 1);
+        assertEquals(expected, actual);
     }
 
 }

@@ -23,6 +23,8 @@ import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.supercsv.cellprocessor.FmtDate;
+import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvBeanWriter;
@@ -36,9 +38,13 @@ import org.supercsv.prefs.CsvPreference;
  */
 public class FileRecorder implements Recorder {
     private static final Logger logger = LoggerFactory.getLogger(FileRecorder.class);
-    private static final String[] FIELDS = {"requestText", "selectedAgentName"};
+    private static final String[] FIELDS = {"timestamp", "requestText", "selectedAgentName", 
+            "responseText", "routeTime", "agentTime"};
+    private static final String ISO_8601 = "yyyy-MM-dd'T'HH:mmZ";
+    // timestamp, request text, and route time are the required fields
     private static final CellProcessor[] PROCESSORS = new CellProcessor[] {
-            new NotNull(), new NotNull()};
+            new FmtDate(ISO_8601), new NotNull(), new Optional(), new Optional(),
+            new NotNull(), new Optional()};
     
     private ICsvBeanWriter csvWriter = null;
     private FileWriter fw = null;
