@@ -154,7 +154,7 @@ public class Record {
      * Set the agent name that handled the request
      * @param name the name of the agent
      */
-    public void setSelectedAgent(String name) {
+    public void setSelectedAgentName(String name) {
         selectedAgentName = name;
     }
 
