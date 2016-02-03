@@ -52,7 +52,7 @@ public class FileRecorder implements Recorder {
     private static final CsvPreference FORMAT = CsvPreference.EXCEL_PREFERENCE;
     private static final String[] FIELDS = {"timestamp", "requestText", "selectedAgentName", 
             "responseText", "routeTime", "agentTime"};
-    public static final String ISO_8601 = "yyyy-MM-dd'T'HH:mmZ";
+    public static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
     // timestamp, request text, and route time are the required fields
     private static final CellProcessor[] WRITE_PROCESSORS = new CellProcessor[] {
             new FmtDate(ISO_8601), new NotNull(), new Optional(), new Optional(),
@@ -183,7 +183,7 @@ public class FileRecorder implements Recorder {
         
         public AgentChecker(RecordQuery query) {
             String[] agentNames = query.getAgentNames();
-            if (names != null) {
+            if (agentNames != null) {
                 names = new HashSet<String>();
                 for (String name : agentNames) {
                     names.add(name);
