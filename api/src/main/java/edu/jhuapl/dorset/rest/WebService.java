@@ -35,6 +35,11 @@ import edu.jhuapl.dorset.agent.Description;
 public class WebService {
     private static final Logger logger = LoggerFactory.getLogger(WebService.class);
 
+    /**
+     * Process a request
+     * @param text The text of the request
+     * @return response
+     */
     @GET
     @Path("/process/{text}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -50,6 +55,10 @@ public class WebService {
         return response;
     }
 
+    /**
+     * Get the agents that are available
+     * @return array of agent descriptions
+     */
     @GET
     @Path("/agents")
     @Produces(MediaType.APPLICATION_JSON)
@@ -61,7 +70,7 @@ public class WebService {
 
         Agent[] agents = app.getAgents();
         Description[] descriptions = new Description[agents.length];
-        for (int i=0; i<agents.length; i++) {
+        for (int i = 0; i < agents.length; i++) {
             descriptions[i] = agents[i].getDescription();
             if (descriptions[i] == null) {
                 logger.warn("Null description object for agent " + agents[i].getName());
@@ -71,6 +80,11 @@ public class WebService {
         return descriptions;
     }
 
+    /**
+     * A test endpoint that echoes anything sent to it
+     * @param message The text to be echoes
+     * @return the message text
+     */
     @GET
     @Path("/echo/{message}")
     @Produces(MediaType.TEXT_PLAIN)
