@@ -35,6 +35,14 @@ public class Record {
     private String responseText;
 
     /**
+     * Default zero argument constructor to support usage as bean
+     *
+     * For bean usage only
+     */
+    public Record() {
+    }
+
+    /**
      * Record of handling a request
      * @param request Request object
      */
@@ -49,8 +57,19 @@ public class Record {
     }
 
     /**
-     * Get the text of the response
-     * @return text of the response
+     * Set the text of the request
+     *
+     * For bean usage only
+     *
+     * @param text request text
+     */
+    public void setRequestText(String text) {
+        requestText = text;
+    }
+
+    /**
+     * Get the text of the request
+     * @return text of the request
      */
     public String getRequestText() {
         return requestText;
@@ -66,6 +85,14 @@ public class Record {
      */
     public void setRouteTime(long start, long stop) {
         routeTime = stop - start;
+    }
+
+    /**
+     * Set the length of time that the routing took
+     * @param time The length of time for the routing 
+     */
+    public void setRouteTime(long time) {
+        routeTime = time;
     }
 
     /**
@@ -86,6 +113,14 @@ public class Record {
      */
     public void setAgentTime(long start, long stop) {
         agentTime = stop - start;
+    }
+
+    /**
+     * Set the length of time that the agent took
+     * @param time The length of time for agent processing 
+     */
+    public void setAgentTime(long time) {
+        agentTime = time;
     }
 
     /**
@@ -145,6 +180,17 @@ public class Record {
      */
     public String getResponseText() {
         return responseText;
+    }
+
+    /**
+     * Set the timestamp of the record
+     *
+     * For bean usage only
+     *
+     * @param timestamp time of the request being received
+     */
+    public void setTimestamp(Date ts) {
+        timestamp = ts;
     }
 
     /**
