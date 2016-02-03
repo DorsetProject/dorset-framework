@@ -44,10 +44,24 @@ public class Application {
 
     private static Application app;
 
+    /**
+     * Create a Dorset application
+     *
+     * Uses a null recorder that ignores new records.
+     *
+     * @param agentRegistry registry of the agents available to the app
+     * @param router a router that finds the appropriate agent for a request
+     */
     public Application(AgentRegistry agentRegistry, Router router) {
         this(agentRegistry, router, new NullRecorder());
     }
 
+    /**
+     * Create a Dorset application
+     * @param agentRegistry registry of the agents available to the app
+     * @param router a router that finds the appropriate agent for a request
+     * @param recorder a recorder which logs request handling
+     */
     public Application(AgentRegistry agentRegistry, Router router, Recorder recorder) {
         this.agentRegistry = agentRegistry;
         this.router = router;

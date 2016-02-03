@@ -39,6 +39,11 @@ public class RottenTomatoesAgent extends AgentBase {
     private String apikey;
     private HttpClient client;
 
+    /**
+     * Create a Rotten Tomatoes agent
+     * @param client An http client object
+     * @param apikey A Rotten Tomatoes API key 
+     */
     public RottenTomatoesAgent(HttpClient client, String apikey) {
         this.apikey = apikey;
         this.client = client;
@@ -76,14 +81,14 @@ public class RottenTomatoesAgent extends AgentBase {
         return new AgentResponse(agentResponse);
     }
 
-    public String requestData(String movieTitle) {
+    protected String requestData(String movieTitle) {
         movieTitle = movieTitle.replace(" ", "%20");
         String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
                 + this.apikey + "&q=" + movieTitle;
         return client.get(url);
     }
 
-    public String findMovieTitle(String agentRequest) {
+    protected String findMovieTitle(String agentRequest) {
 
         BasicTokenizer bt = new BasicTokenizer();
         String movieTitle = "";
@@ -104,32 +109,28 @@ public class RottenTomatoesAgent extends AgentBase {
         return movieTitle;
     }
 
-    public String findKeyWord(String agentRequest) {
+    protected String findKeyWord(String agentRequest) {
         String keyword;
-        // Year film was made
+
         if (agentRequest.toLowerCase().contains("year")) {
+            // year the film was made
             keyword = "year";
-        }
-        // Runtime for the film
-        else if (agentRequest.toLowerCase().contains("runtime")) {
+        } else if (agentRequest.toLowerCase().contains("runtime")) {
+            // the length of the film
             keyword = "runtime";
-        }
-        // MPAA rating for the film
-        else if (agentRequest.toLowerCase().contains("mpaa rating")) {
+        } else if (agentRequest.toLowerCase().contains("mpaa rating")) {
+            // film rating
             keyword = "mpaa_rating";
-        }
-        // Main actor for the film
-        else if (agentRequest.toLowerCase().contains("actor")) {
+        } else if (agentRequest.toLowerCase().contains("actor")) {
+            // actor names
             keyword = "name";
-        }
-        // None of the keywords above is mentioned within the request
-        else {
+        } else {
             keyword = "unsure";
         }
         return keyword;
     }
 
-    public String formatResponse(String keyword, String response) {
+    protected String formatResponse(String keyword, String response) {
         Gson gson = new Gson();
 
         JsonObject jsonObj = gson.fromJson(response.toString(),
@@ -151,49 +152,42 @@ public class RottenTomatoesAgent extends AgentBase {
         String agentResponse = null;
 
         switch (keyword) {
-        case "runtime": {
-            agentResponse = "The runtime for the film, "
-                    + movieTitle.replace("\"", " ").trim() + ", is "
-                    + jsonObjMovie.get(keyword) + " minutes long.";
-            break;
-        }
+            case "runtime":
+                agentResponse = "The runtime for the film, "
+                        + movieTitle.replace("\"", " ").trim() + ", is "
+                        + jsonObjMovie.get(keyword) + " minutes long.";
+                break;
+            case "year":
+                agentResponse = "The year the film, "
+                        + movieTitle.replace("\"", " ").trim()
+                        + ", was created is " + jsonObjMovie.get(keyword) + ".";
+                break;
+            case "mpaa_rating":
+                agentResponse = "The MPAA rating for the film, "
+                        + movieTitle.replace("\"", " ").trim() + ", is "
+                        + jsonObjMovie.get(keyword) + ".";
+                break;
+            case "name":
+                String nameList = "";
+                String name = "";
+                for (int i = 0; i < jsonCastArray.size(); i++) {
+                    JsonObject jsonObjNames = gson.fromJson(jsonCastArray.get(i),
+                            JsonObject.class);
+                    name = jsonObjNames.get("name").toString();
 
-        case "year": {
-            agentResponse = "The year the film, "
-                    + movieTitle.replace("\"", " ").trim()
-                    + ", was created is " + jsonObjMovie.get(keyword) + ".";
-
-            break;
-        }
-        case "mpaa_rating": {
-            agentResponse = "The MPAA rating for the film, "
-                    + movieTitle.replace("\"", " ").trim() + ", is "
-                    + jsonObjMovie.get(keyword) + ".";
-
-            break;
-        }
-
-        case "name": {
-            String nameList = "";
-            String name = "";
-            for (int i = 0; i < jsonCastArray.size(); i++) {
-                JsonObject jsonObjNames = gson.fromJson(jsonCastArray.get(i),
-                        JsonObject.class);
-                name = jsonObjNames.get("name").toString();
-
-                if (i != jsonCastArray.size() - 1) {
-                    nameList = nameList + name + ", ";
-                } else {
-                    nameList = nameList + name + ".";
+                    if (i != jsonCastArray.size() - 1) {
+                        nameList = nameList + name + ", ";
+                    } else {
+                        nameList = nameList + name + ".";
+                    }
                 }
-            }
-            nameList = nameList.replace("\"", "").trim();
+                nameList = nameList.replace("\"", "").trim();
 
-            agentResponse = "The film, " + movieTitle.replace("\"", " ").trim()
-                    + ", stars actors " + nameList;
-        }
-        default:
-            break;
+                agentResponse = "The film, " + movieTitle.replace("\"", " ").trim()
+                        + ", stars actors " + nameList;
+                break;
+            default:
+                break;
         }
         return agentResponse;
     }
