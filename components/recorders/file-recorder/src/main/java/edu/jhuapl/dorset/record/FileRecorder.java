@@ -48,6 +48,7 @@ public class FileRecorder implements Recorder {
     
     private ICsvBeanWriter csvWriter = null;
     private FileWriter fw = null;
+    private Object writeLock = new Object();
 
     /**
      * Create a file recorder
@@ -81,16 +82,13 @@ public class FileRecorder implements Recorder {
         }
 
         try {
-            csvWriter.write(record, FIELDS, PROCESSORS);
+            synchronized(writeLock) {
+                csvWriter.write(record, FIELDS, PROCESSORS);
+                csvWriter.flush();
+            }
         } catch (IOException e) {
             logger.warn("Unable to store record because of internal csv writer error.", e);
             return;
-        }
-
-        try {
-            csvWriter.flush();
-        } catch (IOException e) {
-            logger.info("Unable to flush the file for recording requests", e);
         }
     }
 
