@@ -18,15 +18,25 @@ package edu.jhuapl.dorset.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpClient {
     private final Logger logger = LoggerFactory.getLogger(HttpClient.class);
+
+    private CloseableHttpClient client;
+
+    public HttpClient() {
+        client = HttpClients.createDefault();
+    }
 
     /**
      * Get the http response using a GET request
@@ -34,29 +44,25 @@ public class HttpClient {
      * @return the http response text
      */
     public String get(String url) {
-        StringBuffer response = null;
-        HttpURLConnection con;
+        StringBuffer buffer = new StringBuffer();
+        HttpGet httpget = new HttpGet(url);
         try {
-            URL obj = new URL(url);
-            con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
+            CloseableHttpResponse response = client.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                InputStream in = entity.getContent();
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                String inputLine;
+                while ((inputLine = br.readLine()) != null) {
+                    buffer.append(inputLine);
+                }
+                br.close();
+            }
+            response.close();
         } catch (IOException e) {
-            logger.warn("Failed to connect: " + e.getMessage());
-            return null;
+            logger.error("Failed to get the http response for " + url, e);
         }
 
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-        } catch (IOException e) {
-            logger.warn("Failed to read data: " + e.getMessage());
-            return null;
-        }
-        return response.toString();
+        return buffer.toString();
     }
 }
