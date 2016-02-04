@@ -29,7 +29,37 @@ public class HttpParameter {
         this.name = name;
         this.value = value;
     }
- 
+
+    /**
+     * Create a name-value pair
+     * @param name the name string
+     * @param value the integer value
+     */
+    public HttpParameter(String name, int value) {
+        this.name = name;
+        this.value = String.valueOf(value);
+    }
+
+    /**
+     * Create a name-value pair
+     * @param name the name string
+     * @param value the long integer value
+     */
+    public HttpParameter(String name, long value) {
+        this.name = name;
+        this.value = String.valueOf(value);
+    }
+
+    /**
+     * Create a name-value pair
+     * @param name the name string
+     * @param value the double value
+     */
+    public HttpParameter(String name, double value) {
+        this.name = name;
+        this.value = String.valueOf(value);
+    }
+
     /**
      * Get the name
      * @return name string
