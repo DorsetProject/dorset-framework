@@ -16,47 +16,115 @@
  */
 package edu.jhuapl.dorset.http;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.fluent.Form;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.client.fluent.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * HTTP Client
+ * 
+ * Provides a simple interface for making Get and Post requests.
+ * 
+ * Additional functionality can be exposed as needed such as http proxy support,
+ * additional http header controls, getting the response as a byte array, and
+ * authorization.
+ */
 public class HttpClient {
     private final Logger logger = LoggerFactory.getLogger(HttpClient.class);
 
+    private String userAgent;
+    private Integer connectTimeout;
+    private Integer readTimeout; 
+
     /**
-     * Get the http response using a GET request
+     * Get the http response to a GET request
      * @param url The URL to get
      * @return the http response text
      */
     public String get(String url) {
-        StringBuffer response = null;
-        HttpURLConnection con;
+        String text = null;
+        Request request = Request.Get(url);
+        prepareRequest(request);
+        Response response;
         try {
-            URL obj = new URL(url);
-            con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
+            response = request.execute();
+            text = response.returnContent().asString();
         } catch (IOException e) {
-            logger.warn("Failed to connect: " + e.getMessage());
-            return null;
+            logger.error("Failed to get the http response for getting " + url, e);
         }
+        return text;
+    }
 
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-        } catch (IOException e) {
-            logger.warn("Failed to read data: " + e.getMessage());
-            return null;
+    /**
+     * Get the http response to a POST request
+     * @param url The URL to post to
+     * @param parameters array of parameters
+     * @return the http response text
+     */
+    public String post(String url, HttpParameter[] parameters) {
+        String text = null;
+        Request request = Request.Post(url);
+        prepareRequest(request);
+        if (parameters != null) {
+            request.bodyForm(buildFormBody(parameters));
         }
-        return response.toString();
+        Response response;
+        try {
+            response = request.execute();
+            text = response.returnContent().asString();
+        } catch (IOException e) {
+            logger.error("Failed to get the http response for posting " + url, e);
+        }
+        return text;
+    }
+
+    /**
+     * Set the user agent
+     * @param agent user agent string
+     */
+    public void setUserAgent(String agent) {
+        userAgent = agent;
+    }
+
+    /**
+     * Set the connect timeout (wait for connection to be established)
+     * @param timeout connect timeout in milliseconds (0 equals an infinite timeout)
+     */
+    public void setConnectTimeout(int timeout) {
+        connectTimeout = timeout;
+    }
+
+    /**
+     * Set the read timeout (wait for data during transfer)
+     * @param timeout read timeout in milliseconds (0 equals an infinite timeout)
+     */
+    public void setReadTimeout(int timeout) {
+        readTimeout = timeout;
+    }
+
+    private void prepareRequest(Request request) {
+        if (userAgent != null) {
+            request.userAgent(userAgent);
+        }
+        if (connectTimeout != null) {
+            request.connectTimeout(connectTimeout);
+        }
+        if (readTimeout != null) {
+            request.socketTimeout(readTimeout);
+        }
+    }
+
+    private List<NameValuePair> buildFormBody(HttpParameter[] parameters) {
+        Form form = Form.form();
+        for (HttpParameter param : parameters) {
+            form.add(param.getName(), param.getValue());
+        }
+        return form.build();
     }
 }

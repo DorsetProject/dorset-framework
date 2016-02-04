@@ -14,6 +14,17 @@
   <description>Dorset core implementation</description>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>fluent-hc</artifactId>
+      <version>4.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.5</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
