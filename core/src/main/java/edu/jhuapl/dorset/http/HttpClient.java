@@ -45,16 +45,13 @@ public class HttpClient {
     /**
      * Get the http response to a GET request
      * @param url The URL to get
-     * @return the http response text
+     * @return the http response text or null if error
      */
     public String get(String url) {
         String text = null;
         Request request = Request.Get(url);
-        prepareRequest(request);
-        Response response;
         try {
-            response = request.execute();
-            text = response.returnContent().asString();
+            text = execute(request);
         } catch (IOException e) {
             logger.error("Failed to get the http response for getting " + url, e);
         }
@@ -64,22 +61,55 @@ public class HttpClient {
     /**
      * Get the http response to a POST request
      * @param url The URL to post to
-     * @param parameters array of parameters
-     * @return the http response text
+     * @param parameters array of parameters to encode as a form
+     * @return the http response text or null if error
      */
     public String post(String url, HttpParameter[] parameters) {
         String text = null;
         Request request = Request.Post(url);
-        prepareRequest(request);
         if (parameters != null) {
             request.bodyForm(buildFormBody(parameters));
         }
-        Response response;
         try {
-            response = request.execute();
-            text = response.returnContent().asString();
+            text = execute(request);
         } catch (IOException e) {
             logger.error("Failed to get the http response for posting " + url, e);
+        }
+        return text;
+    }
+
+    /**
+     * Get the http response to a PUT request
+     * @param url The URL to put to
+     * @param parameters array of parameters to encode as a form
+     * @return the http response text or null if error
+     */
+    public String put(String url, HttpParameter[] parameters) {
+        String text = null;
+        Request request = Request.Put(url);
+        if (parameters != null) {
+            request.bodyForm(buildFormBody(parameters));
+        }
+        try {
+            text = execute(request);
+        } catch (IOException e) {
+            logger.error("Failed to get the http response for putting " + url, e);
+        }
+        return text;
+    }
+
+    /**
+     * Get the http response to a DELETE request
+     * @param url The URL for the delete
+     * @return the http response text or null if error
+     */
+    public String delete(String url) {
+        String text = null;
+        Request request = Request.Delete(url);
+        try {
+            text = execute(request);
+        } catch (IOException e) {
+            logger.error("Failed to get the http response for deleting " + url, e);
         }
         return text;
     }
@@ -126,5 +156,11 @@ public class HttpClient {
             form.add(param.getName(), param.getValue());
         }
         return form.build();
+    }
+
+    private String execute(Request request) throws IOException {
+        prepareRequest(request);
+        Response response = request.execute();
+        return response.returnContent().asString();
     }
 }

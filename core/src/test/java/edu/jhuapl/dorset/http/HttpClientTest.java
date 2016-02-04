@@ -45,11 +45,34 @@ public class HttpClientTest {
     }
 
     @Test
+    public void testSimpleDelete() {
+        HttpClient client = new HttpClient();
+
+        String response = client.delete("http://httpbin.org/delete");
+
+        assertNotNull(response);
+    }
+
+    @Test
     public void testSimplePost() {
         HttpClient client = new HttpClient();
         HttpParameter[] p = new HttpParameter[]{new HttpParameter("a", "b"), new HttpParameter("c", "d")};
 
         String response = client.post("http://httpbin.org/post", p);
+
+        assertNotNull(response);
+        JsonObject jsonObj = getJsonObject(response);
+        JsonObject formData = jsonObj.get("form").getAsJsonObject();
+        assertEquals("b", formData.get("a").getAsString());
+        assertEquals("d", formData.get("c").getAsString());
+    }
+
+    @Test
+    public void testSimplePut() {
+        HttpClient client = new HttpClient();
+        HttpParameter[] p = new HttpParameter[]{new HttpParameter("a", "b"), new HttpParameter("c", "d")};
+
+        String response = client.put("http://httpbin.org/put", p);
 
         assertNotNull(response);
         JsonObject jsonObj = getJsonObject(response);
@@ -72,7 +95,10 @@ public class HttpClientTest {
     public void testSetConnectTimeout() {
         HttpClient client = new HttpClient();
         client.setConnectTimeout(1);
-        String response = client.get("http://httpbin.org/get");
+        // non-routable ip address that should cause a connection timeout
+        // this does not test the setTimeout method as much as it tests that
+        // a null is returned for a timeout
+        String response = client.get("http://10.255.255.1/");
         assertNull(response);
     }
 
@@ -80,7 +106,7 @@ public class HttpClientTest {
     public void testSetReadTimeout() {
         HttpClient client = new HttpClient();
         client.setReadTimeout(2000);
-        String response = client.get("http://httpbin.org/delay/3");
+        String response = client.get("http://httpbin.org/delay/4");
         assertNull(response);
 
         client.setReadTimeout(4000);
