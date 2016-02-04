@@ -17,7 +17,10 @@
 package edu.jhuapl.dorset.http;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.slf4j.Logger;
@@ -36,8 +39,8 @@ public class HttpClient {
     private final Logger logger = LoggerFactory.getLogger(HttpClient.class);
 
     private String userAgent;
-    private Integer connectionTimeout;
-    private Integer socketTimeout; 
+    private Integer connectTimeout;
+    private Integer readTimeout; 
 
     /**
      * Get the http response to a GET request
@@ -68,7 +71,9 @@ public class HttpClient {
         String text = null;
         Request request = Request.Post(url);
         prepareRequest(request);
-        // TODO handle parameters
+        if (parameters != null) {
+            request.bodyForm(buildFormBody(parameters));
+        }
         Response response;
         try {
             response = request.execute();
@@ -76,7 +81,7 @@ public class HttpClient {
         } catch (IOException e) {
             logger.error("Failed to get the http response for posting " + url, e);
         }
-        return text;        
+        return text;
     }
 
     /**
@@ -88,30 +93,38 @@ public class HttpClient {
     }
 
     /**
-     * Set the connection timeout (wait for connection to be established)
-     * @param timeout connection timeout in milliseconds (0 equals an infinite timeout)
+     * Set the connect timeout (wait for connection to be established)
+     * @param timeout connect timeout in milliseconds (0 equals an infinite timeout)
      */
-    public void setConnectionTimeout(int timeout) {
-        connectionTimeout = timeout;
+    public void setConnectTimeout(int timeout) {
+        connectTimeout = timeout;
     }
 
     /**
-     * Set the socket timeout (wait for data during transfer)
-     * @param timeout socket timeout in milliseconds (0 equals an infinite timeout)
+     * Set the read timeout (wait for data during transfer)
+     * @param timeout read timeout in milliseconds (0 equals an infinite timeout)
      */
-    public void setSocketTimeout(int timeout) {
-        socketTimeout = timeout;
+    public void setReadTimeout(int timeout) {
+        readTimeout = timeout;
     }
 
     private void prepareRequest(Request request) {
         if (userAgent != null) {
             request.userAgent(userAgent);
         }
-        if (connectionTimeout != null) {
-            request.connectTimeout(connectionTimeout);
+        if (connectTimeout != null) {
+            request.connectTimeout(connectTimeout);
         }
-        if (socketTimeout != null) {
-            request.socketTimeout(socketTimeout);
+        if (readTimeout != null) {
+            request.socketTimeout(readTimeout);
         }
+    }
+
+    private List<NameValuePair> buildFormBody(HttpParameter[] parameters) {
+        Form form = Form.form();
+        for (HttpParameter param : parameters) {
+            form.add(param.getName(), param.getValue());
+        }
+        return form.build();
     }
 }
