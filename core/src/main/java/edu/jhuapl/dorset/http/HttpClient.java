@@ -16,53 +16,102 @@
  */
 package edu.jhuapl.dorset.http;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.client.fluent.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * HTTP Client
+ * 
+ * Provides a simple interface for making Get and Post requests.
+ * 
+ * Additional functionality can be exposed as needed such as http proxy support,
+ * additional http header controls, getting the response as a byte array, and
+ * authorization.
+ */
 public class HttpClient {
     private final Logger logger = LoggerFactory.getLogger(HttpClient.class);
 
-    private CloseableHttpClient client;
-
-    public HttpClient() {
-        client = HttpClients.createDefault();
-    }
+    private String userAgent;
+    private Integer connectionTimeout;
+    private Integer socketTimeout; 
 
     /**
-     * Get the http response using a GET request
+     * Get the http response to a GET request
      * @param url The URL to get
      * @return the http response text
      */
     public String get(String url) {
-        StringBuffer buffer = new StringBuffer();
-        HttpGet httpget = new HttpGet(url);
+        String text = null;
+        Request request = Request.Get(url);
+        prepareRequest(request);
+        Response response;
         try {
-            CloseableHttpResponse response = client.execute(httpget);
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                InputStream in = entity.getContent();
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String inputLine;
-                while ((inputLine = br.readLine()) != null) {
-                    buffer.append(inputLine);
-                }
-                br.close();
-            }
-            response.close();
+            response = request.execute();
+            text = response.returnContent().asString();
         } catch (IOException e) {
-            logger.error("Failed to get the http response for " + url, e);
+            logger.error("Failed to get the http response for getting " + url, e);
         }
+        return text;
+    }
 
-        return buffer.toString();
+    /**
+     * Get the http response to a POST request
+     * @param url The URL to post to
+     * @param parameters array of parameters
+     * @return the http response text
+     */
+    public String post(String url, HttpParameter[] parameters) {
+        String text = null;
+        Request request = Request.Post(url);
+        prepareRequest(request);
+        // TODO handle parameters
+        Response response;
+        try {
+            response = request.execute();
+            text = response.returnContent().asString();
+        } catch (IOException e) {
+            logger.error("Failed to get the http response for posting " + url, e);
+        }
+        return text;        
+    }
+
+    /**
+     * Set the user agent
+     * @param agent user agent string
+     */
+    public void setUserAgent(String agent) {
+        userAgent = agent;
+    }
+
+    /**
+     * Set the connection timeout (wait for connection to be established)
+     * @param timeout connection timeout in milliseconds (0 equals an infinite timeout)
+     */
+    public void setConnectionTimeout(int timeout) {
+        connectionTimeout = timeout;
+    }
+
+    /**
+     * Set the socket timeout (wait for data during transfer)
+     * @param timeout socket timeout in milliseconds (0 equals an infinite timeout)
+     */
+    public void setSocketTimeout(int timeout) {
+        socketTimeout = timeout;
+    }
+
+    private void prepareRequest(Request request) {
+        if (userAgent != null) {
+            request.userAgent(userAgent);
+        }
+        if (connectionTimeout != null) {
+            request.connectTimeout(connectionTimeout);
+        }
+        if (socketTimeout != null) {
+            request.socketTimeout(socketTimeout);
+        }
     }
 }
