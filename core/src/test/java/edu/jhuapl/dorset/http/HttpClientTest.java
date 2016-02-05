@@ -114,4 +114,11 @@ public class HttpClientTest {
         assertNotNull(response);
     }
 
+    @Test
+    public void test404Status() {
+        HttpClient client = new HttpClient();
+        String response = client.get("https://httpbin.org/status/404");
+        assertNull(response);
+        assertTrue(client.getHttpStatus().isClientError());
+    }
 }

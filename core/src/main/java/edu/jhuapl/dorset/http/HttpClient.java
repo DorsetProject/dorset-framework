@@ -19,10 +19,17 @@ package edu.jhuapl.dorset.http;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +47,8 @@ public class HttpClient {
 
     private String userAgent;
     private Integer connectTimeout;
-    private Integer readTimeout; 
+    private Integer readTimeout;
+    private HttpStatus status;
 
     /**
      * Get the http response to a GET request
@@ -138,6 +146,14 @@ public class HttpClient {
         readTimeout = timeout;
     }
 
+    /**
+     * Get the most recent status
+     * @return status object
+     */
+    public HttpStatus getHttpStatus() {
+        return status;
+    }
+
     private void prepareRequest(Request request) {
         if (userAgent != null) {
             request.userAgent(userAgent);
@@ -161,6 +177,46 @@ public class HttpClient {
     private String execute(Request request) throws IOException {
         prepareRequest(request);
         Response response = request.execute();
-        return response.returnContent().asString();
+        ContentAndStatus cas = response.handleResponse(new ContentAndStatusResponseHandler());
+        status = new HttpStatus(cas.statusLine.getStatusCode(), cas.statusLine.getReasonPhrase());
+        if (status.getStatusCode() >= 300) {
+            throw new HttpResponseException(cas.statusLine.getStatusCode(),
+                    cas.statusLine.getReasonPhrase());
+        }
+
+        return cas.content.asString();
+    }
+
+    class ContentAndStatus {
+        public Content content;
+        public StatusLine statusLine;
+    }
+
+    class ContentAndStatusResponseHandler implements ResponseHandler<ContentAndStatus> {
+
+        @Override
+        public ContentAndStatus handleResponse(HttpResponse response)
+                throws HttpResponseException, IOException {
+            ContentAndStatus cas = new ContentAndStatus();
+            cas.statusLine = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            if (cas.statusLine.getStatusCode() >= 300) {
+                EntityUtils.consume(entity);
+                return cas;
+            }
+            cas.content = entity == null ? null : handleEntity(entity);
+            return cas;
+        }
+
+        private Content handleEntity(final HttpEntity entity) throws IOException {
+            Content content = null;
+            if (entity != null) {
+                content = new Content(EntityUtils.toByteArray(entity),
+                        ContentType.getOrDefault(entity));
+            } else {
+                content = Content.NO_CONTENT;
+            }
+            return content;
+        }
     }
 }
