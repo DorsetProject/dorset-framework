@@ -156,4 +156,16 @@ public class HttpClientTest {
         JsonObject args = jsonObj.get("args").getAsJsonObject();
         assertEquals(32, args.get("test").getAsInt());
     }
+
+    @Test
+    public void testHttpHeaders() {
+        HttpClient client = new HttpClient();
+        client.addDefaultRequestHeader("Testing", "dorset");
+        String response = client.get("https://httpbin.org/headers");
+        assertNotNull(response);
+        System.out.println(response);
+        JsonObject jsonObj = getJsonObject(response);
+        JsonObject headers = jsonObj.get("headers").getAsJsonObject();
+        assertEquals("dorset", headers.get("Testing").getAsString());
+    }
 }

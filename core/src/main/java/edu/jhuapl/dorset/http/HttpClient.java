@@ -17,7 +17,9 @@
 package edu.jhuapl.dorset.http;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -52,6 +54,7 @@ public class HttpClient {
     private Integer connectTimeout;
     private Integer readTimeout;
     private HttpStatus status;
+    private final Map<String, String> requestHeaders = new HashMap<String, String>();
 
     /**
      * Get the http response to a GET request
@@ -150,6 +153,15 @@ public class HttpClient {
     }
 
     /**
+     * Add a request header that will be used on every request
+     * @param name the name of the header
+     * @param value the value of the header
+     */
+    public void addDefaultRequestHeader(String name, String value) {
+        requestHeaders.put(name, value);
+    }
+
+    /**
      * Get the most recent status
      * @return status object
      */
@@ -166,6 +178,11 @@ public class HttpClient {
         }
         if (readTimeout != null) {
             request.socketTimeout(readTimeout);
+        }
+        if (!requestHeaders.isEmpty()) {
+            for (Map.Entry<String, String> entry : requestHeaders.entrySet()) {
+                request.addHeader(entry.getKey(), entry.getValue());
+            }
         }
     }
 
