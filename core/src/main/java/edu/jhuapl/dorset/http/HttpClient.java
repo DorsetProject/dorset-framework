@@ -43,12 +43,16 @@ import org.slf4j.LoggerFactory;
  * This client does not return the content body when there has been a client or
  * server error (status code 4xx or 5xx). It does handle redirects automatically.
  * 
- * Additional functionality can be exposed as needed such as http proxy support,
- * additional http header controls, getting the response as a byte array, and
- * authorization.
+ * Additional functionality can be added as needed such as http proxy support,
+ * getting the response as a byte array, and authorization.
  */
 public class HttpClient {
     private final Logger logger = LoggerFactory.getLogger(HttpClient.class);
+
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_XML = "application/xml";
+    public static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    public static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
     private String userAgent;
     private Integer connectTimeout;
@@ -93,6 +97,24 @@ public class HttpClient {
     }
 
     /**
+     * Get the http response to a POST request
+     * @param url The URL to post to
+     * @param body The body of the POST request
+     * @param contentType The content type string
+     * @return the http response text or null if error
+     */
+    public String post(String url, String body, String contentType) {
+        String text = null;
+        Request request = Request.Post(url).bodyString(body, ContentType.create(contentType));
+        try {
+            text = execute(request);
+        } catch (IOException e) {
+            logger.error("Failed to get the http response for posting " + url, e);
+        }
+        return text;
+    }
+
+    /**
      * Get the http response to a PUT request
      * @param url The URL to put to
      * @param parameters array of parameters to encode as a form
@@ -104,6 +126,24 @@ public class HttpClient {
         if (parameters != null) {
             request.bodyForm(buildFormBody(parameters));
         }
+        try {
+            text = execute(request);
+        } catch (IOException e) {
+            logger.error("Failed to get the http response for putting " + url, e);
+        }
+        return text;
+    }
+
+    /**
+     * Get the http response to a PUT request
+     * @param url The URL to put to
+     * @param body The body of the PUT request
+     * @param contentType The content type string
+     * @return the http response text or null if error
+     */
+    public String put(String url, String body, String contentType) {
+        String text = null;
+        Request request = Request.Put(url).bodyString(body, ContentType.create(contentType));
         try {
             text = execute(request);
         } catch (IOException e) {

@@ -72,6 +72,20 @@ public class HttpClientTest {
     }
 
     @Test
+    public void testPostWithJsonBody() {
+        HttpClient client = new HttpClient();
+
+        String response = client.post("http://httpbin.org/post", "{\"value\":\"bar\"}", HttpClient.APPLICATION_JSON);
+
+        assertNotNull(response);
+        JsonObject jsonObj = getJsonObject(response);
+        JsonObject headers = jsonObj.get("headers").getAsJsonObject();
+        assertEquals("application/json", headers.get("Content-Type").getAsString());
+        JsonObject jsonData = jsonObj.get("json").getAsJsonObject();
+        assertEquals("bar", jsonData.get("value").getAsString());
+    }
+
+    @Test
     public void testSimplePut() {
         HttpClient client = new HttpClient();
         HttpParameter[] p = new HttpParameter[]{new HttpParameter("a", "b"), new HttpParameter("c", "d")};
