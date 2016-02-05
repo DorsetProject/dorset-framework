@@ -24,6 +24,7 @@ import org.junit.Test;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+// ignore because of external dependencies and they take several seconds to run
 @Ignore
 public class HttpClientTest {
     private Gson gson = new Gson();
@@ -39,6 +40,9 @@ public class HttpClientTest {
         String response = client.get("http://httpbin.org/get?test=32");
 
         assertNotNull(response);
+        assertNotNull(client.getHttpStatus());
+        assertFalse(client.getHttpStatus().isError());
+        assertTrue(client.getHttpStatus().isSuccess());
         JsonObject jsonObj = getJsonObject(response);
         JsonObject args = jsonObj.get("args").getAsJsonObject();
         assertEquals(32, args.get("test").getAsInt());
@@ -119,6 +123,37 @@ public class HttpClientTest {
         HttpClient client = new HttpClient();
         String response = client.get("https://httpbin.org/status/404");
         assertNull(response);
+        assertNotNull(client.getHttpStatus());
         assertTrue(client.getHttpStatus().isClientError());
+        assertFalse(client.getHttpStatus().isServerError());
+        assertTrue(client.getHttpStatus().isError());
+        assertFalse(client.getHttpStatus().isSuccess());
+        assertEquals("NOT FOUND", client.getHttpStatus().getReasonPhrase());
+    }
+
+    @Test
+    public void test500Status() {
+        HttpClient client = new HttpClient();
+        String response = client.get("https://httpbin.org/status/500");
+        assertNull(response);
+        assertNotNull(client.getHttpStatus());
+        assertFalse(client.getHttpStatus().isClientError());
+        assertTrue(client.getHttpStatus().isServerError());
+        assertTrue(client.getHttpStatus().isError());
+        assertFalse(client.getHttpStatus().isSuccess());
+        assertEquals("INTERNAL SERVER ERROR", client.getHttpStatus().getReasonPhrase());
+    }
+
+    @Test
+    public void testRedirect() {
+        HttpClient client = new HttpClient();
+        // 302 redirect to a get request
+        String response = client.get("http://httpbin.org/redirect-to?url=http%3A%2F%2Fhttpbin.org%2Fget%3Ftest%3D32");
+        assertNotNull(response);
+        assertNotNull(client.getHttpStatus());
+        assertTrue(client.getHttpStatus().isSuccess());
+        JsonObject jsonObj = getJsonObject(response);
+        JsonObject args = jsonObj.get("args").getAsJsonObject();
+        assertEquals(32, args.get("test").getAsInt());
     }
 }

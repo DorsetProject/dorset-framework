@@ -36,7 +36,10 @@ import org.slf4j.LoggerFactory;
 /**
  * HTTP Client
  * 
- * Provides a simple interface for making Get and Post requests.
+ * Provides a simple interface for making HTTP requests.
+ * 
+ * This client does not return the content body when there has been a client or
+ * server error (status code 4xx or 5xx). It does handle redirects automatically.
  * 
  * Additional functionality can be exposed as needed such as http proxy support,
  * additional http header controls, getting the response as a byte array, and
@@ -179,6 +182,8 @@ public class HttpClient {
         Response response = request.execute();
         ContentAndStatus cas = response.handleResponse(new ContentAndStatusResponseHandler());
         status = new HttpStatus(cas.statusLine.getStatusCode(), cas.statusLine.getReasonPhrase());
+        // redirects seem to be handled by Apache's HttpClient internally so not sure why
+        // this check includes the 3xx range
         if (status.getStatusCode() >= 300) {
             throw new HttpResponseException(cas.statusLine.getStatusCode(),
                     cas.statusLine.getReasonPhrase());
@@ -192,6 +197,7 @@ public class HttpClient {
         public StatusLine statusLine;
     }
 
+    // based on Apache's ContentResponseHandler
     class ContentAndStatusResponseHandler implements ResponseHandler<ContentAndStatus> {
 
         @Override
