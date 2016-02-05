@@ -17,30 +17,48 @@
 package edu.jhuapl.dorset.http;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * HTTP Client
  * 
- * Provides a simple interface for making Get and Post requests.
+ * Provides a simple interface for making HTTP requests.
  * 
- * Additional functionality can be exposed as needed such as http proxy support,
- * additional http header controls, getting the response as a byte array, and
- * authorization.
+ * This client does not return the content body when there has been a client or
+ * server error (status code 4xx or 5xx). It does handle redirects automatically.
+ * 
+ * Additional functionality can be added as needed such as http proxy support,
+ * getting the response as a byte array, and authorization.
  */
 public class HttpClient {
     private final Logger logger = LoggerFactory.getLogger(HttpClient.class);
 
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_XML = "application/xml";
+    public static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    public static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
+
     private String userAgent;
     private Integer connectTimeout;
-    private Integer readTimeout; 
+    private Integer readTimeout;
+    private HttpStatus status;
+    private final Map<String, String> requestHeaders = new HashMap<String, String>();
 
     /**
      * Get the http response to a GET request
@@ -79,6 +97,24 @@ public class HttpClient {
     }
 
     /**
+     * Get the http response to a POST request
+     * @param url The URL to post to
+     * @param body The body of the POST request
+     * @param contentType The content type string
+     * @return the http response text or null if error
+     */
+    public String post(String url, String body, String contentType) {
+        String text = null;
+        Request request = Request.Post(url).bodyString(body, ContentType.create(contentType));
+        try {
+            text = execute(request);
+        } catch (IOException e) {
+            logger.error("Failed to get the http response for posting " + url, e);
+        }
+        return text;
+    }
+
+    /**
      * Get the http response to a PUT request
      * @param url The URL to put to
      * @param parameters array of parameters to encode as a form
@@ -90,6 +126,24 @@ public class HttpClient {
         if (parameters != null) {
             request.bodyForm(buildFormBody(parameters));
         }
+        try {
+            text = execute(request);
+        } catch (IOException e) {
+            logger.error("Failed to get the http response for putting " + url, e);
+        }
+        return text;
+    }
+
+    /**
+     * Get the http response to a PUT request
+     * @param url The URL to put to
+     * @param body The body of the PUT request
+     * @param contentType The content type string
+     * @return the http response text or null if error
+     */
+    public String put(String url, String body, String contentType) {
+        String text = null;
+        Request request = Request.Put(url).bodyString(body, ContentType.create(contentType));
         try {
             text = execute(request);
         } catch (IOException e) {
@@ -138,6 +192,23 @@ public class HttpClient {
         readTimeout = timeout;
     }
 
+    /**
+     * Add a request header that will be used on every request
+     * @param name the name of the header
+     * @param value the value of the header
+     */
+    public void addDefaultRequestHeader(String name, String value) {
+        requestHeaders.put(name, value);
+    }
+
+    /**
+     * Get the most recent status
+     * @return status object
+     */
+    public HttpStatus getHttpStatus() {
+        return status;
+    }
+
     private void prepareRequest(Request request) {
         if (userAgent != null) {
             request.userAgent(userAgent);
@@ -147,6 +218,11 @@ public class HttpClient {
         }
         if (readTimeout != null) {
             request.socketTimeout(readTimeout);
+        }
+        if (!requestHeaders.isEmpty()) {
+            for (Map.Entry<String, String> entry : requestHeaders.entrySet()) {
+                request.addHeader(entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -161,6 +237,49 @@ public class HttpClient {
     private String execute(Request request) throws IOException {
         prepareRequest(request);
         Response response = request.execute();
-        return response.returnContent().asString();
+        ContentAndStatus cas = response.handleResponse(new ContentAndStatusResponseHandler());
+        status = new HttpStatus(cas.statusLine.getStatusCode(), cas.statusLine.getReasonPhrase());
+        // redirects seem to be handled by Apache's HttpClient internally so not sure why
+        // this check includes the 3xx range
+        if (status.getStatusCode() >= 300) {
+            throw new HttpResponseException(cas.statusLine.getStatusCode(),
+                    cas.statusLine.getReasonPhrase());
+        }
+
+        return cas.content.asString();
+    }
+
+    class ContentAndStatus {
+        public Content content;
+        public StatusLine statusLine;
+    }
+
+    // based on Apache's ContentResponseHandler
+    class ContentAndStatusResponseHandler implements ResponseHandler<ContentAndStatus> {
+
+        @Override
+        public ContentAndStatus handleResponse(HttpResponse response)
+                throws HttpResponseException, IOException {
+            ContentAndStatus cas = new ContentAndStatus();
+            cas.statusLine = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            if (cas.statusLine.getStatusCode() >= 300) {
+                EntityUtils.consume(entity);
+                return cas;
+            }
+            cas.content = entity == null ? null : handleEntity(entity);
+            return cas;
+        }
+
+        private Content handleEntity(final HttpEntity entity) throws IOException {
+            Content content = null;
+            if (entity != null) {
+                content = new Content(EntityUtils.toByteArray(entity),
+                        ContentType.getOrDefault(entity));
+            } else {
+                content = Content.NO_CONTENT;
+            }
+            return content;
+        }
     }
 }
