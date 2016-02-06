@@ -87,4 +87,10 @@
     </plugins>
   </build>
 
+  <scm>
+    <connection>scm:git:git@github.com:DorsetProject/dorset-framework.git</connection>
+    <developerConnection>scm:git:git@github.com:DorsetProject/dorset-framework.git</developerConnection>
+    <url>https://github.com/DorsetProject/dorset-framework</url>
+  </scm>
+
 </project>
