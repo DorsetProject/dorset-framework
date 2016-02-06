@@ -16,22 +16,24 @@
  */
 package edu.jhuapl.dorset.routing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRegistry;
+import edu.jhuapl.dorset.nlp.BasicTokenizer;
+import edu.jhuapl.dorset.nlp.Tokenizer;
 
 /**
- * This looks at the first word of the request and gets the corresponding agent 
- * based on the agent name. Agent names must be lower case. 
+ * This router looks at the first word of the request and gets the 
+ * corresponding agent based on the agent name.
+ * 
+ * Requests must be of the form: [trigger] [request text]
  */
-public class KeywordRouter implements Router {
+public class TriggerWordRouter implements Router {
     private AgentRegistry registry;
+    private Tokenizer tokenizer;
 
-    public KeywordRouter() {
-   
+    public TriggerWordRouter() {
+        tokenizer = new BasicTokenizer();
     }
 
     @Override
@@ -41,16 +43,18 @@ public class KeywordRouter implements Router {
 
     @Override
     public Agent[] getAgents(Request request) {
-        String quest = request.getText().toLowerCase();
-        String[] wordArray = quest.split(" ", 2);
+        String requestText = request.getText().toLowerCase();
+        String[] tokens = tokenizer.tokenize(requestText);
+        if (tokens.length == 0) {
+            return new Agent[0];
+        }
 
-        List<Agent> agents = new ArrayList<Agent>();
-        Agent outAgent = registry.getAgent(wordArray[0]);
-        if (outAgent != null) {
-            agents.add(outAgent);
-        }   
-        
-        return agents.toArray(new Agent[agents.size()]);
+        Agent agent = registry.getAgent(tokens[0]);
+        if (agent != null) {
+            return new Agent[]{agent};
+        } else {
+            return new Agent[0];
+        }
     }
 
 }

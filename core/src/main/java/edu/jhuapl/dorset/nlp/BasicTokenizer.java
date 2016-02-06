@@ -16,11 +16,13 @@
  */
 package edu.jhuapl.dorset.nlp;
 
+/**
+ * Tokenizes a string using white space as a delimiter
+ * 
+ * Does not remove punctuation.
+ */
 public class BasicTokenizer implements Tokenizer {
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.nlp.Tokenizer#tokenize(String)
-     */
     @Override
     public String[] tokenize(String text) {
         return text.split("\\s+");

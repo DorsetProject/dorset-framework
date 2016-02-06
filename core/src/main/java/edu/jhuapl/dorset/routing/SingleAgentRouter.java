@@ -16,40 +16,37 @@
  */
 package edu.jhuapl.dorset.routing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRegistry;
 
 /**
- *
+ * Routes all requests to a single agent
  */
-public class FixedAgentRouter implements Router {
+public class SingleAgentRouter implements Router {
     private String agentName;
     private Agent agent;
 
-    public FixedAgentRouter(String name) {
+    /**
+     * Create the router
+     * @param name the name of the agent to route requests to
+     */
+    public SingleAgentRouter(String name) {
         agentName = name;
     }
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.routing.Router#initialize(edu.jhuapl.dorset.agent.AgentRegistry)
-     */
     @Override
     public void initialize(AgentRegistry registry) {
         agent = registry.getAgent(agentName);
     }
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.routing.Router#getAgents(edu.jhuapl.dorset.Request)
-     */
     @Override
     public Agent[] getAgents(Request request) {
-        List<Agent> agents = new ArrayList<Agent>();
-        agents.add(agent);
-        return agents.toArray(new Agent[agents.size()]);
+        if (agent != null) {
+            return new Agent[]{agent};
+        } else {
+            return new Agent[0];
+        }
     }
 
 }

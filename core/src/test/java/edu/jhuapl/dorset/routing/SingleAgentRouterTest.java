@@ -16,6 +16,8 @@
  */
 package edu.jhuapl.dorset.routing;
 
+import java.util.Properties;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -24,19 +26,30 @@ import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRegistry;
 
-public class FixedAgentRouterTest {
+public class SingleAgentRouterTest {
     @Test
     public void testGetAgents() {
         Agent agent = mock(Agent.class);
         when(agent.getName()).thenReturn("test");
         AgentRegistry registry = new AgentRegistry();
-        registry.register(agent, null);
-        Router router = new FixedAgentRouter("test");
+        registry.register(agent, new Properties());
+        Router router = new SingleAgentRouter("test");
         router.initialize(registry);
 
         Agent agents[] = router.getAgents(new Request("hello world"));
 
         Agent expected[] = new Agent[]{agent};
         assertArrayEquals(expected, agents);
+    }
+
+    @Test
+    public void testWithAgentMissingFromRegistry() {
+        AgentRegistry registry = new AgentRegistry();
+        Router router = new SingleAgentRouter("test");
+        router.initialize(registry);
+
+        Agent agents[] = router.getAgents(new Request("hello world"));
+
+        assertArrayEquals(new Agent[0], agents);        
     }
 }

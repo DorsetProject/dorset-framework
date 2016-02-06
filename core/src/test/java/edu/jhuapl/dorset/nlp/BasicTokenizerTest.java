@@ -31,6 +31,7 @@ public class BasicTokenizerTest {
         
         assertEquals("Today", tokens[0]);
         assertEquals("rest", tokens[7]);
+        assertEquals("life.", tokens[10]);
     }
 
 }
