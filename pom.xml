@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.jhuapl.dorset</groupId>
-  <artifactId>dorset</artifactId>
+  <artifactId>parent</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Dorset Framework</name>
+  <name>Dorset Framework (Parent)</name>
   <description>Framework for building intelligent assistants</description>
   <url>https://github.com/DorsetProject/dorset-framework</url>
   <issueManagement>
@@ -30,25 +30,26 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk.version>1.7</jdk.version>
     <dorset.version>${project.version}</dorset.version>
+    <slf4j.version>1.7.14</slf4j.version>
   </properties>
 
   <modules>
-    <module>core</module>
-    <module>components</module>
-    <module>api</module>
     <module>agents</module>
+    <module>api</module>
+    <module>components</module>
+    <module>core</module>
   </modules>
 
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.14</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.14</version>
+      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -64,6 +65,21 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>edu.jhuapl.dorset</groupId>
+        <artifactId>dorset-core</artifactId>
+        <version>${dorset.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.5</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>
