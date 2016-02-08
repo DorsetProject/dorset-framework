@@ -195,7 +195,7 @@ public class Record {
      *
      * For bean usage only
      *
-     * @param timestamp time of the request being received
+     * @param ts time of the request being received
      */
     public void setTimestamp(Date ts) {
         timestamp = ts;
