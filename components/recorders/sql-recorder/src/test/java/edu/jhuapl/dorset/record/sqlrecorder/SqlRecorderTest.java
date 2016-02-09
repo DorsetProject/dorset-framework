@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.hibernate.cfg.Configuration;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.jhuapl.dorset.Request;
@@ -28,6 +29,13 @@ import edu.jhuapl.dorset.record.Record;
 import edu.jhuapl.dorset.record.Recorder;
 
 public class SqlRecorderTest {
+
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        // force slf4j logging because jboss logger won't pick it up when we 
+        // use slf4j simple logger
+        System.setProperty("org.jboss.logging.provider", "slf4j");
+    }
 
     @Test
     public void testWritingSQL() {
