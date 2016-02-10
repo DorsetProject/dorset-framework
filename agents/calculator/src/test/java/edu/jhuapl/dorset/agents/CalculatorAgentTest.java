@@ -32,7 +32,7 @@ public class CalculatorAgentTest {
 
         AgentResponse response = agent.process(new AgentRequest("56 + 89"));
 
-        assertEquals("145", response.text);
+        assertEquals("145", response.getText());
     }
 
 }

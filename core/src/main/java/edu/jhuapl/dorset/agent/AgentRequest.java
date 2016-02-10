@@ -17,12 +17,35 @@
 package edu.jhuapl.dorset.agent;
 
 /**
- *
+ * Request sent to an agent
  */
 public class AgentRequest {
-    public String text;
+    private String text;
 
+    public AgentRequest() {
+    }
+
+    /**
+     * Create an agent request
+     * @param text the text of the request
+     */
     public AgentRequest(String text) {
         this.text = text;
+    }
+
+    /**
+     * Set the text of the request
+     * @param text the text of the request
+     */
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    /**
+     * Get the text of the request
+     * @return the text of the request
+     */
+    public String getText() {
+        return text;
     }
 }

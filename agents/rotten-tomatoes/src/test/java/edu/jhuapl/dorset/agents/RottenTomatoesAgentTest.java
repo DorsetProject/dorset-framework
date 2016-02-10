@@ -71,7 +71,7 @@ public class RottenTomatoesAgentTest {
         AgentRequest request = new AgentRequest(testQuestion);
         AgentResponse response = movie.process(request);
 
-        assertEquals(correctAnswer, response.text);
+        assertEquals(correctAnswer, response.getText());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class RottenTomatoesAgentTest {
         AgentRequest request = new AgentRequest(testQuestion);
         AgentResponse response = movie.process(request);
 
-        assertEquals(correctAnswer, response.text);
+        assertEquals(correctAnswer, response.getText());
     }
 
     @Test
@@ -140,7 +140,7 @@ public class RottenTomatoesAgentTest {
         AgentRequest request = new AgentRequest(testQuestion);
         AgentResponse response = movie.process(request);
 
-        assertEquals(correctAnswer, response.text);
+        assertEquals(correctAnswer, response.getText());
     }
 
     @Test
@@ -174,7 +174,7 @@ public class RottenTomatoesAgentTest {
         AgentRequest request = new AgentRequest(testQuestion);
         AgentResponse response = movie.process(request);
 
-        assertEquals(correctAnswer, response.text);
+        assertEquals(correctAnswer, response.getText());
     }
 
     @Test
@@ -209,7 +209,7 @@ public class RottenTomatoesAgentTest {
         AgentRequest request = new AgentRequest(testQuestion);
         AgentResponse response = movie.process(request);
 
-        assertEquals(correctAnswer, response.text);
+        assertEquals(correctAnswer, response.getText());
     }
 
 }

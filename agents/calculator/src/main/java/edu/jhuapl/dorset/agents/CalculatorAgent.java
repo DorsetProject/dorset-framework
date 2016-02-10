@@ -35,7 +35,7 @@ public class CalculatorAgent extends AgentBase {
 
     @Override
     public AgentResponse process(AgentRequest request) {
-        Expression exp = new ExpressionBuilder(request.text).build();
+        Expression exp = new ExpressionBuilder(request.getText()).build();
         double result = exp.evaluate();
 
         // handle integers differently from floating point 

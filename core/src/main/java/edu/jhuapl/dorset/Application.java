@@ -107,7 +107,7 @@ public class Application {
             AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
             if (agentResponse != null) {
                 // take first answer
-                response.setText(agentResponse.text);
+                response.setText(agentResponse.getText());
                 record.setSelectedAgent(agent);
                 record.setResponse(response);
                 break;

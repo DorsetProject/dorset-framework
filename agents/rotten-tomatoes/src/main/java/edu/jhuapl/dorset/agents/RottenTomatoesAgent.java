@@ -54,7 +54,7 @@ public class RottenTomatoesAgent extends AgentBase {
     @Override
     public AgentResponse process(AgentRequest request) {
 
-        String agentRequest = request.text;
+        String agentRequest = request.getText();
         String movieTitle = findMovieTitle(agentRequest);
 
         if (movieTitle.equals("")) {
