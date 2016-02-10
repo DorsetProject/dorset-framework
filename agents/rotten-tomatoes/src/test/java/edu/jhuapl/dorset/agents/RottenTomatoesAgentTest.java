@@ -37,13 +37,12 @@ import edu.jhuapl.dorset.http.HttpClient;
 public class RottenTomatoesAgentTest {
 
     private String apikey = "default_apikey";
-    private Path path = null;
-    private String jsonData = null;
 
-    @Test
-    public void testRuntime() {
+    private String getFileAsString(String filename) {
+        String jsonData = null;
+        Path path = null;
         ClassLoader classLoader = getClass().getClassLoader();
-        URL url = classLoader.getResource("test.json");
+        URL url = classLoader.getResource(filename);
 
         try {
             path = Paths.get(url.toURI());
@@ -56,6 +55,14 @@ public class RottenTomatoesAgentTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return jsonData;
+    }
+
+
+    @Test
+    public void testRuntime() {
+        String jsonData = getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -76,20 +83,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testYear() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL url = classLoader.getResource("test.json");
-
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            jsonData = new String(Files.readAllBytes(path), "UTF8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String jsonData = getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -110,20 +104,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testActors() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL url = classLoader.getResource("test.json");
-
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            jsonData = new String(Files.readAllBytes(path), "UTF8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String jsonData = getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -145,20 +126,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testNoKeyword() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL url = classLoader.getResource("test.json");
-
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            jsonData = new String(Files.readAllBytes(path), "UTF8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String jsonData = getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -179,20 +147,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testBadApiKey() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL url = classLoader.getResource("test.json");
-
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            jsonData = new String(Files.readAllBytes(path), "UTF8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String jsonData = getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
