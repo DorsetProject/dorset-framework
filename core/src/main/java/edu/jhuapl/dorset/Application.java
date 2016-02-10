@@ -26,9 +26,9 @@ import edu.jhuapl.dorset.agent.AgentRegistry;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.RegistryEntry;
-import edu.jhuapl.dorset.record.NullRecorder;
-import edu.jhuapl.dorset.record.Record;
-import edu.jhuapl.dorset.record.Recorder;
+import edu.jhuapl.dorset.reporting.NullReporter;
+import edu.jhuapl.dorset.reporting.Report;
+import edu.jhuapl.dorset.reporting.Reporter;
 import edu.jhuapl.dorset.routing.Router;
 
 /**
@@ -40,32 +40,32 @@ public class Application {
 
     protected AgentRegistry agentRegistry;
     protected Router router;
-    protected Recorder recorder;
+    protected Reporter reporter;
 
     private static Application app;
 
     /**
      * Create a Dorset application
      *
-     * Uses a null recorder that ignores new records.
+     * Uses a null reporter that ignores new reports.
      *
      * @param agentRegistry registry of the agents available to the app
      * @param router a router that finds the appropriate agent for a request
      */
     public Application(AgentRegistry agentRegistry, Router router) {
-        this(agentRegistry, router, new NullRecorder());
+        this(agentRegistry, router, new NullReporter());
     }
 
     /**
      * Create a Dorset application
      * @param agentRegistry registry of the agents available to the app
      * @param router a router that finds the appropriate agent for a request
-     * @param recorder a recorder which logs request handling
+     * @param reporter a reporter which logs request handling
      */
-    public Application(AgentRegistry agentRegistry, Router router, Recorder recorder) {
+    public Application(AgentRegistry agentRegistry, Router router, Reporter reporter) {
         this.agentRegistry = agentRegistry;
         this.router = router;
-        this.recorder = recorder;
+        this.reporter = reporter;
         router.initialize(agentRegistry);
     }
 
@@ -92,12 +92,12 @@ public class Application {
     public Response process(Request request) {
         logger.info("Processing request: " + request.getText());
         Response response = new Response("no response");
-        Record record = new Record(request);
+        Report report = new Report(request);
 
         long startTime = System.nanoTime();
         Agent[] agents = router.getAgents(request);
-        record.setRouteTime(startTime, System.nanoTime());
-        record.setAgents(agents);
+        report.setRouteTime(startTime, System.nanoTime());
+        report.setAgents(agents);
         if (agents.length == 0) {
             return response;
         }
@@ -108,12 +108,12 @@ public class Application {
             if (agentResponse != null) {
                 // take first answer
                 response.setText(agentResponse.getText());
-                record.setSelectedAgent(agent);
-                record.setResponse(response);
+                report.setSelectedAgent(agent);
+                report.setResponse(response);
                 break;
             }
         }
-        record.setAgentTime(startTime, System.nanoTime());
+        report.setAgentTime(startTime, System.nanoTime());
 
         return response;
     }
