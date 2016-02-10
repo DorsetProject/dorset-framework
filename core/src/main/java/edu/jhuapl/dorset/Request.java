@@ -16,22 +16,70 @@
  */
 package edu.jhuapl.dorset;
 
+import java.util.UUID;
+
+/**
+ * Dorset Request
+ *
+ * Represents a question or command to a Dorset application.
+ */
 public class Request {
+    public static final int MAX_ID_LENGTH = 36;
+
     private String text;
+    private String id;
 
     public Request() {
 
     }
 
+    /**
+     * Create a request
+     *
+     * Automatically sets the identifier of the request
+     *
+     * @param text the text of the request
+     */
     public Request(String text) {
         this.text = text;
+        this.id = UUID.randomUUID().toString();
     }
 
+    /**
+     * Create a request
+     * @param text the text of the request
+     * @param id the identifier of the request (cannot be longer then MAX_ID_LENGTH)
+     *           The identifier must be unique.
+     */
+    public Request(String text, String id) {
+        if (id.length() > MAX_ID_LENGTH) {
+            // throw exception
+        }
+        this.text = text;
+        this.id = id;
+    }
+
+    /**
+     * Get the text of the request
+     * @return the text of the request
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Set the text of the request
+     * @param text the text of the request
+     */
     public void setText(String text) {
         this.text = text;
+    }
+
+    /**
+     * Get the identifier of the request
+     * @return
+     */
+    public String getId() {
+        return id;
     }
 }

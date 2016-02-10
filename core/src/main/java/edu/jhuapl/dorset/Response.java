@@ -18,6 +18,11 @@ package edu.jhuapl.dorset;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Dorset Response
+ *
+ * Represents the response to a request to the application.
+ */
 @XmlRootElement
 public class Response {
     private String text;
@@ -26,14 +31,26 @@ public class Response {
         
     }
 
+    /**
+     * Create a response
+     * @param text the text of the response
+     */
     public Response(String text) {
         this.text = text;
     }
 
+    /**
+     * Get the text of the response
+     * @return the text of the response
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Set the text of the response
+     * @param text the text of the response
+     */
     public void setText(String text) {
         this.text = text;
     }
