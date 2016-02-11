@@ -16,6 +16,9 @@
  */
 package edu.jhuapl.dorset.reporting;
 
+import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -33,6 +36,11 @@ public class SqlReporter implements Reporter {
 
     private SessionFactory sessionFactory;
 
+    /**
+     * Create a SQL Reporter
+     * 
+     * @param conf Hibernate configuration
+     */
     public SqlReporter(Configuration conf) {
         conf.addResource("report.hbm.xml");
         sessionFactory = conf.buildSessionFactory();
@@ -44,11 +52,35 @@ public class SqlReporter implements Reporter {
         session.beginTransaction();
         session.save(report);
         session.getTransaction().commit();
+        session.close();
     }
 
     @Override
     public Report[] retrieve(ReportQuery query) {
-        // TODO Auto-generated method stub
-        return null;
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        Query hql = session.createQuery(buildQuery(query))
+                        .setParameter("ts_start", query.getStartDate())
+                        .setParameter("ts_stop", query.getEndDate());
+        if (query.getAgentNames() != null) {
+            hql.setParameterList("agents", query.getAgentNames());
+        }
+        if (query.getLimit() != ReportQuery.NO_LIMIT) {
+            hql.setMaxResults(query.getLimit());
+        }
+        @SuppressWarnings("unchecked")
+        List<Report> reports = hql.list();
+        session.getTransaction().commit();
+        session.close();
+        return reports.toArray(new Report[reports.size()]);
+    }
+
+    private String buildQuery(ReportQuery query) {
+        String hql = "from Report where (:ts_start is null or timestamp > :ts_start)" 
+                        + " and (:ts_stop is null or timestamp < :ts_stop)";
+        if (query.getAgentNames() != null) {
+            hql += " and selectedAgentName in (:agents)";
+        }
+        return hql;
     }
 }
