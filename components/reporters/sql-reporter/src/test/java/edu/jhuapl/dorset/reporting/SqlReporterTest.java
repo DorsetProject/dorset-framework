@@ -24,6 +24,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.hibernate.cfg.Configuration;
@@ -55,8 +58,32 @@ public class SqlReporterTest {
         return conf;
     }
 
+    private void loadData(SqlReporter reporter) throws ParseException {
+        String[] data1 = new String[] {"2016-02-02T15:43:34UTC", "all"};
+        String[] data2 = new String[] {"2016-02-03T15:43:34UTC", "time"};
+        String[] data3 = new String[] {"2016-02-04T15:43:34UTC", "date"};
+        String[] data4 = new String[] {"2016-02-05T15:43:34UTC", "all"};
+        String[] data5 = new String[] {"2016-02-06T15:43:34UTC", "all"};
+        String[][] data = new String[][] {data1, data2, data3, data4, data5};
+
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        Request req = new Request("What is 1 + 1?");
+        Agent agent = mock(Agent.class);
+
+        Report r = new Report(req);
+        r.setRouteTime(123);
+        r.setAgentTime(9876);
+        r.setResponseText("2");
+        for (String[] dateAndAgent : data) {
+            when(agent.getName()).thenReturn(dateAndAgent[1]);
+            r.setSelectedAgent(agent);
+            r.setTimestamp(df.parse(dateAndAgent[0]));
+            reporter.store(r);
+        }
+    }
+
     @Test
-    public void testWritingSQL() throws ClassNotFoundException, SQLException {
+    public void testStore() throws ClassNotFoundException, SQLException {
         Request req = new Request("What is today's date?");
         Agent agent = mock(Agent.class);
         when(agent.getName()).thenReturn("date");
@@ -88,5 +115,93 @@ public class SqlReporterTest {
         assertFalse(rs.next());
         stmt.close();
         conn.close();
+    }
+
+    @Test
+    public void testSimpleRetrieve() {
+        Request req = new Request("What is tomorrow's date?");
+        Agent agent = mock(Agent.class);
+        when(agent.getName()).thenReturn("date");
+
+        Report r = new Report(req);
+        Date d = new Date();
+        r.setTimestamp(d);
+        r.setSelectedAgent(agent);
+        r.setRouteTime(123);
+        r.setAgentTime(987654321);
+        r.setResponseText("tuesday");
+        Reporter reporter = new SqlReporter(getConf());
+        reporter.store(r);
+
+        Report[] reports = reporter.retrieve(new ReportQuery());
+        assertEquals(1, reports.length);
+        assertEquals(req.getText(), reports[0].getRequestText());
+        assertEquals(r.getResponseText(), reports[0].getResponseText());
+        assertEquals(r.getTimestamp(), reports[0].getTimestamp());
+        assertEquals(r.getAgentTime(), reports[0].getAgentTime());
+        assertEquals(r.getRouteTime(), reports[0].getRouteTime());
+        assertEquals(r.getSelectedAgentName(), reports[0].getSelectedAgentName());
+    }
+
+    @Test
+    public void testDateRangeRetrieve() throws ParseException {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SqlReporter reporter = new SqlReporter(getConf());
+        loadData(reporter);
+
+        ReportQuery rq = new ReportQuery();
+        rq.setStartDate(df.parse("2016-02-04T12:00:00UTC"));
+        rq.setEndDate(df.parse("2016-02-06T12:00:00UTC"));
+        Report[] reports = reporter.retrieve(rq);
+
+        assertEquals(2, reports.length);
+        assertEquals(df.parse("2016-02-05T15:43:34UTC"), reports[1].getTimestamp());
+    }
+
+    @Test
+    public void testLimitRetrieve() throws ParseException {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SqlReporter reporter = new SqlReporter(getConf());
+        loadData(reporter);
+
+        ReportQuery rq = new ReportQuery();
+        rq.setLimit(3);
+        Report[] reports = reporter.retrieve(rq);
+
+        assertEquals(3, reports.length);
+        assertEquals(df.parse("2016-02-02T15:43:34UTC"), reports[0].getTimestamp());
+        assertEquals(df.parse("2016-02-03T15:43:34UTC"), reports[1].getTimestamp());
+        assertEquals(df.parse("2016-02-04T15:43:34UTC"), reports[2].getTimestamp());
+    }
+
+    @Test
+    public void testAgentFilterRetrieve() throws ParseException {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SqlReporter reporter = new SqlReporter(getConf());
+        loadData(reporter);
+
+        ReportQuery rq = new ReportQuery();
+        rq.setAgentName("all");
+        Report[] reports = reporter.retrieve(rq);
+
+        assertEquals(3, reports.length);
+        assertEquals(df.parse("2016-02-02T15:43:34UTC"), reports[0].getTimestamp());
+        assertEquals(df.parse("2016-02-05T15:43:34UTC"), reports[1].getTimestamp());
+        assertEquals(df.parse("2016-02-06T15:43:34UTC"), reports[2].getTimestamp());
+    }
+
+    @Test
+    public void testAgentArrayFilterRetrieve() throws ParseException {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SqlReporter reporter = new SqlReporter(getConf());
+        loadData(reporter);
+
+        ReportQuery rq = new ReportQuery();
+        rq.setAgentNames(new String[]{"time", "date"});
+        Report[] reports = reporter.retrieve(rq);
+
+        assertEquals(2, reports.length);
+        assertEquals(df.parse("2016-02-03T15:43:34UTC"), reports[0].getTimestamp());
+        assertEquals(df.parse("2016-02-04T15:43:34UTC"), reports[1].getTimestamp());
     }
 }
