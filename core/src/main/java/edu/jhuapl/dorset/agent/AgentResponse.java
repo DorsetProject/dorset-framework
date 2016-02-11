@@ -18,23 +18,50 @@ package edu.jhuapl.dorset.agent;
 
 /**
  * Response from an agent to a request
+ *
+ * This class is part of the public API for remote agent web services.
+ *
+ * If the statusCode is not AgentMessages.SUCCESS, the text field can be left blank.
  */
 public class AgentResponse {
     private String text;
+    private int statusCode;
 
-    public AgentResponse() {
-    }
+    public AgentResponse() {}
 
     /**
      * Create an agent response
+     * 
      * @param text the text of the response
      */
     public AgentResponse(String text) {
         this.text = text;
+        this.statusCode = AgentMessages.SUCCESS;
+    }
+
+    /**
+     * Create an agent response
+     * 
+     * @param text the text of the response
+     * @param code the status code
+     */
+    public AgentResponse(String text, int code) {
+        this.text = text;
+        this.statusCode = code;
+    }
+
+    /**
+     * Create an agent response
+     * 
+     * @param code the status code
+     */
+    public AgentResponse(int code) {
+        this.statusCode = code;
     }
 
     /**
      * Set the text of the response
+     * 
      * @param text the text of the response
      */
     public void setText(String text) {
@@ -43,9 +70,30 @@ public class AgentResponse {
 
     /**
      * Get the text of the response
+     * 
      * @return text of the response
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * Get the status code
+     * 
+     * @return the status code
+     * @see AgentMessages
+     */
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * Set the status code
+     * 
+     * @param code the status code
+     * @see AgentMessages
+     */
+    public void setStatusCode(int code) {
+        this.statusCode = code;
     }
 }
