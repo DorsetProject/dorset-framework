@@ -27,21 +27,20 @@ import edu.jhuapl.dorset.reporting.Reporter;
 /**
  * SQL Reporter
  *
- * Stores reports of request handling to a sql database.
+ * Stores reports of request handling to an SQL database.
  */
 public class SqlReporter implements Reporter {
 
     private SessionFactory sessionFactory;
 
     public SqlReporter(Configuration conf) {
-        this.sessionFactory = conf.buildSessionFactory();
-
+        conf.addResource("report.hbm.xml");
+        sessionFactory = conf.buildSessionFactory();
     }
 
     @Override
     public void store(Report report) {
-        // TODO Auto-generated method stub
-        Session session = this.sessionFactory.openSession();
+        Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.save(report);
         session.getTransaction().commit();

@@ -16,8 +16,15 @@
  */
 package edu.jhuapl.dorset.reporting;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
 
 import org.hibernate.cfg.Configuration;
 import org.junit.BeforeClass;
@@ -38,22 +45,48 @@ public class SqlReporterTest {
         System.setProperty("org.jboss.logging.provider", "slf4j");
     }
 
+    private Configuration getConf() {
+        Configuration conf = new Configuration();
+        conf.setProperty("hibernate.connection.driver_class", "org.h2.Driver");
+        conf.setProperty("hibernate.connection.url", "jdbc:h2:mem:sql_reporter");
+        conf.setProperty("hibernate.connection.pool_size", "1");
+        conf.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        conf.setProperty("hibernate.hbm2ddl.auto", "create");
+        return conf;
+    }
+
     @Test
-    public void testWritingSQL() {
+    public void testWritingSQL() throws ClassNotFoundException, SQLException {
         Request req = new Request("What is today's date?");
         Agent agent = mock(Agent.class);
         when(agent.getName()).thenReturn("date");
 
         Report r = new Report(req);
+        Date d = new Date();
+        r.setTimestamp(d);
         r.setSelectedAgent(agent);
         r.setRouteTime(30, 47);
         r.setAgentTime(78, 450000);
         r.setResponseText("yesterday");
 
-        Configuration conf = new Configuration();
-        conf.configure();
-
-        Reporter reporter = new SqlReporter(conf);
+        Reporter reporter = new SqlReporter(getConf());
         reporter.store(r);
+
+        // talk directly to h2 and test if the data was stored correctly
+        Class.forName("org.h2.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:h2:mem:sql_reporter");
+        String selectQuery = "SELECT * FROM report";
+        PreparedStatement stmt = conn.prepareStatement(selectQuery);
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        assertEquals(d, rs.getTimestamp("timestamp"));
+        assertEquals("date", rs.getString("selectedAgentName"));
+        assertEquals("What is today's date?", rs.getString("requestText"));
+        assertEquals("yesterday", rs.getString("responseText"));
+        assertEquals(17, rs.getLong("routeTime"));
+        assertEquals(449922, rs.getLong("agentTime"));
+        assertFalse(rs.next());
+        stmt.close();
+        conn.close();
     }
 }
