@@ -29,7 +29,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -40,6 +43,7 @@ import edu.jhuapl.dorset.reporting.Reporter;
 import edu.jhuapl.dorset.reporting.SqlReporter;
 
 public class SqlReporterTest {
+    private SessionFactory sessionFactory;
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -48,14 +52,21 @@ public class SqlReporterTest {
         System.setProperty("org.jboss.logging.provider", "slf4j");
     }
 
-    private Configuration getConf() {
+    @Before
+    public void setup() {
         Configuration conf = new Configuration();
         conf.setProperty("hibernate.connection.driver_class", "org.h2.Driver");
         conf.setProperty("hibernate.connection.url", "jdbc:h2:mem:sql_reporter");
         conf.setProperty("hibernate.connection.pool_size", "1");
         conf.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-        conf.setProperty("hibernate.hbm2ddl.auto", "create");
-        return conf;
+        conf.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+        conf.addResource("report.hbm.xml");
+        sessionFactory = conf.buildSessionFactory();
+    }
+
+    @After
+    public void cleanup() {
+        sessionFactory.close();
     }
 
     private void loadData(SqlReporter reporter) throws ParseException {
@@ -96,7 +107,7 @@ public class SqlReporterTest {
         r.setAgentTime(78, 450000);
         r.setResponseText("yesterday");
 
-        Reporter reporter = new SqlReporter(getConf());
+        Reporter reporter = new SqlReporter(sessionFactory);
         reporter.store(r);
 
         // talk directly to h2 and test if the data was stored correctly
@@ -130,7 +141,7 @@ public class SqlReporterTest {
         r.setRouteTime(123);
         r.setAgentTime(987654321);
         r.setResponseText("tuesday");
-        Reporter reporter = new SqlReporter(getConf());
+        Reporter reporter = new SqlReporter(sessionFactory);
         reporter.store(r);
 
         Report[] reports = reporter.retrieve(new ReportQuery());
@@ -146,7 +157,7 @@ public class SqlReporterTest {
     @Test
     public void testDateRangeRetrieve() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        SqlReporter reporter = new SqlReporter(getConf());
+        SqlReporter reporter = new SqlReporter(sessionFactory);
         loadData(reporter);
 
         ReportQuery rq = new ReportQuery();
@@ -161,7 +172,7 @@ public class SqlReporterTest {
     @Test
     public void testLimitRetrieve() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        SqlReporter reporter = new SqlReporter(getConf());
+        SqlReporter reporter = new SqlReporter(sessionFactory);
         loadData(reporter);
 
         ReportQuery rq = new ReportQuery();
@@ -177,7 +188,7 @@ public class SqlReporterTest {
     @Test
     public void testAgentFilterRetrieve() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        SqlReporter reporter = new SqlReporter(getConf());
+        SqlReporter reporter = new SqlReporter(sessionFactory);
         loadData(reporter);
 
         ReportQuery rq = new ReportQuery();
@@ -193,7 +204,7 @@ public class SqlReporterTest {
     @Test
     public void testAgentArrayFilterRetrieve() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        SqlReporter reporter = new SqlReporter(getConf());
+        SqlReporter reporter = new SqlReporter(sessionFactory);
         loadData(reporter);
 
         ReportQuery rq = new ReportQuery();

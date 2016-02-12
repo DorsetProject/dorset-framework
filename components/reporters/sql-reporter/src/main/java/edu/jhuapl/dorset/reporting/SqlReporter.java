@@ -21,7 +21,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.ReportQuery;
@@ -39,11 +38,10 @@ public class SqlReporter implements Reporter {
     /**
      * Create a SQL Reporter
      * 
-     * @param conf Hibernate configuration
+     * @param sessionFactory Hibernate session factory
      */
-    public SqlReporter(Configuration conf) {
-        conf.addResource("report.hbm.xml");
-        sessionFactory = conf.buildSessionFactory();
+    public SqlReporter(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
