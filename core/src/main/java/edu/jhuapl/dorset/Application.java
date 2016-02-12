@@ -114,6 +114,7 @@ public class Application {
             }
         }
         report.setAgentTime(startTime, System.nanoTime());
+        reporter.store(report);
 
         return response;
     }
