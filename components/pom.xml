@@ -15,6 +15,7 @@
   <description>Components for use with the Dorset framework</description>
 
   <modules>
+    <module>hibernate-service</module>
     <module>reporters</module>
   </modules>
 
