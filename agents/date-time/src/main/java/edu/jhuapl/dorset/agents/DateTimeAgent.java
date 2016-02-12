@@ -76,10 +76,10 @@ public class DateTimeAgent extends AgentBase {
     }
 
     protected String getDay(Date date) {
-        String weekdays[] = new DateFormatSymbols(Locale.ENGLISH).getWeekdays();
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        String[] weekdays = new DateFormatSymbols(Locale.ENGLISH).getWeekdays();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         return weekdays[dayOfWeek];
     }
 
