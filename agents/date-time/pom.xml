@@ -5,10 +5,9 @@
   <parent>
     <groupId>edu.jhuapl.dorset.agents</groupId>
     <artifactId>dorset-agents</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>edu.jhuapl.dorset.agents</groupId>
   <artifactId>date-time</artifactId>
   <packaging>jar</packaging>
   <name>Date Time agent</name>

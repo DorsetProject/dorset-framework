@@ -1,9 +1,10 @@
 package edu.jhuapl.dorset.agents;
 
 import edu.jhuapl.dorset.agent.AgentBase;
+import edu.jhuapl.dorset.agent.AgentMessages;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
-import edu.jhuapl.dorset.nlp.BasicTokenizer;
+import edu.jhuapl.dorset.agent.Description;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -11,84 +12,79 @@ import java.util.Locale;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.DateFormatSymbols;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
-public class DateTimeAgent extends AgentBase  {
-	private Date date; 
-	
-	public DateTimeAgent (){
-		this(new Date()); 
-	}
-	
-	public DateTimeAgent (Date date){
-		super();
-		this.date = date;
-	}
-	
+/**
+ * Agent for answering questions about the current date or time
+ *
+ */
+public class DateTimeAgent extends AgentBase {
+    private static final String DATE = "date";
+    private static final String DAY = "day";
+    private static final String TIME = "time";
+    private static final String UNKNOWN = "unknown";
 
+    private static final String SUMMARY = "Provide information on the current date and time";
+    private static final String[] EXAMPLES =
+                    new String[] {"What day is it?", "What time is it?", "What is today's date?"};
+
+    /**
+     * Create a date-time agent
+     */
+    public DateTimeAgent() {
+        this.setName("date-time");
+        this.setDescription(new Description(getName(), SUMMARY, EXAMPLES));
+    }
+
+    @Override
     public AgentResponse process(AgentRequest request) {
-    	String functionName = getFunctionName(request.text);  	
-    	Method method;
-    	String outputResponse = null; 
-    	
-    	try{
-    		method = this.getClass().getMethod(functionName);
-    		outputResponse = (String) method.invoke(this);
-    	}
-    	catch (SecurityException e){
-    		
-    	}
-    	catch (NoSuchMethodException e){
-    		
-    	} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-        return new AgentResponse(outputResponse);
-    }
-    
-    protected String getFunctionName(String requestText){
-    	String question = requestText.toLowerCase(); 	
-    	String functionName; 
-    	
-    	if(question.indexOf("date")!=-1)
-    		functionName = "getDate";
-    	else if (question.indexOf("day")!=-1)
-    		functionName = "getDay";
-    	else if (question.indexOf("time")!=-1)
-    		functionName = "getTime";
-    	else
-    		functionName = "errorFunc";
-    	
-    	return(functionName);
+        Date now = new Date();
+        AgentResponse response = new AgentResponse();
+        String requestType = getRequestType(request.getText());
+        switch (requestType) {
+            case DATE:
+                response.setText(getDate(now));
+                break;
+            case DAY:
+                response.setText(getDay(now));
+                break;
+            case TIME:
+                response.setText(getTime(now));
+                break;
+            default:
+                response.setStatusCode(AgentMessages.BAD_REQUEST);
+                break;
+        }
+        
+        return response;
     }
 
-    public String getTime(){
-    	return (DateFormat.getTimeInstance(DateFormat.SHORT).format(this.date));
+    protected String getRequestType(String text) {
+        text = text.toLowerCase();
+        String type = UNKNOWN;
+        if (text.contains("date")) {
+            type = DATE;
+        } else if (text.contains("day")) {
+            type = DAY;
+        } else if (text.contains("time")) {
+            type = TIME;
+        }
+        return type;
     }
-    
-    public String getDay(){
-    	String weekdays[] = new DateFormatSymbols(Locale.ENGLISH).getWeekdays();
-    	Calendar c = Calendar.getInstance();
-    	c.setTime(this.date);
-    	int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-    	return (weekdays[dayOfWeek]);
-    }    
 
-    public String getDate(){
-    	DateFormat format = new SimpleDateFormat("MMMMM dd, yyyy");
-        return(format.format(this.date));
+    protected String getTime(Date date) {
+        return DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
     }
-    
-    public String errorFunc(){
-    	return("Request must contain words time, date or day.");
+
+    protected String getDay(Date date) {
+        String weekdays[] = new DateFormatSymbols(Locale.ENGLISH).getWeekdays();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        return weekdays[dayOfWeek];
+    }
+
+    protected String getDate(Date date) {
+        DateFormat format = new SimpleDateFormat("MMMMM dd, yyyy");
+        return format.format(date);
     }
 }
