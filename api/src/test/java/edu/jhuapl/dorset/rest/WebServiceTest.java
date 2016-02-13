@@ -76,4 +76,13 @@ public class WebServiceTest extends JerseyTest {
         assertEquals(expected, response.readEntity(String.class));
     }
 
+    @Test
+    public void testPing() {
+        javax.ws.rs.core.Response response = target("/ping").request(MediaType.APPLICATION_JSON_TYPE).get();
+
+        assertEquals(200, response.getStatus());
+        String expected = "\"pong\"";
+        assertEquals(expected, response.readEntity(String.class));        
+    }
+
 }
