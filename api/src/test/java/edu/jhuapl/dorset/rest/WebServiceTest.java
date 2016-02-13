@@ -26,6 +26,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.test.JerseyTest;
@@ -65,11 +66,13 @@ public class WebServiceTest extends JerseyTest {
     }
 
     @Test
-    public void testProcess() {
+    public void testRequest() {
         Response resp = new Response("this is a test");
         when(app.process(any(Request.class))).thenReturn(resp);
 
-        javax.ws.rs.core.Response response = target("/process/test").request(MediaType.APPLICATION_JSON_TYPE).get();
+        WebRequest wr = new WebRequest("why?");
+        Entity<WebRequest> body = Entity.entity(wr, MediaType.APPLICATION_JSON_TYPE);
+        javax.ws.rs.core.Response response = target("/request").request(MediaType.APPLICATION_JSON_TYPE).post(body);
 
         assertEquals(200, response.getStatus());
         String expected = "{\"text\":\"this is a test\"}";

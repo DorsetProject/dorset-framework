@@ -17,9 +17,10 @@
 package edu.jhuapl.dorset.rest;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -44,11 +45,12 @@ public class WebService {
      * @param text The text of the request
      * @return response
      */
-    @GET
-    @Path("/process/{text}")
+    @POST
+    @Path("/request")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public WebResponse process(@PathParam("text") String text) {
-        Request request = new Request(text);
+    public WebResponse process(WebRequest req) {
+        Request request = new Request(req.getText());
 
         if (app == null) {
             return new WebResponse("Dorset application not set");
