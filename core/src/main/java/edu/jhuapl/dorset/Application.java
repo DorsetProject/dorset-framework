@@ -36,13 +36,11 @@ import edu.jhuapl.dorset.routing.Router;
  *
  */
 public class Application {
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private final Logger logger = LoggerFactory.getLogger(Application.class);
 
     protected AgentRegistry agentRegistry;
     protected Router router;
     protected Reporter reporter;
-
-    private static Application app;
 
     /**
      * Create a Dorset application
@@ -119,23 +117,4 @@ public class Application {
         return response;
     }
 
-    /**
-     * Set the shared application object
-     * 
-     * This is useful for web-based use cases.
-     * 
-     * @param app Application object
-     */
-    public static void setApplication(Application app) {
-        logger.info("Registering dorset application");
-        Application.app = app;
-    }
-
-    /**
-     * Get the shared application object
-     * @return Application object
-     */
-    public static Application getApplication() {
-        return Application.app;
-    }
 }

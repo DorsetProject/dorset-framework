@@ -16,6 +16,7 @@
  */
 package edu.jhuapl.dorset.rest;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -35,6 +36,9 @@ import edu.jhuapl.dorset.agent.Description;
 public class WebService {
     private static final Logger logger = LoggerFactory.getLogger(WebService.class);
 
+    @Inject
+    private Application app;
+
     /**
      * Process a request
      * @param text The text of the request
@@ -46,7 +50,6 @@ public class WebService {
     public WebResponse process(@PathParam("text") String text) {
         Request request = new Request(text);
 
-        Application app = Application.getApplication();
         if (app == null) {
             return new WebResponse("Dorset application not set");
         }
@@ -63,7 +66,6 @@ public class WebService {
     @Path("/agents")
     @Produces(MediaType.APPLICATION_JSON)
     public Description[] getAgents() {
-        Application app = Application.getApplication();
         if (app == null) {
             return new Description[0];
         }
