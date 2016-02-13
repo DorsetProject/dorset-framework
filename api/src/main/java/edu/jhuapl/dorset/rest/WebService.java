@@ -83,14 +83,13 @@ public class WebService {
     }
 
     /**
-     * A test endpoint that echoes anything sent to it
-     * @param message The text to be echoes
-     * @return the message text
+     * Use this to test if the web services are alive
+     * @return the json encoded string "pong"
      */
     @GET
-    @Path("/echo/{message}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String echo(@PathParam("message") String message) {
-        return message;
+    @Path("/ping")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String ping() {
+        return "\"pong\"";
     }
 }
