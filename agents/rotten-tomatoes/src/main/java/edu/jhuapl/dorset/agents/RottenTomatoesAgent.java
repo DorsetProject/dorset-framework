@@ -23,14 +23,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import edu.jhuapl.dorset.agent.AgentBase;
+import edu.jhuapl.dorset.agent.AbstractAgent;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.Description;
 import edu.jhuapl.dorset.http.HttpClient;
 import edu.jhuapl.dorset.nlp.BasicTokenizer;
 
-public class RottenTomatoesAgent extends AgentBase {
+public class RottenTomatoesAgent extends AbstractAgent {
     private final Logger logger = LoggerFactory.getLogger(RottenTomatoesAgent.class);
     
     private static final String SUMMARY = "Get answers to questions about movies. Ask about actors, actors, runtime, or release date.";

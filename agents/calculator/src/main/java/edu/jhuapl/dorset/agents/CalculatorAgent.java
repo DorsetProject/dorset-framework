@@ -16,14 +16,14 @@
  */
 package edu.jhuapl.dorset.agents;
 
-import edu.jhuapl.dorset.agent.AgentBase;
+import edu.jhuapl.dorset.agent.AbstractAgent;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.Description;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
-public class CalculatorAgent extends AgentBase {
+public class CalculatorAgent extends AbstractAgent {
 
     private static final String SUMMARY = "Perform mathematical calculations.";
     private static final String EXAMPLE = "341 / 13";

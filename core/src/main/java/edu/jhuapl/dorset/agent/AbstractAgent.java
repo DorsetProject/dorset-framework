@@ -19,7 +19,7 @@ package edu.jhuapl.dorset.agent;
 /**
  *
  */
-public abstract class AgentBase implements Agent {
+public abstract class AbstractAgent implements Agent {
     protected String name = this.getClass().getCanonicalName().toLowerCase();
     protected Description description = Description.getUninitializedDescription(name);
 

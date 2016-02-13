@@ -28,7 +28,7 @@ import edu.jhuapl.dorset.http.HttpClient;
  * Agent wrapper for remote web services that implement the agent API
  *
  */
-public class RemoteAgent extends AgentBase {
+public class RemoteAgent extends AbstractAgent {
     private static final String REQUEST_ENDPOINT = "request";
     private static final String PING_ENDPOINT = "ping";
     private static final String PING_RESPONSE = "pong";

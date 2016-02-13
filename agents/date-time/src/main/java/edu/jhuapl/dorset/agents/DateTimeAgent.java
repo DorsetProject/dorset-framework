@@ -1,6 +1,6 @@
 package edu.jhuapl.dorset.agents;
 
-import edu.jhuapl.dorset.agent.AgentBase;
+import edu.jhuapl.dorset.agent.AbstractAgent;
 import edu.jhuapl.dorset.agent.AgentMessages;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
@@ -17,7 +17,7 @@ import java.text.DateFormatSymbols;
  * Agent for answering questions about the current date or time
  *
  */
-public class DateTimeAgent extends AgentBase {
+public class DateTimeAgent extends AbstractAgent {
     private static final String DATE = "date";
     private static final String DAY = "day";
     private static final String TIME = "time";
