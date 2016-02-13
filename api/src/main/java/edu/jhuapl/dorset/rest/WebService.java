@@ -42,7 +42,7 @@ public class WebService {
 
     /**
      * Process a request
-     * @param text The text of the request
+     * @param req the WebRequest payload
      * @return response
      */
     @POST
