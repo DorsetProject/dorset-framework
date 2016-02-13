@@ -10,7 +10,7 @@
 
   <artifactId>calculator</artifactId>
   <packaging>jar</packaging>
-  <name>Calculator</name>
+  <name>Calculator agent</name>
   <description>Answer math questions</description>
 
   <dependencies>

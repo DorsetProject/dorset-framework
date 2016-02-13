@@ -11,12 +11,17 @@
   <artifactId>agents-all</artifactId>
   <packaging>pom</packaging>
   <name>All Agents</name>
-  <description>All Dorset agents from the main Dorset agents repository.</description>
+  <description>All Dorset agents from the main Dorset repository.</description>
 
   <dependencies>
     <dependency>
       <groupId>edu.jhuapl.dorset.agents</groupId>
       <artifactId>calculator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhuapl.dorset.agents</groupId>
+      <artifactId>date-time</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
