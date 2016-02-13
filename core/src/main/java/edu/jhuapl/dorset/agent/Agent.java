@@ -19,7 +19,7 @@ package edu.jhuapl.dorset.agent;
 /**
  * An agent answers a question or performs an action.
  * 
- * An agent must have name set in its constructor. 
+ * An agent must have its default name and description set in its constructor. 
  */
 public interface Agent {
     /**

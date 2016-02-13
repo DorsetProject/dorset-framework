@@ -16,6 +16,9 @@
  */
 package edu.jhuapl.dorset.agents;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhuapl.dorset.agent.AbstractAgent;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
@@ -23,7 +26,11 @@ import edu.jhuapl.dorset.agent.Description;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
+/**
+ * Performs simple mathematical calculations
+ */
 public class CalculatorAgent extends AbstractAgent {
+    private final Logger logger = LoggerFactory.getLogger(CalculatorAgent.class);
 
     private static final String SUMMARY = "Perform mathematical calculations.";
     private static final String EXAMPLE = "341 / 13";
@@ -35,6 +42,7 @@ public class CalculatorAgent extends AbstractAgent {
 
     @Override
     public AgentResponse process(AgentRequest request) {
+        logger.debug("Handling the request: " + request.getText());
         Expression exp = new ExpressionBuilder(request.getText()).build();
         double result = exp.evaluate();
 

@@ -39,8 +39,7 @@ public class Report {
      *
      * For bean usage only
      */
-    public Report() {
-    }
+    public Report() {}
 
     /**
      * Record of handling a request

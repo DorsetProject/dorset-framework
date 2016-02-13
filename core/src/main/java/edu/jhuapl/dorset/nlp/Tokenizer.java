@@ -17,7 +17,7 @@
 package edu.jhuapl.dorset.nlp;
 
 /**
- * Break a string up into tokens
+ * Break a string into tokens
  */
 public interface Tokenizer {
     /**

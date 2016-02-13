@@ -53,6 +53,7 @@ public class RottenTomatoesAgent extends AbstractAgent {
 
     @Override
     public AgentResponse process(AgentRequest request) {
+        logger.debug("Handling the request: " + request.getText());
 
         String agentRequest = request.getText();
         String movieTitle = findMovieTitle(agentRequest);

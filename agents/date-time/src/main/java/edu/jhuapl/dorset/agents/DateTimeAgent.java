@@ -9,6 +9,10 @@ import edu.jhuapl.dorset.agent.Description;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.DateFormatSymbols;
@@ -18,6 +22,8 @@ import java.text.DateFormatSymbols;
  *
  */
 public class DateTimeAgent extends AbstractAgent {
+    private final Logger logger = LoggerFactory.getLogger(DateTimeAgent.class);
+
     private static final String DATE = "date";
     private static final String DAY = "day";
     private static final String TIME = "time";
@@ -37,6 +43,7 @@ public class DateTimeAgent extends AbstractAgent {
 
     @Override
     public AgentResponse process(AgentRequest request) {
+        logger.debug("Handling the request: " + request.getText());
         Date now = new Date();
         AgentResponse response = new AgentResponse();
         String requestType = getRequestType(request.getText());

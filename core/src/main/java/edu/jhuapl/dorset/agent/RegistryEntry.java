@@ -24,7 +24,6 @@ import java.util.Properties;
 public class RegistryEntry {
     private Agent agent;
     private Properties details;
-    private Boolean isActive;
 
     /**
      * Constructor an entry for the agent registry
@@ -34,7 +33,6 @@ public class RegistryEntry {
     public RegistryEntry(Agent agent, Properties details) {
         this.agent = agent;
         this.details = details;
-        this.isActive = true;
     }
 
     /**

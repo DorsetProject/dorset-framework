@@ -17,23 +17,20 @@
 package edu.jhuapl.dorset.agent;
 
 /**
- *
+ * Abstract Agent class
+ * 
+ * Agent implementations should inherit from this class. It provides convenient
+ * methods for managing the agent name and description.
  */
 public abstract class AbstractAgent implements Agent {
     protected String name = this.getClass().getCanonicalName().toLowerCase();
     protected Description description = Description.getUninitializedDescription(name);
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.agent.Agent#getName()
-     */
     @Override
     public String getName() {
         return name.toLowerCase();
     }
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.agent.Agent#setName(java.lang.String)
-     */
     @Override
     public void setName(String name) {
         name = name.toLowerCase();
@@ -43,17 +40,11 @@ public abstract class AbstractAgent implements Agent {
         }
     }
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.agent.Agent#getDescription()
-     */
     @Override
     public Description getDescription() {
         return description;
     }
 
-    /* (non-Javadoc)
-     * @see edu.jhuapl.dorset.agent.Agent#setDescription(edu.jhuapl.dorset.agent.Description)
-     */
     @Override
     public void setDescription(Description description) {
         this.description = description;
