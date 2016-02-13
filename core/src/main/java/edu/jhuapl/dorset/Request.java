@@ -27,11 +27,7 @@ public class Request {
     public static final int MAX_ID_LENGTH = 36;
 
     private String text;
-    private String id;
-
-    public Request() {
-
-    }
+    private final String id;
 
     /**
      * Create a request

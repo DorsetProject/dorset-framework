@@ -43,16 +43,16 @@ public class WebService {
     @GET
     @Path("/process/{text}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response process(@PathParam("text") String text) {
+    public WebResponse process(@PathParam("text") String text) {
         Request request = new Request(text);
 
         Application app = Application.getApplication();
         if (app == null) {
-            return new Response("Dorset application not set");
+            return new WebResponse("Dorset application not set");
         }
         Response response = app.process(request);
 
-        return response;
+        return new WebResponse(response);
     }
 
     /**

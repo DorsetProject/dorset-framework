@@ -32,10 +32,6 @@ public class Response {
     private String text;
     private int statusCode;
 
-    public Response() {
-        
-    }
-
     /**
      * Create a response
      * @param text the text of the response
