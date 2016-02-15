@@ -23,31 +23,26 @@ package edu.jhuapl.dorset.agent;
  * methods for managing the agent name and description.
  */
 public abstract class AbstractAgent implements Agent {
-    protected String name = this.getClass().getCanonicalName().toLowerCase();
-    protected Description description = Description.getUninitializedDescription(name);
+    protected Description description = Description.getUninitializedDescription(this.getClass());
 
     @Override
     public String getName() {
-        return name.toLowerCase();
+        return description.getName();
     }
 
     @Override
     public void setName(String name) {
-        name = name.toLowerCase();
-        this.name = name;
-        if (description != null) {
-            description.setName(name);
-        }
+        description.setName(name);
     }
 
     @Override
     public Description getDescription() {
-        return description;
+        return new Description(description);
     }
 
     @Override
     public void setDescription(Description description) {
-        this.description = description;
+        this.description = new Description(description);
     }
 
 }

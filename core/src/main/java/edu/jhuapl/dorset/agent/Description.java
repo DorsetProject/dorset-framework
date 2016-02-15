@@ -26,25 +26,24 @@ public class Description {
     private String summary;
     private String[] examples;
 
-    public Description() {
-        
-    }
+    /**
+     * For java bean use only
+     */
+    public Description() {}
 
     /**
-     * Constructor
+     * Create an agent description
      * 
      * @param name Name of the agent
      * @param summary A user-facing description of the agent's capabilities
      * @param example An example question or command
      */
     public Description(String name, String summary, String example) {
-        this.setName(name);
-        this.setSummary(summary);
-        this.setExample(example);
+        this(name, summary, new String[]{example});
     }
 
     /**
-     * Constructor
+     * Create an agent description
      * 
      * @param name Name of the agent
      * @param summary A user-facing description of the agent's capabilities
@@ -54,6 +53,14 @@ public class Description {
         this.setName(name);
         this.setSummary(summary);
         this.setExamples(examples);
+    }
+
+    /**
+     * Copy a description
+     * @param description agent description
+     */
+    public Description(Description description) {
+        this(description.getName(), description.getSummary(), description.getExamples());
     }
 
     /**
@@ -74,7 +81,7 @@ public class Description {
      * @return examples of using the agent
      */
     public String[] getExamples() {
-        return examples;
+        return examples.clone();
     }
 
     /**
@@ -108,10 +115,11 @@ public class Description {
 
     /**
      * Get a default description
-     * @param name The name of the agent
-     * @return Default description
+     * @param clazz The class of the agent
+     * @return default description
      */
-    public static Description getUninitializedDescription(String name) {
+    public static Description getUninitializedDescription(Class<?> clazz) {
+        String name = clazz.getCanonicalName();
         return new Description(name, "Summary is not set.", "Example is not set.");
     }
 }
