@@ -47,8 +47,7 @@ public class RottenTomatoesAgent extends AbstractAgent {
     public RottenTomatoesAgent(HttpClient client, String apikey) {
         this.apikey = apikey;
         this.client = client;
-        this.setName("movies");
-        this.setDescription(new Description(name, SUMMARY, EXAMPLE));
+        this.setDescription(new Description("movies", SUMMARY, EXAMPLE));
     }
 
     @Override

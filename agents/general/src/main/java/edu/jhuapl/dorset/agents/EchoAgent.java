@@ -16,17 +16,33 @@
  */
 package edu.jhuapl.dorset.agents;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhuapl.dorset.agent.AbstractAgent;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
+import edu.jhuapl.dorset.agent.Description;
 
 /**
  * Echoes back the text that it receives
  */
 public class EchoAgent extends AbstractAgent {
+    private final Logger logger = LoggerFactory.getLogger(EchoAgent.class);
+
+    private static final String SUMMARY = "Echoes anything submitted";
+    private static final String EXAMPLE = "You are the best";
+
+    /**
+     * Create an echo agent
+     */
+    public EchoAgent() {
+        setDescription(new Description("echo", SUMMARY, EXAMPLE));
+    }
 
     @Override
     public AgentResponse process(AgentRequest request) {
+        logger.debug("Handling the request: " + request.getText());
         return new AgentResponse(request.getText());
     }
 

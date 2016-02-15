@@ -36,8 +36,7 @@ public class CalculatorAgent extends AbstractAgent {
     private static final String EXAMPLE = "341 / 13";
 
     public CalculatorAgent() {
-        this.setName("calculator");
-        this.setDescription(new Description(name, SUMMARY, EXAMPLE));
+        this.setDescription(new Description("calculator", SUMMARY, EXAMPLE));
     }
 
     @Override
