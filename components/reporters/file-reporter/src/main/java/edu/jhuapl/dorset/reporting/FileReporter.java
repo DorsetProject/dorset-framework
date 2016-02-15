@@ -50,19 +50,21 @@ import edu.jhuapl.dorset.reporting.Reporter;
  * File Reporter
  *
  * Stores reports of request handling to a csv file.
+ *
+ * This is not intended for significant production use.
  */
 public class FileReporter implements Reporter {
     private static final Logger logger = LoggerFactory.getLogger(FileReporter.class);
     private static final CsvPreference FORMAT = CsvPreference.EXCEL_PREFERENCE;
-    private static final String[] FIELDS = {"timestamp", "requestText", "selectedAgentName", 
-            "responseText", "routeTime", "agentTime"};
+    private static final String[] FIELDS = {"timestamp", "requestId", "requestText",
+            "selectedAgentName", "responseText", "routeTime", "agentTime"};
     public static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
-    // timestamp, request text, and route time are the required fields
+    // timestamp, request id, request text, and route time are the required fields
     private static final CellProcessor[] WRITE_PROCESSORS = new CellProcessor[] {
-            new FmtDate(ISO_8601), new NotNull(), new Optional(), new Optional(),
+            new FmtDate(ISO_8601), new NotNull(), new NotNull(), new Optional(), new Optional(),
             new NotNull(), new Optional()};
     private static final CellProcessor[] READ_PROCESSORS = new CellProcessor[] {
-            new ParseDate(ISO_8601), new NotNull(), new Optional(), new Optional(),
+            new ParseDate(ISO_8601), new NotNull(), new NotNull(), new Optional(), new Optional(),
             new ParseLong(), new Optional(new ParseLong())};
 
     private final String filename;
@@ -72,7 +74,7 @@ public class FileReporter implements Reporter {
 
     /**
      * Create a file reporter
-     * @param filename Filename to write to
+     * @param filename the filename to write to
      */
     public FileReporter(String filename) {
         this.filename = filename;

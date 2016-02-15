@@ -5,12 +5,13 @@
 
 <hibernate-mapping package="edu.jhuapl.dorset.reporting">
   <class name="Report" table="report">
-    <id name="timestamp" column="timestamp" type="timestamp" />
-    <property name="routeTime" column="routeTime" />
-    <property name="agentTime" column="agentTime" />
-    <property name="requestText" column="requestText" length="1000" /> 
+    <id name="requestId" column="requestId" length="36" />
+    <property name="timestamp" column="timestamp" type="timestamp" />
+    <property name="requestText" column="requestText" length="1000" />
 <!-- <property name="agentNames" column="agentNames" /> -->
     <property name="selectedAgentName" column="selectedAgentName" length="255" />
     <property name="responseText" column="responseText" length="1000" />
+    <property name="routeTime" column="routeTime" />
+    <property name="agentTime" column="agentTime" />
   </class>
 </hibernate-mapping>

@@ -29,6 +29,7 @@ public class Report {
     private Date timestamp;
     private long routeTime;
     private long agentTime;
+    private String requestId;
     private String requestText;
     private String[] agentNames;
     private String selectedAgentName;
@@ -47,6 +48,7 @@ public class Report {
      */
     public Report(Request request) {
         timestamp = new Date();
+        requestId = request.getId();
         requestText = request.getText();
         routeTime = 0;
         agentTime = 0;
@@ -56,9 +58,29 @@ public class Report {
     }
 
     /**
-     * Set the text of the request
+     * Set the request identifier
      *
-     * For bean usage only
+     * For bean use only
+     *
+     * @param id request identifier
+     */
+    public void setRequestId(String id) {
+        requestId = id;
+    }
+
+    /**
+     * Get the request identifier
+     * @return request identifier
+     * @see Request.MAX_ID_LENGTH for length limitation of identifier
+     */
+    public String getRequestId() {
+        return requestId;
+    }
+
+    /**
+     * Set the request text
+     *
+     * For bean use only
      *
      * @param text request text
      */
@@ -192,12 +214,12 @@ public class Report {
     /**
      * Set the timestamp of the report
      *
-     * For bean usage only
+     * For bean use only
      *
      * @param ts time of the request being received
      */
     public void setTimestamp(Date ts) {
-        timestamp = ts;
+        timestamp = new Date(ts.getTime());
     }
 
     /**
@@ -205,6 +227,6 @@ public class Report {
      * @return Date of the report
      */
     public Date getTimestamp() {
-        return timestamp;
+        return new Date(timestamp.getTime());
     }
 }

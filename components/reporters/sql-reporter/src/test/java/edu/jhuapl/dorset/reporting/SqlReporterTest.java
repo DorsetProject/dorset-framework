@@ -78,14 +78,14 @@ public class SqlReporterTest {
         String[][] data = new String[][] {data1, data2, data3, data4, data5};
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        Request req = new Request("What is 1 + 1?");
         Agent agent = mock(Agent.class);
 
-        Report r = new Report(req);
-        r.setRouteTime(123);
-        r.setAgentTime(9876);
-        r.setResponseText("2");
         for (String[] dateAndAgent : data) {
+            Request req = new Request("What is 1 + 1?");
+            Report r = new Report(req);
+            r.setRouteTime(123);
+            r.setAgentTime(9876);
+            r.setResponseText("2");
             when(agent.getName()).thenReturn(dateAndAgent[1]);
             r.setSelectedAgent(agent);
             r.setTimestamp(df.parse(dateAndAgent[0]));
@@ -95,7 +95,7 @@ public class SqlReporterTest {
 
     @Test
     public void testStore() throws ClassNotFoundException, SQLException {
-        Request req = new Request("What is today's date?");
+        Request req = new Request("What is today's date?", "abcdef");
         Agent agent = mock(Agent.class);
         when(agent.getName()).thenReturn("date");
 
@@ -119,6 +119,7 @@ public class SqlReporterTest {
         rs.next();
         assertEquals(d, rs.getTimestamp("timestamp"));
         assertEquals("date", rs.getString("selectedAgentName"));
+        assertEquals("abcdef", rs.getString("requestId"));
         assertEquals("What is today's date?", rs.getString("requestText"));
         assertEquals("yesterday", rs.getString("responseText"));
         assertEquals(17, rs.getLong("routeTime"));
