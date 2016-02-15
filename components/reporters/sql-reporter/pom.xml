@@ -18,6 +18,11 @@
       <artifactId>hibernate-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>edu.jhuapl.dorset.components</groupId>
+      <artifactId>hibernate-service</artifactId>
+      <version>${dorset.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <version>1.4.191</version>
