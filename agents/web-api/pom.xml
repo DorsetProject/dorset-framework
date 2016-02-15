@@ -8,16 +8,15 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>calculator</artifactId>
+  <artifactId>web-api</artifactId>
   <packaging>jar</packaging>
-  <name>Calculator agent</name>
-  <description>Answer math questions</description>
+  <name>Web API agents</name>
+  <description>A collection of agents that use popular web APIs.</description>
 
   <dependencies>
     <dependency>
-      <groupId>net.objecthunter</groupId>
-      <artifactId>exp4j</artifactId>
-      <version>0.4.5</version>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
     </dependency>
   </dependencies>
 

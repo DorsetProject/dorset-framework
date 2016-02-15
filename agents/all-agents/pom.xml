@@ -16,17 +16,12 @@
   <dependencies>
     <dependency>
       <groupId>edu.jhuapl.dorset.agents</groupId>
-      <artifactId>calculator</artifactId>
+      <artifactId>general</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>edu.jhuapl.dorset.agents</groupId>
-      <artifactId>date-time</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>edu.jhuapl.dorset.agents</groupId>
-      <artifactId>rotten-tomatoes</artifactId>
+      <artifactId>web-api</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

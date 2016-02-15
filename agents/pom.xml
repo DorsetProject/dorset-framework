@@ -16,9 +16,8 @@
 
   <modules>
     <module>all-agents</module>
-    <module>calculator</module>
-    <module>date-time</module>
-    <module>rotten-tomatoes</module>
+    <module>general</module>
+    <module>web-api</module>
   </modules>
 
   <dependencies>

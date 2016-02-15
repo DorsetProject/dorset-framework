@@ -8,15 +8,16 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>rotten-tomatoes</artifactId>
+  <artifactId>general</artifactId>
   <packaging>jar</packaging>
-  <name>Rotten Tomatoes agent</name>
-  <description>Answer movie-related questions using the Rotten Tomatoes web api</description>
+  <name>General agents</name>
+  <description>A collection of agents that provide general functionality like answer math questions or give the current time.</description>
 
   <dependencies>
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
+      <groupId>net.objecthunter</groupId>
+      <artifactId>exp4j</artifactId>
+      <version>0.4.5</version>
     </dependency>
   </dependencies>
 
