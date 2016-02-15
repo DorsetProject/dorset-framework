@@ -26,14 +26,14 @@ import edu.jhuapl.dorset.agent.Agent;
  * A report of handling a request
  */
 public class Report {
-    private Date timestamp;
-    private long routeTime;
-    private long agentTime;
-    private String requestId;
-    private String requestText;
-    private String[] agentNames;
-    private String selectedAgentName;
-    private String responseText;
+    protected Date timestamp;
+    protected String requestId;
+    protected String requestText;
+    protected String[] agentNames;
+    protected String selectedAgentName;
+    protected String responseText;
+    protected long routeTime;
+    protected long agentTime;
 
     /**
      * Default zero argument constructor to support usage as bean
@@ -55,6 +55,21 @@ public class Report {
         agentNames = new String[0];
         selectedAgentName = "";
         responseText = "";
+    }
+
+    /**
+     * Copy constructor
+     * @param report the report to copy
+     */
+    public Report(Report report) {
+        timestamp = report.timestamp;
+        requestId = report.requestId;
+        requestText = report.requestText;
+        agentNames = report.agentNames;
+        selectedAgentName = report.selectedAgentName;
+        responseText = report.responseText;
+        routeTime = report.routeTime;
+        agentTime = report.agentTime;
     }
 
     /**

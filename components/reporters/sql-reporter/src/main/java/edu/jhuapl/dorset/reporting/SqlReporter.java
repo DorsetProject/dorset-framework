@@ -48,7 +48,7 @@ public class SqlReporter implements Reporter {
     public void store(Report report) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        session.save(report);
+        session.save(new SqlReport(report));
         session.getTransaction().commit();
         session.close();
     }
@@ -67,14 +67,20 @@ public class SqlReporter implements Reporter {
             hql.setMaxResults(query.getLimit());
         }
         @SuppressWarnings("unchecked")
-        List<Report> reports = hql.list();
+        List<SqlReport> reports = hql.list();
         session.getTransaction().commit();
         session.close();
-        return reports.toArray(new Report[reports.size()]);
+
+        // convert to parent Report class for possible serialization
+        Report[] rtnReports = new Report[reports.size()];
+        for (int i = 0; i < reports.size(); i++) {
+            rtnReports[i] = new Report(reports.get(i));
+        }
+        return rtnReports;
     }
 
     private String buildQuery(ReportQuery query) {
-        String hql = "from Report where (:ts_start is null or timestamp > :ts_start)" 
+        String hql = "from SqlReport where (:ts_start is null or timestamp > :ts_start)" 
                         + " and (:ts_stop is null or timestamp < :ts_stop)";
         if (query.getAgentNames() != null) {
             hql += " and selectedAgentName in (:agents)";

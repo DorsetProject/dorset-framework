@@ -4,8 +4,11 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="edu.jhuapl.dorset.reporting">
-  <class name="Report" table="report">
-    <id name="requestId" column="requestId" length="36" />
+  <class name="SqlReport" table="report">
+    <id name="id" column="id">
+      <generator class="native" />
+    </id>
+    <property name="requestId" column="requestId" length="36" />
     <property name="timestamp" column="timestamp" type="timestamp" />
     <property name="requestText" column="requestText" length="1000" />
 <!-- <property name="agentNames" column="agentNames" /> -->
