@@ -49,7 +49,8 @@ public class Request {
      */
     public Request(String text, String id) {
         if (id.length() > MAX_ID_LENGTH) {
-            // throw exception
+            throw new IllegalArgumentException(
+                            "Request id cannot be longer than " + String.valueOf(MAX_ID_LENGTH));
         }
         this.text = text;
         this.id = id;
