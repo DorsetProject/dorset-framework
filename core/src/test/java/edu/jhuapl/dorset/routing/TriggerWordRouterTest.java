@@ -45,12 +45,12 @@ public class TriggerWordRouterTest {
     }
 
     @Test
-    public void testRoutingWithBadRequest() {
+    public void testRoutingWithEmptyRequest() {
         AgentRegistry registry = new AgentRegistry();
         Router router = new TriggerWordRouter();
         router.initialize(registry);
 
-        Agent agents[] = router.getAgents(new Request("blah"));
+        Agent agents[] = router.getAgents(new Request(""));
 
         Agent expected[] = new Agent[0];
         assertArrayEquals(expected, agents);
