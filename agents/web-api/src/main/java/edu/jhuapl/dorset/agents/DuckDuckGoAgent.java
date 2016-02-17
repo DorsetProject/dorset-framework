@@ -18,6 +18,9 @@ package edu.jhuapl.dorset.agents;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,30 +33,44 @@ import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.Description;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.nlp.BasicTokenizer;
+import edu.jhuapl.dorset.nlp.Tokenizer;
 
+/**
+ * DuckduckGo agent
+ *
+ * Duckduckgo has an instant answers API. It scrapes entity information from
+ * data sources like Wikipedia and CrunchBase. Documentation on the api here:
+ * https://duckduckgo.com/api
+ */
 public class DuckDuckGoAgent extends AbstractAgent {
     private final Logger logger = LoggerFactory.getLogger(DuckDuckGoAgent.class);
-    
-    private static final String SUMMARY = "Get information about famous people, places, organizations.";
+
+    private static final String SUMMARY =
+                    "Get information about famous people, places, organizations.";
     private static final String EXAMPLE = "Who is Brack Obama?";
 
     private HttpClient client;
+    private Set<String> dictionary = new HashSet<String>(
+            Arrays.asList("what", "who", "is", "are", "a", "an", "the"));
 
+    /**
+     * Create a duckduckgo agent
+     * @param client http client
+     */
     public DuckDuckGoAgent(HttpClient client) {
         this.client = client;
-        this.setDescription(new Description("movies", SUMMARY, EXAMPLE));
+        this.setDescription(new Description("general answers", SUMMARY, EXAMPLE));
     }
 
     @Override
     public AgentResponse process(AgentRequest request) {
         logger.debug("Handling the request: " + request.getText());
 
-        String agentRequest = request.getText();
+        String requestText = request.getText();
+        String entityText = extractEntity(requestText);
+        String data = requestData(entityText);
 
-        // TODO parse entity out of request text
-        
-        String data = requestData(agentRequest);
-        
         return new AgentResponse(formatResponse(data));
     }
 
@@ -73,5 +90,34 @@ public class DuckDuckGoAgent extends AbstractAgent {
         JsonObject jsonObj = gson.fromJson(json, JsonObject.class);
         // TODO need more logic to handle cases where abstract is empty
         return jsonObj.get("AbstractText").getAsString();
+    }
+
+    /**
+     * Iterate over the words until we think we get to the name of the entity
+     */
+    protected String extractEntity(String sentence) {
+        Tokenizer tokenizer = new BasicTokenizer();
+        String[] words = tokenizer.tokenize(sentence);
+        int index = 0;
+        for (index = 0; index < words.length; index++) {
+            if (!dictionary.contains(words[index].toLowerCase())) {
+                break;
+            }
+        }
+        return joinStrings(Arrays.copyOfRange(words, index, words.length), " ");
+    }
+
+    protected String joinStrings(String[] strings, String separator) {
+        if (strings == null || strings.length == 0) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(strings[0]);
+        for (int i = 1; i < strings.length; i++) {
+            sb.append(separator);
+            sb.append(strings[i]);
+        }
+        return sb.toString();
     }
 }
