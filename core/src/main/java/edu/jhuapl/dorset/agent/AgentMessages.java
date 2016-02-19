@@ -27,4 +27,8 @@ public class AgentMessages {
     public static final int BAD_REQUEST = 101;
     // the agent's response was invalid
     public static final int INVALID_RESPONSE = 102;
+    // the agent did not know the answer
+    public static final int UNKNOWN_ANSWER = 103;
+    // the agent needs more information
+    public static final int MORE_INFORMATION_NEEDED = 104;
 }

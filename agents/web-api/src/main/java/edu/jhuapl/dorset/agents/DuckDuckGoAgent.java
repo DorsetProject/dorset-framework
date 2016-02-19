@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import edu.jhuapl.dorset.agent.AbstractAgent;
+import edu.jhuapl.dorset.agent.AgentMessages;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.Description;
@@ -44,7 +45,7 @@ import edu.jhuapl.dorset.nlp.Tokenizer;
  * https://duckduckgo.com/api
  */
 public class DuckDuckGoAgent extends AbstractAgent {
-    private final Logger logger = LoggerFactory.getLogger(DuckDuckGoAgent.class);
+    private static final Logger logger = LoggerFactory.getLogger(DuckDuckGoAgent.class);
 
     private static final String SUMMARY =
                     "Get information about famous people, places, organizations.";
@@ -66,30 +67,30 @@ public class DuckDuckGoAgent extends AbstractAgent {
     @Override
     public AgentResponse process(AgentRequest request) {
         logger.debug("Handling the request: " + request.getText());
-
         String requestText = request.getText();
         String entityText = extractEntity(requestText);
         String data = requestData(entityText);
-
-        return new AgentResponse(formatResponse(data));
+        return createResponse(data);
     }
 
     protected String requestData(String entity) {
-        try {
-            entity = URLEncoder.encode(entity, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // this isn't going to happen
-            logger.error("Unexpected exception when encoding url", e);
-        }
-        String url = "http://api.duckduckgo.com/?format=json&q=" + entity;
-        return client.get(url);
+        return client.get(createUrl(entity));
     }
 
-    protected String formatResponse(String json) {
+    protected AgentResponse createResponse(String json) {
         Gson gson = new Gson();
         JsonObject jsonObj = gson.fromJson(json, JsonObject.class);
-        // TODO need more logic to handle cases where abstract is empty
-        return jsonObj.get("AbstractText").getAsString();
+        String heading = jsonObj.get("Heading").getAsString();
+        if (heading.equals("")) {
+            // duckduckgo does not know
+            return new AgentResponse(AgentMessages.UNKNOWN_ANSWER);
+        }
+        String abstractText = jsonObj.get("AbstractText").getAsString();
+        if (abstractText.equals("")) {
+            // most likely a disambiguation page
+            return new AgentResponse(AgentMessages.MORE_INFORMATION_NEEDED);
+        }
+        return new AgentResponse(abstractText);
     }
 
     /**
@@ -104,7 +105,8 @@ public class DuckDuckGoAgent extends AbstractAgent {
                 break;
             }
         }
-        return joinStrings(Arrays.copyOfRange(words, index, words.length), " ");
+        String entity = joinStrings(Arrays.copyOfRange(words, index, words.length), " ");
+        return entity.replace("?", "");
     }
 
     protected String joinStrings(String[] strings, String separator) {
@@ -119,5 +121,15 @@ public class DuckDuckGoAgent extends AbstractAgent {
             sb.append(strings[i]);
         }
         return sb.toString();
+    }
+
+    protected static String createUrl(String entity) {
+        try {
+            entity = URLEncoder.encode(entity, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // this isn't going to happen
+            logger.error("Unexpected exception when encoding url", e);
+        }
+        return "http://api.duckduckgo.com/?format=json&q=" + entity;
     }
 }

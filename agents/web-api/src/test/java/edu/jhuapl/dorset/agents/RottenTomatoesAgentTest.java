@@ -20,13 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.junit.Test;
 
 import edu.jhuapl.dorset.agent.Agent;
@@ -38,31 +31,9 @@ public class RottenTomatoesAgentTest {
 
     private String apikey = "default_apikey";
 
-    private String getFileAsString(String filename) {
-        String jsonData = null;
-        Path path = null;
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL url = classLoader.getResource(filename);
-
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            jsonData = new String(Files.readAllBytes(path), "UTF8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return jsonData;
-    }
-
-
     @Test
     public void testRuntime() {
-        String jsonData = getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -83,7 +54,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testYear() {
-        String jsonData = getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -104,7 +75,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testActors() {
-        String jsonData = getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -126,7 +97,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testNoKeyword() {
-        String jsonData = getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -147,7 +118,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testBadApiKey() {
-        String jsonData = getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
