@@ -17,10 +17,10 @@
 package edu.jhuapl.dorset.routing;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.agent.AgentRegistry;
 
 /**
  * Chain routers together
@@ -40,22 +40,24 @@ public class ChainRouter implements Router {
     }
 
     @Override
-    public void initialize(AgentRegistry registry) {
-        for (Router router : routers) {
-            router.initialize(registry);
-        }
-    }
-
-    @Override
-    public Agent[] getAgents(Request request) {
+    public Agent[] route(Request request) {
         Agent[] agents = {};
         for (Router router : routers) {
-            agents = router.getAgents(request);
+            agents = router.route(request);
             if (agents.length != 0) {
                 break;
             }
         }
         return agents;
+    }
+
+    @Override
+    public Agent[] getAgents() {
+        HashSet<Agent> agents = new HashSet<Agent>();
+        for (Router router : routers) {
+            agents.addAll(Arrays.asList(router.getAgents()));
+        }
+        return agents.toArray(new Agent[agents.size()]);
     }
 
 }

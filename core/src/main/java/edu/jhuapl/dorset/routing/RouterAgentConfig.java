@@ -16,22 +16,21 @@
  */
 package edu.jhuapl.dorset.routing;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.config.MultiValuedMap;
 
-public class SingleAgentRouterTest {
-    @Test
-    public void testRoute() {
-        Agent agent = mock(Agent.class);
-        Router router = new SingleAgentRouter(agent);
+public class RouterAgentConfig {
+    private Agent agent;
+    private MultiValuedMap params;
 
-        Agent agents[] = router.route(new Request("hello world"));
-
-        Agent expected[] = new Agent[]{agent};
-        assertArrayEquals(expected, agents);
+    public RouterAgentConfig(Agent agent, MultiValuedMap params) {
+        this.agent = agent;
+        this.params = params;
+    }
+    public Agent getAgent() {
+        return agent;
+    }
+    public MultiValuedMap getParams() {
+        return params;
     }
 }

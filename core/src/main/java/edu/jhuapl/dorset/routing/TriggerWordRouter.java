@@ -16,9 +16,11 @@
  */
 package edu.jhuapl.dorset.routing;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.agent.AgentRegistry;
 import edu.jhuapl.dorset.nlp.BasicTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
 
@@ -29,32 +31,47 @@ import edu.jhuapl.dorset.nlp.Tokenizer;
  * Requests must be of the form: [trigger] [request text]
  */
 public class TriggerWordRouter implements Router {
-    private AgentRegistry registry;
+    public static final String TRIGGERS = "triggers";
+
+    private HashMap<String, Agent> agentMap;
+    private HashSet<Agent> agents;
     private Tokenizer tokenizer;
 
-    public TriggerWordRouter() {
+    public TriggerWordRouter(RouterAgentConfig[] setup) {
+        agentMap = new HashMap<String, Agent>();
+        agents = new HashSet<Agent>();
         tokenizer = new BasicTokenizer();
+        for (RouterAgentConfig pair : setup) {
+            String[] triggers = pair.getParams().getStrings(TRIGGERS);
+            if (triggers == null) {
+                continue;
+            }
+            agents.add(pair.getAgent());
+            for (String trigger : triggers) {
+                agentMap.put(trigger.toLowerCase(), pair.getAgent());
+            }
+        }
     }
 
     @Override
-    public void initialize(AgentRegistry registry) {
-        this.registry = registry;
-    }
-
-    @Override
-    public Agent[] getAgents(Request request) {
+    public Agent[] route(Request request) {
         String requestText = request.getText().toLowerCase();
         String[] tokens = tokenizer.tokenize(requestText);
         if (tokens.length == 0) {
             return new Agent[0];
         }
 
-        Agent agent = registry.getAgent(tokens[0]);
+        Agent agent = agentMap.get(tokens[0]);
         if (agent != null) {
             return new Agent[]{agent};
         } else {
             return new Agent[0];
         }
+    }
+
+    @Override
+    public Agent[] getAgents() {
+        return agents.toArray(new Agent[agents.size()]);
     }
 
 }

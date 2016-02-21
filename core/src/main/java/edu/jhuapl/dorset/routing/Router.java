@@ -18,7 +18,6 @@ package edu.jhuapl.dorset.routing;
 
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.agent.AgentRegistry;
 
 /**
  * Route requests to agents for request handling
@@ -26,18 +25,15 @@ import edu.jhuapl.dorset.agent.AgentRegistry;
 public interface Router {
 
     /**
-     * Initialize the router with the agent registry
-     * 
-     * This is called automatically by the framework.
-     * 
-     * @param registry the agent registry
-     */
-    public void initialize(AgentRegistry registry);
-
-    /**
      * Get an array of agents to send the request to
      * @param request the request object
      * @return array of agents (empty array if no agent found)
      */
-    public Agent[] getAgents(Request request);
+    public Agent[] route(Request request);
+
+    /**
+     * Get an array of the agents for this router
+     * @return array of agents
+     */
+    public Agent[] getAgents();
 }
