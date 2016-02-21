@@ -14,28 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset.agent;
+package edu.jhuapl.dorset.routing;
 
-import java.util.Properties;
+import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.config.MultiValuedMap;
 
-/**
- * Agent registry entry
- */
-public class RegistryEntry {
+public class RouterAgentConfigEntry {
     private Agent agent;
-    private Properties details;
+    private MultiValuedMap params;
 
     /**
-     * Constructor an entry for the agent registry
-     * @param agent The agent
-     * @param details Details about the agent that could be used for routing
+     * Construct an entry
+     * @param agent the agent
+     * @param params the parameters for that agent
      */
-    public RegistryEntry(Agent agent, Properties details) {
+    public RouterAgentConfigEntry(Agent agent, MultiValuedMap params) {
         this.agent = agent;
-        this.details = details;
+        this.params = params;
     }
 
     /**
+     * Get the agent
      * @return the agent
      */
     public Agent getAgent() {
@@ -43,9 +42,10 @@ public class RegistryEntry {
     }
 
     /**
-     * @return the details
+     * Get the parameters for the agent
+     * @return the parameters
      */
-    public Properties getDetails() {
-        return details;
+    public MultiValuedMap getParams() {
+        return params;
     }
 }

@@ -16,21 +16,39 @@
  */
 package edu.jhuapl.dorset.routing;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.config.MultiValuedMap;
 
-public class RouterAgentConfig {
-    private Agent agent;
-    private MultiValuedMap params;
+/**
+ * Configuration for a set of routers
+ */
+public class RouterAgentConfig implements Iterable<RouterAgentConfigEntry> {
+    private ArrayList<RouterAgentConfigEntry> list = new ArrayList<RouterAgentConfigEntry>();
 
-    public RouterAgentConfig(Agent agent, MultiValuedMap params) {
-        this.agent = agent;
-        this.params = params;
+    /**
+     * Add an agent to the configuration
+     * @param agent the agent to add
+     * @param params the parameters for the router for that agent
+     * @return this
+     */
+    public RouterAgentConfig add(Agent agent, MultiValuedMap params) {
+        list.add(new RouterAgentConfigEntry(agent, params));
+        return this;
     }
-    public Agent getAgent() {
-        return agent;
+
+    @Override
+    public Iterator<RouterAgentConfigEntry> iterator() {
+        return list.iterator();
     }
-    public MultiValuedMap getParams() {
-        return params;
+
+    /**
+     * Factory for this config class
+     * @return a new instance of RouterAgentConfig
+     */
+    public static RouterAgentConfig create() {
+        return new RouterAgentConfig();
     }
 }

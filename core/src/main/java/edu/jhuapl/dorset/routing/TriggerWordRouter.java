@@ -37,18 +37,22 @@ public class TriggerWordRouter implements Router {
     private HashSet<Agent> agents;
     private Tokenizer tokenizer;
 
-    public TriggerWordRouter(RouterAgentConfig[] setup) {
+    /**
+     * Create the router
+     * @param agentsConfig agents and routing configuration for those agents
+     */
+    public TriggerWordRouter(RouterAgentConfig agentsConfig) {
         agentMap = new HashMap<String, Agent>();
         agents = new HashSet<Agent>();
         tokenizer = new BasicTokenizer();
-        for (RouterAgentConfig pair : setup) {
-            String[] triggers = pair.getParams().getStrings(TRIGGERS);
+        for (RouterAgentConfigEntry entry : agentsConfig) {
+            String[] triggers = entry.getParams().getStrings(TRIGGERS);
             if (triggers == null) {
                 continue;
             }
-            agents.add(pair.getAgent());
+            agents.add(entry.getAgent());
             for (String trigger : triggers) {
-                agentMap.put(trigger.toLowerCase(), pair.getAgent());
+                agentMap.put(trigger.toLowerCase(), entry.getAgent());
             }
         }
     }

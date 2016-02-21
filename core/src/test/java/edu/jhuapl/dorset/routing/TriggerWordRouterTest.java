@@ -16,9 +16,8 @@ public class TriggerWordRouterTest {
         Agent agent = mock(Agent.class);
         MultiValuedMap params = new MultiValuedMap();
         params.addString(TriggerWordRouter.TRIGGERS, "twitter");
-        RouterAgentConfig[] pairs = new RouterAgentConfig[1];
-        pairs[0] = new RouterAgentConfig(agent, params);
-        Router router = new TriggerWordRouter(pairs);
+        RouterAgentConfig config = RouterAgentConfig.create().add(agent, params);
+        Router router = new TriggerWordRouter(config);
 
         Agent agents[] = router.route(new Request("twitter hello world"));
 
@@ -31,9 +30,8 @@ public class TriggerWordRouterTest {
         Agent agent = mock(Agent.class);
         MultiValuedMap params = new MultiValuedMap();
         params.addString(TriggerWordRouter.TRIGGERS, "twitter");
-        RouterAgentConfig[] pairs = new RouterAgentConfig[1];
-        pairs[0] = new RouterAgentConfig(agent, params);
-        Router router = new TriggerWordRouter(pairs);
+        RouterAgentConfig config = RouterAgentConfig.create().add(agent, params);
+        Router router = new TriggerWordRouter(config);
 
         Agent agents[] = router.route(new Request("film hello world"));
 
@@ -43,8 +41,7 @@ public class TriggerWordRouterTest {
 
     @Test
     public void testRoutingWithEmptyRequest() {
-        RouterAgentConfig[] pairs = new RouterAgentConfig[0];
-        Router router = new TriggerWordRouter(pairs);
+        Router router = new TriggerWordRouter(RouterAgentConfig.create());
 
         Agent agents[] = router.route(new Request(""));
 
@@ -59,11 +56,9 @@ public class TriggerWordRouterTest {
         params1.addString(TriggerWordRouter.TRIGGERS, "twitter");
         Agent agent2 = mock(Agent.class);
         MultiValuedMap params2 = new MultiValuedMap();
-        RouterAgentConfig[] pairs = new RouterAgentConfig[2];
-        pairs[0] = new RouterAgentConfig(agent1, params1);
-        pairs[1] = new RouterAgentConfig(agent2, params2);
+        RouterAgentConfig config = RouterAgentConfig.create().add(agent1, params1).add(agent2, params2);
 
-        Router router = new TriggerWordRouter(pairs);
+        Router router = new TriggerWordRouter(config);
 
         assertEquals(1, router.getAgents().length);
     }
