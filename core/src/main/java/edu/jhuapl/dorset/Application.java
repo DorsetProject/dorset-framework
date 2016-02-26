@@ -16,16 +16,12 @@
  */
 package edu.jhuapl.dorset;
 
-import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.agent.AgentRegistry;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
-import edu.jhuapl.dorset.agent.RegistryEntry;
 import edu.jhuapl.dorset.reporting.NullReporter;
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.Reporter;
@@ -38,7 +34,7 @@ import edu.jhuapl.dorset.routing.Router;
 public class Application {
     private final Logger logger = LoggerFactory.getLogger(Application.class);
 
-    protected AgentRegistry agentRegistry;
+    protected Agent[] agents;
     protected Router router;
     protected Reporter reporter;
 
@@ -47,24 +43,21 @@ public class Application {
      *
      * Uses a null reporter that ignores new reports.
      *
-     * @param agentRegistry registry of the agents available to the app
      * @param router a router that finds the appropriate agent for a request
      */
-    public Application(AgentRegistry agentRegistry, Router router) {
-        this(agentRegistry, router, new NullReporter());
+    public Application(Router router) {
+        this(router, new NullReporter());
     }
 
     /**
      * Create a Dorset application
-     * @param agentRegistry registry of the agents available to the app
      * @param router a router that finds the appropriate agent for a request
      * @param reporter a reporter which logs request handling
      */
-    public Application(AgentRegistry agentRegistry, Router router, Reporter reporter) {
-        this.agentRegistry = agentRegistry;
+    public Application(Router router, Reporter reporter) {
         this.router = router;
         this.reporter = reporter;
-        router.initialize(agentRegistry);
+        this.agents = router.getAgents();
     }
 
     /**
@@ -72,13 +65,6 @@ public class Application {
      * @return array of Agent objects
      */
     public Agent[] getAgents() {
-        Collection<RegistryEntry> entries = agentRegistry.asMap().values();
-        Agent[] agents = new Agent[entries.size()];
-        int index = 0;
-        for (RegistryEntry entry : entries) {
-            agents[index] = entry.getAgent();
-            index++;
-        }
         return agents;
     }
 
@@ -93,7 +79,7 @@ public class Application {
         Report report = new Report(request);
 
         long startTime = System.nanoTime();
-        Agent[] agents = router.getAgents(request);
+        Agent[] agents = router.route(request);
         report.setRouteTime(startTime, System.nanoTime());
         report.setAgents(agents);
         if (agents.length == 0) {
