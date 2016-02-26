@@ -16,8 +16,6 @@
  */
 package edu.jhuapl.dorset;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import edu.jhuapl.dorset.agent.AgentMessages;
 
 /**
@@ -27,7 +25,6 @@ import edu.jhuapl.dorset.agent.AgentMessages;
  *
  * If the statusCode is not AgentMessages.SUCCESS, the text field can be left blank.
  */
-@XmlRootElement
 public class Response {
     private String text;
     private int statusCode;
