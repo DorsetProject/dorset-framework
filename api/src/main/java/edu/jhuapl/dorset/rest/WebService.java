@@ -42,7 +42,8 @@ public class WebService {
 
     /**
      * Process a request
-     * @param req the WebRequest payload
+     *
+     * @param req  the WebRequest payload
      * @return response
      */
     @POST
@@ -62,6 +63,7 @@ public class WebService {
 
     /**
      * Get the agents that are available
+     *
      * @return array of agent descriptions
      */
     @GET
@@ -86,6 +88,7 @@ public class WebService {
 
     /**
      * Use this to test if the web services are alive
+     *
      * @return the json encoded string "pong"
      */
     @GET

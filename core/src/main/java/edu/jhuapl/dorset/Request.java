@@ -20,10 +20,11 @@ import java.util.UUID;
 
 /**
  * Dorset Request
- *
+ * <p>
  * Represents a question or command to a Dorset application.
  */
 public class Request {
+    /** Maximum length of the identifier string ({@value #MAX_ID_LENGTH}) */
     public static final int MAX_ID_LENGTH = 36;
 
     private String text;
@@ -31,10 +32,10 @@ public class Request {
 
     /**
      * Create a request
-     *
+     * <p>
      * Automatically sets the identifier of the request
      *
-     * @param text the text of the request
+     * @param text  the text of the request
      */
     public Request(String text) {
         this.text = text;
@@ -43,9 +44,10 @@ public class Request {
 
     /**
      * Create a request
-     * @param text the text of the request
-     * @param id the identifier of the request (cannot be longer then MAX_ID_LENGTH)
-     *           The identifier must be unique.
+     *
+     * @param text  the text of the request
+     * @param id  the identifier of the request (cannot be longer then MAX_ID_LENGTH)
+     *            The identifier must be unique.
      */
     public Request(String text, String id) {
         if (id.length() > MAX_ID_LENGTH) {
@@ -58,6 +60,7 @@ public class Request {
 
     /**
      * Get the text of the request
+     *
      * @return the text of the request
      */
     public String getText() {
@@ -66,7 +69,8 @@ public class Request {
 
     /**
      * Set the text of the request
-     * @param text the text of the request
+     *
+     * @param text  the text of the request
      */
     public void setText(String text) {
         this.text = text;
@@ -74,6 +78,7 @@ public class Request {
 
     /**
      * Get the identifier of the request
+     *
      * @return identifier
      */
     public String getId() {

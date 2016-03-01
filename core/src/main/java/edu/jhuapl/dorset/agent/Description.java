@@ -19,7 +19,7 @@ package edu.jhuapl.dorset.agent;
 import java.util.Arrays;
 
 /**
- * Agent description for public consumption
+ * Agent description for human consumption
  */
 public class Description {
     private String name;
@@ -33,10 +33,10 @@ public class Description {
 
     /**
      * Create an agent description
-     * 
-     * @param name Name of the agent
-     * @param summary A user-facing description of the agent's capabilities
-     * @param example An example question or command
+     *
+     * @param name  Name of the agent
+     * @param summary  A user-facing description of the agent's capabilities
+     * @param example  An example question or command
      */
     public Description(String name, String summary, String example) {
         this(name, summary, new String[]{example});
@@ -44,10 +44,10 @@ public class Description {
 
     /**
      * Create an agent description
-     * 
-     * @param name Name of the agent
-     * @param summary A user-facing description of the agent's capabilities
-     * @param examples Array of example questions or commands
+     *
+     * @param name  Name of the agent
+     * @param summary  A user-facing description of the agent's capabilities
+     * @param examples  Array of example questions or commands
      */
     public Description(String name, String summary, String[] examples) {
         this.setName(name);
@@ -57,13 +57,16 @@ public class Description {
 
     /**
      * Copy a description
-     * @param description agent description
+     *
+     * @param description  agent description
      */
     public Description(Description description) {
         this(description.getName(), description.getSummary(), description.getExamples());
     }
 
     /**
+     * Get the summary
+     *
      * @return the summary
      */
     public String getSummary() {
@@ -71,13 +74,17 @@ public class Description {
     }
 
     /**
-     * @param summary A description of the agent's capabilities
+     * Set the summary
+     *
+     * @param summary  A description of the agent's capabilities
      */
     public void setSummary(String summary) {
         this.summary = summary;
     }
 
     /**
+     * Get the example requests for the agent
+     *
      * @return examples of using the agent
      */
     public String[] getExamples() {
@@ -85,14 +92,18 @@ public class Description {
     }
 
     /**
-     * @param examples Array of example requests that the agent can handle
+     * Set several examples of requests for the agent
+     *
+     * @param examples  Array of example requests that the agent can handle
      */
     public void setExamples(String[] examples) {
         this.examples = Arrays.copyOf(examples, examples.length);
     }
 
     /**
-     * @param example A single example request that the agent can handle
+     * Set a single example of a request for the agent
+     *
+     * @param example  A single example request that the agent can handle
      */
     public void setExample(String example) {
         this.examples = new String[1];
@@ -100,6 +111,8 @@ public class Description {
     }
 
     /**
+     * Get the name of the agent
+     *
      * @return name of the agent
      */
     public String getName() {
@@ -107,7 +120,9 @@ public class Description {
     }
 
     /**
-     * @param name The name of the agent
+     * Set the name of the agent
+     *
+     * @param name  The name of the agent
      */
     public void setName(String name) {
         this.name = name.toLowerCase();
@@ -115,7 +130,8 @@ public class Description {
 
     /**
      * Get a default description
-     * @param clazz The class of the agent
+     *
+     * @param clazz  The class of the agent
      * @return default description
      */
     public static Description getUninitializedDescription(Class<?> clazz) {

@@ -26,7 +26,6 @@ import edu.jhuapl.dorset.http.HttpClient;
 
 /**
  * Agent wrapper for remote web services that implement the agent API
- *
  */
 public class RemoteAgent extends AbstractAgent {
     private static final String REQUEST_ENDPOINT = "request";
@@ -43,8 +42,9 @@ public class RemoteAgent extends AbstractAgent {
 
     /**
      * Create a remote agent object
-     * @param urlBase the base URL for the web services
-     * @param client the http client
+     *
+     * @param urlBase  the base URL for the web services
+     * @param client  the http client
      */
     public RemoteAgent(String urlBase, HttpClient client) {
         // make sure end of url has slash
@@ -78,6 +78,7 @@ public class RemoteAgent extends AbstractAgent {
 
     /**
      * Is the remote agent available?
+     *
      * @return boolean
      */
     public boolean ping() {
@@ -95,6 +96,7 @@ public class RemoteAgent extends AbstractAgent {
 
     /**
      * Get the URL base
+     *
      * @return base URL
      */
     public String getUrlBase() {

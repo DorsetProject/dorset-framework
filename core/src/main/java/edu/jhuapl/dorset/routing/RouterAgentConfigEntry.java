@@ -25,8 +25,9 @@ public class RouterAgentConfigEntry {
 
     /**
      * Construct an entry
-     * @param agent the agent
-     * @param params the parameters for that agent
+     *
+     * @param agent  the agent
+     * @param params  the parameters for that agent
      */
     public RouterAgentConfigEntry(Agent agent, MultiValuedMap params) {
         this.agent = agent;
@@ -35,6 +36,7 @@ public class RouterAgentConfigEntry {
 
     /**
      * Get the agent
+     *
      * @return the agent
      */
     public Agent getAgent() {
@@ -43,6 +45,7 @@ public class RouterAgentConfigEntry {
 
     /**
      * Get the parameters for the agent
+     *
      * @return the parameters
      */
     public MultiValuedMap getParams() {

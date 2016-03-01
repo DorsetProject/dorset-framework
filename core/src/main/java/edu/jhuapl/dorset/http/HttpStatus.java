@@ -25,8 +25,9 @@ public class HttpStatus {
 
     /**
      * Create an HttpStatus object
-     * @param code HTTP status code
-     * @param reason HTTP status reason
+     *
+     * @param code  HTTP status code
+     * @param reason  HTTP status reason
      */
     public HttpStatus(int code, String reason) {
         this.setStatusCode(code);
@@ -35,6 +36,7 @@ public class HttpStatus {
 
     /**
      * Get the status code
+     *
      * @return status code
      */
     public int getStatusCode() {
@@ -43,7 +45,8 @@ public class HttpStatus {
 
     /**
      * Set the status code
-     * @param statusCode the status code
+     *
+     * @param statusCode  the status code
      */
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
@@ -51,6 +54,7 @@ public class HttpStatus {
 
     /**
      * Get the HTTP reason phrase
+     *
      * @return reason phrase
      */
     public String getReasonPhrase() {
@@ -59,7 +63,8 @@ public class HttpStatus {
 
     /**
      * Set the HTTP reason phrase
-     * @param reason the reason phrase
+     *
+     * @param reason  the reason phrase
      */
     public void setReasonPhrase(String reason) {
         this.reason = reason;
@@ -67,6 +72,7 @@ public class HttpStatus {
 
     /**
      * Was there a client error (such as a 404)?
+     *
      * @return boolean
      */
     public boolean isClientError() {
@@ -75,6 +81,7 @@ public class HttpStatus {
 
     /**
      * Was there a server error?
+     *
      * @return boolean
      */
     public boolean isServerError() {
@@ -83,6 +90,7 @@ public class HttpStatus {
 
     /**
      * Was there any kind of error?
+     *
      * @return boolean
      */
     public boolean isError() {
@@ -91,6 +99,7 @@ public class HttpStatus {
 
     /**
      * Was the request a success?
+     *
      * @return boolean
      */
     public boolean isSuccess() {

@@ -20,9 +20,9 @@ import edu.jhuapl.dorset.agent.AgentMessages;
 
 /**
  * Dorset Response
- *
+ * <p>
  * Represents the response to a request to the application.
- *
+ * <p>
  * If the statusCode is not AgentMessages.SUCCESS, the text field can be left blank.
  */
 public class Response {
@@ -31,7 +31,8 @@ public class Response {
 
     /**
      * Create a response
-     * @param text the text of the response
+     *
+     * @param text  the text of the response
      */
     public Response(String text) {
         this.text = text;
@@ -40,8 +41,9 @@ public class Response {
 
     /**
      * Create a response
-     * @param text the text of the response
-     * @param code the status code
+     *
+     * @param text  the text of the response
+     * @param code  the status code
      */
     public Response(String text, int code) {
         this.text = text;
@@ -50,7 +52,8 @@ public class Response {
 
     /**
      * Create a response
-     * @param code the status code
+     *
+     * @param code  the status code
      */
     public Response(int code) {
         this.statusCode = code;
@@ -58,7 +61,7 @@ public class Response {
 
     /**
      * Get the text of the response
-     *
+     * <p>
      * Can return a null if an error occurred.
      *
      * @return the text of the response
@@ -69,7 +72,8 @@ public class Response {
 
     /**
      * Set the text of the response
-     * @param text the text of the response
+     *
+     * @param text  the text of the response
      */
     public void setText(String text) {
         this.text = text;
@@ -77,6 +81,7 @@ public class Response {
 
     /**
      * Get the status code
+     *
      * @return the status code
      * @see AgentMessages
      */
@@ -86,7 +91,8 @@ public class Response {
 
     /**
      * Set the status code
-     * @param code the status code
+     *
+     * @param code  the status code
      * @see AgentMessages
      */
     public void setStatusCode(int code) {

@@ -21,8 +21,9 @@ package edu.jhuapl.dorset.nlp;
  */
 public interface Tokenizer {
     /**
-     * Tokenize
-     * @param text the text to tokenize
+     * Tokenize some text
+     *
+     * @param text  the text to tokenize
      * @return array of tokens
      */
     public String[] tokenize(String text);

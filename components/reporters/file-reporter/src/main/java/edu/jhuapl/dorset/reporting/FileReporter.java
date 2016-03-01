@@ -48,9 +48,9 @@ import edu.jhuapl.dorset.reporting.Reporter;
 
 /**
  * File Reporter
- *
+ * <p>
  * Stores reports of request handling to a csv file.
- *
+ * <p>
  * This is not intended for significant production use.
  */
 public class FileReporter implements Reporter {
@@ -74,7 +74,8 @@ public class FileReporter implements Reporter {
 
     /**
      * Create a file reporter
-     * @param filename the filename to write to
+     *
+     * @param filename  the filename to write to
      */
     public FileReporter(String filename) {
         this.filename = filename;

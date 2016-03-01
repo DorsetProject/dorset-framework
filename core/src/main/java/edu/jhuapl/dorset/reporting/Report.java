@@ -37,14 +37,15 @@ public class Report {
 
     /**
      * Default zero argument constructor to support usage as bean
-     *
+     * <p>
      * For bean usage only
      */
     public Report() {}
 
     /**
      * Record of handling a request
-     * @param request Request object
+     *
+     * @param request  Request object
      */
     public Report(Request request) {
         timestamp = new Date();
@@ -59,7 +60,8 @@ public class Report {
 
     /**
      * Copy constructor
-     * @param report the report to copy
+     *
+     * @param report  the report to copy
      */
     public Report(Report report) {
         timestamp = report.timestamp;
@@ -74,10 +76,10 @@ public class Report {
 
     /**
      * Set the request identifier
-     *
+     * <p>
      * For bean use only
      *
-     * @param id request identifier
+     * @param id  request identifier
      */
     public void setRequestId(String id) {
         requestId = id;
@@ -85,8 +87,9 @@ public class Report {
 
     /**
      * Get the request identifier
+     *
      * @return request identifier
-     * @see Request.MAX_ID_LENGTH for length limitation of identifier
+     * @see Request#MAX_ID_LENGTH length limitation of identifier
      */
     public String getRequestId() {
         return requestId;
@@ -94,10 +97,10 @@ public class Report {
 
     /**
      * Set the request text
-     *
+     * <p>
      * For bean use only
      *
-     * @param text request text
+     * @param text  request text
      */
     public void setRequestText(String text) {
         requestText = text;
@@ -105,6 +108,7 @@ public class Report {
 
     /**
      * Get the text of the request
+     *
      * @return text of the request
      */
     public String getRequestText() {
@@ -113,11 +117,11 @@ public class Report {
 
     /**
      * Set the length of time that the routing took
-     * 
+     * <p>
      * Use System.nanoTime() to get the start and stop times.
      * 
-     * @param start The time the routing started
-     * @param stop The time the routing stopped
+     * @param start  The time the routing started
+     * @param stop  The time the routing stopped
      */
     public void setRouteTime(long start, long stop) {
         routeTime = stop - start;
@@ -125,7 +129,8 @@ public class Report {
 
     /**
      * Set the length of time that the routing took
-     * @param time The length of time for the routing 
+     *
+     * @param time  The length of time for the routing 
      */
     public void setRouteTime(long time) {
         routeTime = time;
@@ -133,6 +138,7 @@ public class Report {
 
     /**
      * Get the length of time that the routing took
+     *
      * @return time in nano-seconds
      */
     public long getRouteTime() {
@@ -141,11 +147,11 @@ public class Report {
 
     /**
      * Set the length of time the agent took to handle the request
-     * 
+     * <p>
      * Use System.nanoTime() to get the start and stop times.
-     * 
-     * @param start The time the agent started
-     * @param stop The time the agent stopped
+     *
+     * @param start  The time the agent started
+     * @param stop  The time the agent stopped
      */
     public void setAgentTime(long start, long stop) {
         agentTime = stop - start;
@@ -153,7 +159,8 @@ public class Report {
 
     /**
      * Set the length of time that the agent took
-     * @param time The length of time for agent processing 
+     *
+     * @param time  The length of time for agent processing 
      */
     public void setAgentTime(long time) {
         agentTime = time;
@@ -161,6 +168,7 @@ public class Report {
 
     /**
      * Get the length of time the agent took to handle the request
+     *
      * @return time in nano-seconds
      */
     public long getAgentTime() {
@@ -169,7 +177,8 @@ public class Report {
 
     /**
      * Set the agents the router nominated to handle the request
-     * @param agents Array of Agent objects
+     *
+     * @param agents  Array of Agent objects
      */
     public void setAgents(Agent[] agents) {
         agentNames = new String[agents.length];
@@ -180,7 +189,8 @@ public class Report {
 
     /**
      * Set the agent that handled the request
-     * @param agent Agent object
+     *
+     * @param agent  Agent object
      */
     public void setSelectedAgent(Agent agent) {
         selectedAgentName = agent.getName();
@@ -188,7 +198,8 @@ public class Report {
 
     /**
      * Set the agent name that handled the request
-     * @param name the name of the agent
+     *
+     * @param name  the name of the agent
      */
     public void setSelectedAgentName(String name) {
         selectedAgentName = name;
@@ -196,6 +207,7 @@ public class Report {
 
     /**
      * Get the agent that handled the request
+     *
      * @return name of the agent
      */
     public String getSelectedAgentName() {
@@ -204,7 +216,8 @@ public class Report {
 
     /**
      * Set the text of the response
-     * @param response Response object
+     *
+     * @param response  Response object
      */
     public void setResponse(Response response) {
         responseText = response.getText();
@@ -212,7 +225,8 @@ public class Report {
 
     /**
      * Set the text of the response
-     * @param text Text of the response
+     *
+     * @param text  Text of the response
      */
     public void setResponseText(String text) {
         responseText = text;
@@ -220,6 +234,7 @@ public class Report {
 
     /**
      * Get the text of the response
+     *
      * @return text of the response
      */
     public String getResponseText() {
@@ -228,10 +243,10 @@ public class Report {
 
     /**
      * Set the timestamp of the report
-     *
+     * <p>
      * For bean use only
      *
-     * @param ts time of the request being received
+     * @param ts  time of the request being received
      */
     public void setTimestamp(Date ts) {
         timestamp = new Date(ts.getTime());
@@ -239,6 +254,7 @@ public class Report {
 
     /**
      * Get the timestamp of the report
+     *
      * @return Date of the report
      */
     public Date getTimestamp() {

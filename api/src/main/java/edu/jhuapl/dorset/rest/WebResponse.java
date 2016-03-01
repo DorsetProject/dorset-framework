@@ -22,7 +22,7 @@ import edu.jhuapl.dorset.Response;
 
 /**
  * Web response to a request
- *
+ * <p>
  * This class defines the json object returned by the web services
  */
 @XmlRootElement
@@ -36,7 +36,8 @@ public class WebResponse {
 
     /**
      * Create a web response
-     * @param resp the response from the Dorset application
+     *
+     * @param resp  the response from the Dorset application
      */
     public WebResponse(Response resp) {
         this.text = resp.getText();
@@ -44,7 +45,8 @@ public class WebResponse {
 
     /**
      * Create a web response
-     * @param text the text of the response
+     *
+     * @param text  the text of the response
      */
     public WebResponse(String text) {
         this.text = text;
@@ -52,6 +54,7 @@ public class WebResponse {
 
     /**
      * Get the text of the response
+     *
      * @return the text of the response
      */
     public String getText() {
@@ -60,7 +63,8 @@ public class WebResponse {
 
     /**
      * Set the text of the response
-     * @param text the text of the response
+     *
+     * @param text  the text of the response
      */
     public void setText(String text) {
         this.text = text;

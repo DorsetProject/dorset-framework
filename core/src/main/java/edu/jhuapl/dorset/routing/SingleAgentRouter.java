@@ -27,7 +27,8 @@ public class SingleAgentRouter implements Router {
 
     /**
      * Create the router
-     * @param agent the agent to route all requests to
+     *
+     * @param agent  the agent to route all requests to
      */
     public SingleAgentRouter(Agent agent) {
         this.agent = agent;

@@ -18,9 +18,9 @@ package edu.jhuapl.dorset.agent;
 
 /**
  * Response from an agent to a request
- *
+ * <p>
  * This class is part of the public API for remote agent web services.
- *
+ * <p>
  * If the statusCode is not AgentMessages.SUCCESS, the text field can be left blank.
  */
 public class AgentResponse {
@@ -31,8 +31,8 @@ public class AgentResponse {
 
     /**
      * Create an agent response
-     * 
-     * @param text the text of the response
+     *
+     * @param text  the text of the response
      */
     public AgentResponse(String text) {
         this.text = text;
@@ -41,9 +41,9 @@ public class AgentResponse {
 
     /**
      * Create an agent response
-     * 
-     * @param text the text of the response
-     * @param code the status code
+     *
+     * @param text  the text of the response
+     * @param code  the status code
      */
     public AgentResponse(String text, int code) {
         this.text = text;
@@ -52,8 +52,8 @@ public class AgentResponse {
 
     /**
      * Create an agent response
-     * 
-     * @param code the status code
+     *
+     * @param code  the status code
      */
     public AgentResponse(int code) {
         this.statusCode = code;
@@ -61,8 +61,8 @@ public class AgentResponse {
 
     /**
      * Set the text of the response
-     * 
-     * @param text the text of the response
+     *
+     * @param text  the text of the response
      */
     public void setText(String text) {
         this.text = text;
@@ -70,7 +70,7 @@ public class AgentResponse {
 
     /**
      * Get the text of the response
-     * 
+     *
      * @return text of the response
      */
     public String getText() {
@@ -79,7 +79,7 @@ public class AgentResponse {
 
     /**
      * Get the status code
-     * 
+     *
      * @return the status code
      * @see AgentMessages
      */
@@ -89,8 +89,8 @@ public class AgentResponse {
 
     /**
      * Set the status code
-     * 
-     * @param code the status code
+     *
+     * @param code  the status code
      * @see AgentMessages
      */
     public void setStatusCode(int code) {

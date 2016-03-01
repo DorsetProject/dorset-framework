@@ -29,24 +29,25 @@ import com.typesafe.config.ConfigValue;
 
 /**
  * Service to configure the Hibernate session factory
- *
+ * <p>
  * The standard hibernate configuration is used and should be placed in the
  * application's application.conf file:
- *
+ * <pre>
  * hibernate.connection.driver_class = com.mysql.jdbc.Driver
  * hibernate.connection.url = jdbc:mysql://localhost:3306/db_name
  * hibernate.connection.username = db_user
  * hibernate.connection.password = db_password
  * hibernate.dialect = org.hibernate.dialect.MySQLDialect
- *
+ * </pre>
+ * <p>
  * Mapping files will be loaded if the configuration includes the key:
- *
+ * <p>
  * hibernate.mapping.[name of component] = [filename]
- *
+ * <p>
  * It is recommended to store the default mapping for components in a
  * reference.conf file.
- *
- * @see SqlReporter for an example of a mapping configuration.
+ * <p>
+ * see SqlReporter for an example of a mapping configuration.
  */
 public class HibernateService {
     private static final String HIBERNATE_KEY = "hibernate";
@@ -57,7 +58,8 @@ public class HibernateService {
 
     /**
      * Create the hibernate service which initializes the session factory
-     * @param conf application configuration
+     *
+     * @param conf  application configuration
      * @throws UnsupportedOperationException if a mapping file is invalid
      */
     public HibernateService(Config conf) {
@@ -83,6 +85,7 @@ public class HibernateService {
 
     /**
      * Get the Hibernate session factory
+     *
      * @return session factory
      */
     public SessionFactory getSessionFactory() {
@@ -91,7 +94,7 @@ public class HibernateService {
 
     /**
      * Shutdown the session factory
-     * 
+     * <p>
      * Must be called before exiting the application
      */
     public void shutdown() {

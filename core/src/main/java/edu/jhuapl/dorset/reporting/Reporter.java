@@ -18,19 +18,22 @@ package edu.jhuapl.dorset.reporting;
 
 /**
  * Stores the request to response cycle for a Dorset Application.
- * 
+ * <p>
  * The reports support debugging, tuning, and metrics.
  */
 public interface Reporter {
+
     /**
      * Store a report
-     * @param report The report to store
+     *
+     * @param report  The report to store
      */
     public void store(Report report);
 
     /**
      * Retrieve reports
-     * @param query Query object
+     *
+     * @param query  Query object
      * @return Array of reports
      */
     public Report[] retrieve(ReportQuery query);

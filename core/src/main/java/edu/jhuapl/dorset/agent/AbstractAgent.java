@@ -18,7 +18,7 @@ package edu.jhuapl.dorset.agent;
 
 /**
  * Abstract Agent class
- * 
+ * <p>
  * Agent implementations should inherit from this class. It provides convenient
  * methods for managing the agent name and description.
  */

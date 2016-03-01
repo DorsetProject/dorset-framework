@@ -29,7 +29,26 @@ import edu.jhuapl.dorset.routing.Router;
 
 /**
  * Dorset Application
+ * <p>
+ * The application manages the state of the Dorset framework.
+ * An application processes requests and returns responses. 
+ * The requests are handled by agents.
+ * A router determines which agent handles a request. 
+ * Each request-response cycle can be stored as a report for further analysis.
  *
+ * A basic application has at least one agent, a router, and methods for 
+ * getting requests and sending responses:
+ * <pre>
+ * Agent agent = new CalculatorAgent();
+ * Router router = new SingleAgentRouter(agent);
+ * Application app = new Application(router);
+ *
+ * while (true) {
+ *     Request request = yourMethodToGetRequests();
+ *     Response response = app.process(request);
+ *     yourMethodToSendResponse(response);
+ * }
+ * </pre>
  */
 public class Application {
     private final Logger logger = LoggerFactory.getLogger(Application.class);
@@ -40,10 +59,10 @@ public class Application {
 
     /**
      * Create a Dorset application
-     *
+     * <p>
      * Uses a null reporter that ignores new reports.
      *
-     * @param router a router that finds the appropriate agent for a request
+     * @param router  a router that finds the appropriate agent for a request
      */
     public Application(Router router) {
         this(router, new NullReporter());
@@ -51,8 +70,9 @@ public class Application {
 
     /**
      * Create a Dorset application
-     * @param router a router that finds the appropriate agent for a request
-     * @param reporter a reporter which logs request handling
+     *
+     * @param router  a router that finds the appropriate agent for a request
+     * @param reporter  a reporter which logs request handling
      */
     public Application(Router router, Reporter reporter) {
         this.router = router;
@@ -62,6 +82,7 @@ public class Application {
 
     /**
      * Get the active agents in the registry
+     *
      * @return array of Agent objects
      */
     public Agent[] getAgents() {
@@ -70,7 +91,8 @@ public class Application {
 
     /**
      * Process a request
-     * @param request Request object
+     *
+     * @param request  Request object
      * @return Response object
      */
     public Response process(Request request) {

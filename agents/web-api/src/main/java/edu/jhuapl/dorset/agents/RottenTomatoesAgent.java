@@ -41,8 +41,9 @@ public class RottenTomatoesAgent extends AbstractAgent {
 
     /**
      * Create a Rotten Tomatoes agent
-     * @param client An http client object
-     * @param apikey A Rotten Tomatoes API key 
+     *
+     * @param client  An http client object
+     * @param apikey  A Rotten Tomatoes API key 
      */
     public RottenTomatoesAgent(HttpClient client, String apikey) {
         this.apikey = apikey;
