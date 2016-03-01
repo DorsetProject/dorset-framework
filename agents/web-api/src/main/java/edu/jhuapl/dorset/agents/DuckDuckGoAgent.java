@@ -57,7 +57,8 @@ public class DuckDuckGoAgent extends AbstractAgent {
 
     /**
      * Create a duckduckgo agent
-     * @param client http client
+     *
+     * @param client  http client
      */
     public DuckDuckGoAgent(HttpClient client) {
         this.client = client;
