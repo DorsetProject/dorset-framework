@@ -29,7 +29,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk.version>1.7</jdk.version>
-    <dorset.version>${project.version}</dorset.version>
     <slf4j.version>1.7.14</slf4j.version>
   </properties>
 
@@ -76,7 +75,7 @@
       <dependency>
         <groupId>edu.jhuapl.dorset</groupId>
         <artifactId>dorset-core</artifactId>
-        <version>${dorset.version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>

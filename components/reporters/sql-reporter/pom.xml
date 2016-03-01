@@ -20,7 +20,7 @@
     <dependency>
       <groupId>edu.jhuapl.dorset.components</groupId>
       <artifactId>hibernate-service</artifactId>
-      <version>${dorset.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
