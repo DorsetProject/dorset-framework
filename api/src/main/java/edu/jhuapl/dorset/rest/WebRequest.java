@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Web request
- * 
+ * <p>
  * This class defines the json object expected as the body of a request
  */
 @XmlRootElement
@@ -34,7 +34,8 @@ public class WebRequest {
 
     /**
      * Create a web request
-     * @param text the text of the request
+     *
+     * @param text  the text of the request
      */
     public WebRequest(String text) {
         this.text = text;
@@ -42,6 +43,7 @@ public class WebRequest {
 
     /**
      * Get the text of the request
+     *
      * @return the text of the request
      */
     public String getText() {
@@ -50,7 +52,8 @@ public class WebRequest {
 
     /**
      * Set the text of the request
-     * @param text the text of the request
+     *
+     * @param text  the text of the request
      */
     public void setText(String text) {
         this.text = text;

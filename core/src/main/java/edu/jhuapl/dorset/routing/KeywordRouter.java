@@ -27,12 +27,12 @@ import edu.jhuapl.dorset.nlp.Tokenizer;
 
 /**
  * This router uses keywords to direct requests.
- *
+ * <p>
  * Each agent can have one or more keywords associated with it. Each request is
  * tokenized into words and any agent that has one of the words as a keyword
  * is returned.
- *
- * @TODO how to handle duplicate keywords across agents
+ * <p>
+ * TODO how to handle duplicate keywords across agents
  */
 public class KeywordRouter implements Router {
     public static final String KEYWORDS = "keywords";
@@ -43,7 +43,8 @@ public class KeywordRouter implements Router {
 
     /**
      * Create the router
-     * @param agentsConfig agents and routing configuration for those agents
+     *
+     * @param agentsConfig  agents and routing configuration for those agents
      */
     public KeywordRouter(RouterAgentConfig agentsConfig) {
         agentMap = new HashMap<String, Agent>();

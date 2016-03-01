@@ -18,7 +18,6 @@ package edu.jhuapl.dorset.reporting;
 
 /**
  * Wraps reports for storage in order to get a simple id that sorts well
- *
  */
 public class SqlReport extends Report {
     private long id;
@@ -27,7 +26,8 @@ public class SqlReport extends Report {
 
     /**
      * Copy constructor
-     * @param report report object
+     *
+     * @param report  report object
      */
     public SqlReport(Report report) {
         super(report);
@@ -35,6 +35,7 @@ public class SqlReport extends Report {
 
     /**
      * Get the database id
+     *
      * @return id
      */
     public long getId() {
@@ -43,7 +44,8 @@ public class SqlReport extends Report {
 
     /**
      * Set the database id
-     * @param id the id
+     *
+     * @param id  the id
      */
     public void setId(long id) {
         this.id = id;

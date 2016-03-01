@@ -22,8 +22,9 @@ public class HttpParameter {
 
     /**
      * Create a name-value pair
-     * @param name the name string
-     * @param value the value string
+     *
+     * @param name  the name string
+     * @param value  the value string
      */
     public HttpParameter(String name, String value) {
         this.name = name;
@@ -32,8 +33,9 @@ public class HttpParameter {
 
     /**
      * Create a name-value pair
-     * @param name the name string
-     * @param value the integer value
+     *
+     * @param name  the name string
+     * @param value  the integer value
      */
     public HttpParameter(String name, int value) {
         this.name = name;
@@ -42,8 +44,9 @@ public class HttpParameter {
 
     /**
      * Create a name-value pair
-     * @param name the name string
-     * @param value the long integer value
+     *
+     * @param name  the name string
+     * @param value  the long integer value
      */
     public HttpParameter(String name, long value) {
         this.name = name;
@@ -52,8 +55,9 @@ public class HttpParameter {
 
     /**
      * Create a name-value pair
-     * @param name the name string
-     * @param value the double value
+     *
+     * @param name  the name string
+     * @param value  the double value
      */
     public HttpParameter(String name, double value) {
         this.name = name;
@@ -62,6 +66,7 @@ public class HttpParameter {
 
     /**
      * Get the name
+     *
      * @return name string
      */
     public String getName() {
@@ -70,6 +75,7 @@ public class HttpParameter {
 
     /**
      * Get the value
+     *
      * @return value string
      */
     public String getValue() {

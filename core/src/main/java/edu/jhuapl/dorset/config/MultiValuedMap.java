@@ -29,7 +29,8 @@ public class MultiValuedMap {
 
     /**
      * Add a string in the map replacing any strings at that key
-     * @param key the key
+     *
+     * @param key  the key
      * @param value the value
      */
     public void putString(String key, String value) {
@@ -38,7 +39,8 @@ public class MultiValuedMap {
 
     /**
      * Add the array of strings to the map replacing any strings at that key
-     * @param key the key
+     *
+     * @param key  the key
      * @param values array of values
      */
     public void putStrings(String key, String[] values) {
@@ -49,7 +51,8 @@ public class MultiValuedMap {
 
     /**
      * Add the string to those at that key
-     * @param key the key
+     *
+     * @param key  the key
      * @param value the value
      */
     public void addString(String key, String value) {
@@ -61,7 +64,8 @@ public class MultiValuedMap {
 
     /**
      * Add strings to those at that key
-     * @param key the key
+     *
+     * @param key  the key
      * @param values array of values
      */
     public void addStrings(String key, String[] values) {
@@ -73,7 +77,8 @@ public class MultiValuedMap {
 
     /**
      * Get the string at the specified key
-     * @param key the key
+     *
+     * @param key  the key
      * @return the first value at the key or null if none
      */
     public String getString(String key) {
@@ -86,7 +91,8 @@ public class MultiValuedMap {
 
     /**
      * Get the strings at the specified key
-     * @param key the key
+     *
+     * @param key  the key
      * @return array of values or null if none
      */
     public String[] getStrings(String key) {
@@ -99,7 +105,8 @@ public class MultiValuedMap {
 
     /**
      * Does the map contain this key?
-     * @param key the key
+     *
+     * @param key  the key
      * @return true if it does
      */
     public boolean containsKey(String key) {
@@ -108,6 +115,7 @@ public class MultiValuedMap {
 
     /**
      * How many keys does the map contain?
+     *
      * @return the number of keys
      */
     public int size() {

@@ -18,7 +18,7 @@ package edu.jhuapl.dorset.nlp;
 
 /**
  * Tokenizes a string using white space as a delimiter
- * 
+ * <p>
  * Does not remove punctuation.
  */
 public class BasicTokenizer implements Tokenizer {

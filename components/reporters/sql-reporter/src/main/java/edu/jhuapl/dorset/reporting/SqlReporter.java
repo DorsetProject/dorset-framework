@@ -28,7 +28,7 @@ import edu.jhuapl.dorset.reporting.Reporter;
 
 /**
  * SQL Reporter
- *
+ * <p>
  * Stores reports of request handling to an SQL database.
  */
 public class SqlReporter implements Reporter {
@@ -37,8 +37,8 @@ public class SqlReporter implements Reporter {
 
     /**
      * Create a SQL Reporter
-     * 
-     * @param sessionFactory Hibernate session factory
+     *
+     * @param sessionFactory  Hibernate session factory
      */
     public SqlReporter(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

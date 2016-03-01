@@ -18,7 +18,7 @@ package edu.jhuapl.dorset.agent;
 
 /**
  * Request sent to an agent
- * 
+ * <p>
  * This class is part of the public API for remote agent web services.
  */
 public class AgentRequest {
@@ -28,8 +28,8 @@ public class AgentRequest {
 
     /**
      * Create an agent request
-     * 
-     * @param text the text of the request
+     *
+     * @param text  the text of the request
      */
     public AgentRequest(String text) {
         this.text = text;
@@ -37,8 +37,8 @@ public class AgentRequest {
 
     /**
      * Set the text of the request
-     * 
-     * @param text the text of the request
+     *
+     * @param text  the text of the request
      */
     public void setText(String text) {
         this.text = text;
@@ -46,7 +46,7 @@ public class AgentRequest {
 
     /**
      * Get the text of the request
-     * 
+     *
      * @return the text of the request
      */
     public String getText() {

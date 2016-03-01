@@ -30,8 +30,9 @@ public class RouterAgentConfig implements Iterable<RouterAgentConfigEntry> {
 
     /**
      * Add an agent to the configuration
-     * @param agent the agent to add
-     * @param params the parameters for the router for that agent
+     *
+     * @param agent  the agent to add
+     * @param params  the parameters for the router for that agent
      * @return this
      */
     public RouterAgentConfig add(Agent agent, MultiValuedMap params) {
@@ -46,6 +47,7 @@ public class RouterAgentConfig implements Iterable<RouterAgentConfigEntry> {
 
     /**
      * Factory for this config class
+     *
      * @return a new instance of RouterAgentConfig
      */
     public static RouterAgentConfig create() {

@@ -26,13 +26,15 @@ public interface Router {
 
     /**
      * Get an array of agents to send the request to
-     * @param request the request object
+     *
+     * @param request  the request object
      * @return array of agents (empty array if no agent found)
      */
     public Agent[] route(Request request);
 
     /**
      * Get an array of the agents for this router
+     *
      * @return array of agents
      */
     public Agent[] getAgents();

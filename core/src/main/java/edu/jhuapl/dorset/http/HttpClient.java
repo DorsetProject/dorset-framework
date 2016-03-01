@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * HTTP Client
- * 
+ * <p>
  * Provides a simple interface for making HTTP requests.
- * 
+ * <p>
  * This client does not return the content body when there has been a client or
  * server error (status code 4xx or 5xx). It does handle redirects automatically.
- * 
+ * <p>
  * Additional functionality can be added as needed such as http proxy support,
  * getting the response as a byte array, and authorization.
  */
@@ -62,7 +62,8 @@ public class HttpClient {
 
     /**
      * Get the http response to a GET request
-     * @param url The URL to get
+     *
+     * @param url  The URL to get
      * @return the http response text or null if error
      */
     public String get(String url) {
@@ -78,8 +79,9 @@ public class HttpClient {
 
     /**
      * Get the http response to a POST request
-     * @param url The URL to post to
-     * @param parameters array of parameters to encode as a form
+     *
+     * @param url  The URL to post to
+     * @param parameters  array of parameters to encode as a form
      * @return the http response text or null if error
      */
     public String post(String url, HttpParameter[] parameters) {
@@ -98,9 +100,10 @@ public class HttpClient {
 
     /**
      * Get the http response to a POST request
-     * @param url The URL to post to
-     * @param body The body of the POST request
-     * @param contentType The content type string
+     *
+     * @param url  The URL to post to
+     * @param body  The body of the POST request
+     * @param contentType  The content type string
      * @return the http response text or null if error
      */
     public String post(String url, String body, String contentType) {
@@ -116,8 +119,9 @@ public class HttpClient {
 
     /**
      * Get the http response to a PUT request
-     * @param url The URL to put to
-     * @param parameters array of parameters to encode as a form
+     *
+     * @param url  The URL to put to
+     * @param parameters  array of parameters to encode as a form
      * @return the http response text or null if error
      */
     public String put(String url, HttpParameter[] parameters) {
@@ -136,9 +140,10 @@ public class HttpClient {
 
     /**
      * Get the http response to a PUT request
-     * @param url The URL to put to
-     * @param body The body of the PUT request
-     * @param contentType The content type string
+     *
+     * @param url  The URL to put to
+     * @param body  The body of the PUT request
+     * @param contentType  The content type string
      * @return the http response text or null if error
      */
     public String put(String url, String body, String contentType) {
@@ -154,7 +159,8 @@ public class HttpClient {
 
     /**
      * Get the http response to a DELETE request
-     * @param url The URL for the delete
+     *
+     * @param url  The URL for the delete
      * @return the http response text or null if error
      */
     public String delete(String url) {
@@ -170,7 +176,8 @@ public class HttpClient {
 
     /**
      * Set the user agent
-     * @param agent user agent string
+     *
+     * @param agent  user agent string
      */
     public void setUserAgent(String agent) {
         userAgent = agent;
@@ -178,7 +185,8 @@ public class HttpClient {
 
     /**
      * Set the connect timeout (wait for connection to be established)
-     * @param timeout connect timeout in milliseconds (0 equals an infinite timeout)
+     *
+     * @param timeout  connect timeout in milliseconds (0 equals an infinite timeout)
      */
     public void setConnectTimeout(int timeout) {
         connectTimeout = timeout;
@@ -186,7 +194,8 @@ public class HttpClient {
 
     /**
      * Set the read timeout (wait for data during transfer)
-     * @param timeout read timeout in milliseconds (0 equals an infinite timeout)
+     *
+     * @param timeout  read timeout in milliseconds (0 equals an infinite timeout)
      */
     public void setReadTimeout(int timeout) {
         readTimeout = timeout;
@@ -194,8 +203,9 @@ public class HttpClient {
 
     /**
      * Add a request header that will be used on every request
-     * @param name the name of the header
-     * @param value the value of the header
+     *
+     * @param name  the name of the header
+     * @param value  the value of the header
      */
     public void addDefaultRequestHeader(String name, String value) {
         requestHeaders.put(name, value);
@@ -203,6 +213,7 @@ public class HttpClient {
 
     /**
      * Get the most recent status
+     *
      * @return status object
      */
     public HttpStatus getHttpStatus() {

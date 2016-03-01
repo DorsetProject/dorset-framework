@@ -27,7 +27,7 @@ import edu.jhuapl.dorset.nlp.Tokenizer;
 /**
  * This router looks at the first word of the request and gets the 
  * corresponding agent based on the agent name.
- * 
+ * <p>
  * Requests must be of the form: [trigger] [request text]
  */
 public class TriggerWordRouter implements Router {
@@ -39,7 +39,8 @@ public class TriggerWordRouter implements Router {
 
     /**
      * Create the router
-     * @param agentsConfig agents and routing configuration for those agents
+     *
+     * @param agentsConfig  agents and routing configuration for those agents
      */
     public TriggerWordRouter(RouterAgentConfig agentsConfig) {
         agentMap = new HashMap<String, Agent>();

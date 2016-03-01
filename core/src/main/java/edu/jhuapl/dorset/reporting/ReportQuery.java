@@ -20,14 +20,13 @@ import java.util.Date;
 
 /**
  * Query object for reports
- *
+ * <p>
  * Provides methods for setting filters on the stored reports. The filters supported are
  * <ul>
  * <li>Limit on the number of reports returned
  * <li>Agent names
  * <li>Date range
  * </ul>
- * 
  */
 public class ReportQuery {
     private int limit;
@@ -44,6 +43,7 @@ public class ReportQuery {
 
     /**
      * Get the maximum number of reports to return
+     *
      * @return the limit
      */
     public int getLimit() {
@@ -52,7 +52,8 @@ public class ReportQuery {
 
     /**
      * Set the maximum number of reports to return
-     * @param limit The maximum number of reports to return
+     *
+     * @param limit  The maximum number of reports to return
      */
     public void setLimit(int limit) {
         this.limit = limit;
@@ -67,6 +68,7 @@ public class ReportQuery {
 
     /**
      * Get the names of the agents being filtered for
+     *
      * @return the agentNames being filtered for
      */
     public String[] getAgentNames() {
@@ -75,7 +77,8 @@ public class ReportQuery {
 
     /**
      * Set the names of the agents to filter for
-     * @param agentNames The agents to filter for
+     *
+     * @param agentNames  The agents to filter for
      */
     public void setAgentNames(String[] agentNames) {
         this.agentNames = agentNames;
@@ -83,7 +86,8 @@ public class ReportQuery {
 
     /**
      * Set the name of the agent to filter for
-     * @param agentName The agent to filter for
+     *
+     * @param agentName  The agent to filter for
      */
     public void setAgentName(String agentName) {
         this.agentNames = new String[1];
@@ -92,6 +96,7 @@ public class ReportQuery {
 
     /**
      * Get the start of the date range
+     *
      * @return the start of the date range filter
      */
     public Date getStartDate() {
@@ -100,7 +105,8 @@ public class ReportQuery {
 
     /**
      * Set the start of the date range
-     * @param startDate the beginning of the date range
+     *
+     * @param startDate  the beginning of the date range
      */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
@@ -108,6 +114,7 @@ public class ReportQuery {
 
     /**
      * Get the end of the date range
+     *
      * @return the end of the date range filter
      */
     public Date getEndDate() {
@@ -116,7 +123,8 @@ public class ReportQuery {
 
     /**
      * Set the end of the date range
-     * @param endDate the end of the date range
+     *
+     * @param endDate  the end of the date range
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
@@ -124,8 +132,9 @@ public class ReportQuery {
 
     /**
      * Set the start and end of the date range
-     * @param startDate the start of the date range filter
-     * @param endDate the end of the date range filter
+     *
+     * @param startDate  the start of the date range filter
+     * @param endDate  the end of the date range filter
      */
     public void setTimeRange(Date startDate, Date endDate) {
         this.startDate = startDate;

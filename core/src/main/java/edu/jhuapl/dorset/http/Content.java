@@ -37,7 +37,7 @@ import org.apache.http.entity.ContentType;
  * Pulled from the Apache httpclient 4.5.1 fluent API because the constructor is
  * private to the package.
  * 
- * This class represents arbitrary content of a specfic type that can be consumed
+ * This class represents arbitrary content of a specific type that can be consumed
  * multiple times and requires no explicit deallocation.
  */
 public class Content {
@@ -47,6 +47,12 @@ public class Content {
     private final byte[] raw;
     private final ContentType type;
 
+    /**
+     * Create a content object
+     *
+     * @param raw  the raw data
+     * @param type  the content type
+     */
     Content(final byte[] raw, final ContentType type) {
         super();
         this.raw = raw;
