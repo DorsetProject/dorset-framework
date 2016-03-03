@@ -19,6 +19,7 @@ package edu.jhuapl.dorset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.jhuapl.dorset.ResponseStatus.Code;
 import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
@@ -97,29 +98,28 @@ public class Application {
      */
     public Response process(Request request) {
         logger.info("Processing request: " + request.getText());
-        Response response = new Response("no response");
+        Response response = new Response(new ResponseStatus(Code.NO_AVAILABLE_AGENT));
         Report report = new Report(request);
 
         long startTime = System.nanoTime();
         Agent[] agents = router.route(request);
         report.setRouteTime(startTime, System.nanoTime());
         report.setAgents(agents);
-        if (agents.length == 0) {
-            return response;
-        }
-
-        startTime = System.nanoTime();
-        for (Agent agent : agents) {
-            AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
-            if (agentResponse != null) {
-                // take first answer
-                response.setText(agentResponse.getText());
-                report.setSelectedAgent(agent);
-                report.setResponse(response);
-                break;
+        if (agents.length > 0) {
+            response = new Response(new ResponseStatus(Code.AGENT_DID_NOT_ANSWER));
+            startTime = System.nanoTime();
+            for (Agent agent : agents) {
+                AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
+                if (agentResponse != null) {
+                    // take first answer
+                    response = new Response(agentResponse.getText());
+                    report.setSelectedAgent(agent);
+                    report.setResponse(response);
+                    break;
+                }
             }
+            report.setAgentTime(startTime, System.nanoTime());
         }
-        report.setAgentTime(startTime, System.nanoTime());
         reporter.store(report);
 
         return response;

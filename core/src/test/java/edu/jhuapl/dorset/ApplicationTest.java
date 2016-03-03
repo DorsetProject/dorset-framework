@@ -36,7 +36,8 @@ public class ApplicationTest {
 
         Response response = app.process(request);
 
-        assertEquals("no response", response.getText());
+        assertFalse(response.isSuccess());
+        assertEquals(ResponseStatus.Code.NO_AVAILABLE_AGENT, response.getStatus().getCode());
     }
 
     @Test
@@ -54,7 +55,6 @@ public class ApplicationTest {
         Response response = app.process(request);
 
         assertEquals("the answer", response.getText());
-        //verify(router, times(1)).initialize(null);
     }
 
     @Test
@@ -71,7 +71,8 @@ public class ApplicationTest {
 
         Response response = app.process(request);
 
-        assertEquals("no response", response.getText());
+        assertFalse(response.isSuccess());
+        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_ANSWER, response.getStatus().getCode());
     }
 
 }
