@@ -37,6 +37,7 @@ import edu.jhuapl.dorset.agent.Description;
 public class WebService {
     private static final Logger logger = LoggerFactory.getLogger(WebService.class);
 
+    // If an Application is not injected, this will cause a server error ("Request failed.")
     @Inject
     private Application app;
 
@@ -52,12 +53,7 @@ public class WebService {
     @Produces(MediaType.APPLICATION_JSON)
     public WebResponse process(WebRequest req) {
         Request request = new Request(req.getText());
-
-        if (app == null) {
-            return new WebResponse("Dorset application not set");
-        }
         Response response = app.process(request);
-
         return new WebResponse(response);
     }
 
