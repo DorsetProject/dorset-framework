@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import edu.jhuapl.dorset.ResponseStatus;
@@ -52,7 +53,9 @@ public class RemoteAgent extends AbstractAgent {
         this.urlBase = urlBase.replaceAll("/$", "") + "/";
         this.client = client;
         setUrls();
-        gson = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(ResponseStatus.Code.class, new ResponseCodeDeserializer());
+        gson = gsonBuilder.create();
     }
 
     @Override

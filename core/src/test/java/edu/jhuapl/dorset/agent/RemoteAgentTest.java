@@ -49,6 +49,7 @@ public class RemoteAgentTest {
         AgentResponse response = agent.process(request);
 
         assertEquals("2", response.getText());
+        assertEquals(ResponseStatus.createSuccess(), response.getStatus());
     }
 
     @Test

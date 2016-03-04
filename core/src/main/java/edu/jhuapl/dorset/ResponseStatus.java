@@ -79,6 +79,22 @@ public class ResponseStatus {
         return message;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ResponseStatus && ((ResponseStatus) obj).getCode() == this.getCode()
+                        && ((ResponseStatus) obj).getMessage().equals(this.getMessage())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        // codes are 3 digits
+        return 1000 * this.message.hashCode() + this.code.getValue();
+    }
+
     /**
      * Factory method to create a default success status
      *
@@ -88,6 +104,9 @@ public class ResponseStatus {
         return new ResponseStatus(Code.SUCCESS);
     }
 
+    /**
+     * Response code enumeration
+     */
     public enum Code {
         SUCCESS(0),
         INTERNAL_ERROR(100),
@@ -111,6 +130,21 @@ public class ResponseStatus {
          */
         public int getValue() {
             return code;
+        }
+
+        /**
+         * Get a Code enum member from an integer value
+         *
+         * @param value  the integer value
+         * @return Code enum member
+         */
+        public static Code fromValue(int value) {
+            for (Code code : Code.values()) {
+                if (code.getValue() == value) {
+                    return code;
+                }
+            }
+            return null;
         }
     }
 
