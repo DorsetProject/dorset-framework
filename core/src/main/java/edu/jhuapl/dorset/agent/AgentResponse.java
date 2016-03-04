@@ -43,12 +43,14 @@ public class AgentResponse {
     }
 
     /**
-     * Create an agent response
+     * Create an agent response with payload
      *
+     * @param type  the response type
      * @param text  the text of the response
+     * @param payload  the payload of the response
      */
-    public AgentResponse(String text, String payload) {
-        this.type = Response.Type.TEXT;
+    public AgentResponse(Response.Type type, String text, String payload) {
+        this.type = type;
         this.text = text;
         this.payload = payload;
         this.status = ResponseStatus.createSuccess();
