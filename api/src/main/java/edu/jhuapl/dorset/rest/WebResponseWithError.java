@@ -16,15 +16,18 @@
  */
 package edu.jhuapl.dorset.rest;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import edu.jhuapl.dorset.Response;
 
+/**
+ * Web response with an error
+ * <p>
+ * Extends the WebResponse with the optional error information
+ */
+@XmlRootElement
 public class WebResponseWithError extends WebResponse {
-    private Error error;
-
-    /**
-     * Empty constructor required by Jersey
-     */
-    public WebResponseWithError() {}
+    protected final Error error;
 
     /**
      * Create a web response
@@ -32,6 +35,7 @@ public class WebResponseWithError extends WebResponse {
      * @param resp  the response from the Dorset application
      */
     public WebResponseWithError(Response resp) {
+        super(resp);
         error = new Error(resp.getStatus());
     }
 
@@ -41,6 +45,7 @@ public class WebResponseWithError extends WebResponse {
      * @param text  the text of the response
      */
     public WebResponseWithError(Error error) {
+        super(Response.Type.ERROR.getValue(), null);
         this.error = error;
     }
 
@@ -51,15 +56,6 @@ public class WebResponseWithError extends WebResponse {
      */
     public Error getError() {
         return error;
-    }
-
-    /**
-     * Set the error for the response
-     *
-     * @param error  the error
-     */
-    public void setError(Error error) {
-        this.error = error;
     }
 
 }

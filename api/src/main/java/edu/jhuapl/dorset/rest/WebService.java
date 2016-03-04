@@ -56,7 +56,11 @@ public class WebService {
         Request request = new Request(req.getText());
         Response response = app.process(request);
         if (response.isSuccess()) {
-            webResp = new WebResponse(response);
+            if (response.hasPayload()) {
+                webResp = new WebResponseWithPayload(response);    
+            } else {
+                webResp = new WebResponse(response);
+            }
         } else {
             webResp = new WebResponseWithError(response);
         }

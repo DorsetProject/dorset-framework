@@ -76,7 +76,7 @@ public class WebServiceTest extends JerseyTest {
         javax.ws.rs.core.Response response = target("/request").request(MediaType.APPLICATION_JSON_TYPE).post(body);
 
         assertEquals(200, response.getStatus());
-        String expected = "{\"text\":\"this is a test\"}";
+        String expected = "{\"type\":\"text\",\"text\":\"this is a test\"}";
         assertEquals(expected, response.readEntity(String.class));
     }
 
@@ -90,7 +90,21 @@ public class WebServiceTest extends JerseyTest {
         javax.ws.rs.core.Response response = target("/request").request(MediaType.APPLICATION_JSON_TYPE).post(body);
 
         assertEquals(200, response.getStatus());
-        String expected = "{\"text\":null,\"error\":{\"code\":201,\"message\":\"Huh?\"}}";
+        String expected = "{\"type\":\"error\",\"text\":null,\"error\":{\"code\":201,\"message\":\"Huh?\"}}";
+        assertEquals(expected, response.readEntity(String.class));
+    }
+
+    @Test
+    public void testRequestWithPayload() {
+        Response resp = new Response(Response.Type.EMBEDDED_IMAGE, "Here is your image", "base64_image");
+        when(app.process(any(Request.class))).thenReturn(resp);
+
+        WebRequest wr = new WebRequest("show me a flamingo");
+        Entity<WebRequest> body = Entity.entity(wr, MediaType.APPLICATION_JSON_TYPE);
+        javax.ws.rs.core.Response response = target("/request").request(MediaType.APPLICATION_JSON_TYPE).post(body);
+
+        assertEquals(200, response.getStatus());
+        String expected = "{\"type\":\"embedded_image\",\"text\":\"Here is your image\",\"payload\":\"base64_image\"}";
         assertEquals(expected, response.readEntity(String.class));
     }
 

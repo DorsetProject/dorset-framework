@@ -21,52 +21,30 @@ import javax.xml.bind.annotation.XmlRootElement;
 import edu.jhuapl.dorset.Response;
 
 /**
- * Web response to a request
+ * Web response with payload data
  * <p>
- * This class defines the json object returned by the web services
+ * Extends the WebResponse with the optional payload information
  */
 @XmlRootElement
-public class WebResponse {
-    protected final String type;
-    // see Response.Type for the supported type strings
-    protected final String text;
+public class WebResponseWithPayload extends WebResponse {
+    private final String payload;
 
     /**
-     * Create a web response
+     * Create a web response with a payload
      *
      * @param resp  the response from the Dorset application
      */
-    public WebResponse(Response resp) {
-        this.type = resp.getType().getValue();
-        this.text = resp.getText();
+    public WebResponseWithPayload(Response resp) {
+        super(resp);
+        this.payload = resp.getPayload();
     }
 
     /**
-     * Create a web response
+     * Get the payload string
      *
-     * @param type  the response type
-     * @param text  the response text
+     * @return the payload
      */
-    public WebResponse(String type, String text) {
-        this.type = type;
-        this.text = text;
-    }
-
-    /**
-     * Get the response type
-     *
-     * @return the response type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Get the text of the response
-     *
-     * @return the text of the response
-     */
-    public String getText() {
-        return text;
+    public String getPayload() {
+        return payload;
     }
 }

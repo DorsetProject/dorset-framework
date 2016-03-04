@@ -16,6 +16,7 @@
  */
 package edu.jhuapl.dorset.agent;
 
+import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
 
 /**
@@ -24,7 +25,9 @@ import edu.jhuapl.dorset.ResponseStatus;
  * This class is part of the public API for remote agent web services.
  */
 public class AgentResponse {
+    private final Response.Type type;
     private final String text;
+    private final String payload;
     private final ResponseStatus status;
 
     /**
@@ -33,7 +36,23 @@ public class AgentResponse {
      * @param text  the text of the response
      */
     public AgentResponse(String text) {
+        this.type = Response.Type.TEXT;
         this.text = text;
+        this.payload = null;
+        this.status = ResponseStatus.createSuccess();
+    }
+
+    /**
+     * Create an agent response with payload
+     *
+     * @param type  the response type
+     * @param text  the text of the response
+     * @param payload  the payload of the response
+     */
+    public AgentResponse(Response.Type type, String text, String payload) {
+        this.type = type;
+        this.text = text;
+        this.payload = payload;
         this.status = ResponseStatus.createSuccess();
     }
 
@@ -43,7 +62,9 @@ public class AgentResponse {
      * @param code  the status code
      */
     public AgentResponse(ResponseStatus.Code code) {
+        this.type = Response.Type.ERROR;
         this.text = null;
+        this.payload = null;
         this.status = new ResponseStatus(code);
     }
 
@@ -53,8 +74,19 @@ public class AgentResponse {
      * @param status  the status of the response
      */
     public AgentResponse(ResponseStatus status) {
+        this.type = Response.Type.ERROR;
         this.text = null;
+        this.payload = null;
         this.status = status;
+    }
+
+    /**
+     * Get the response type
+     *
+     * @return the response type
+     */
+    public Response.Type getType() {
+        return type;
     }
 
     /**
@@ -64,6 +96,17 @@ public class AgentResponse {
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * Get the payload of the response
+     * <p>
+     * The payload data varies according to the response type
+     *
+     * @return payload string or null if no payload
+     */
+    public String getPayload() {
+        return payload;
     }
 
     /**
@@ -90,7 +133,10 @@ public class AgentResponse {
      * @return true if valid
      */
     public boolean isValid() {
-        if (status == null) {
+        if (type == null || status == null) { 
+            return false;
+        }
+        if (Response.Type.usesPayload(type) && payload == null) {
             return false;
         }
         return !(isSuccess() && text == null);

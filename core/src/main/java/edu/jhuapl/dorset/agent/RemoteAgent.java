@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
+import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.http.HttpClient;
 
@@ -55,6 +56,7 @@ public class RemoteAgent extends AbstractAgent {
         setUrls();
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(ResponseStatus.Code.class, new ResponseCodeDeserializer());
+        gsonBuilder.registerTypeAdapter(Response.Type.class, new ResponseTypeDeserializer());
         gson = gsonBuilder.create();
     }
 
