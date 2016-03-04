@@ -112,7 +112,7 @@ public class Application {
                 AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
                 if (agentResponse != null) {
                     // take first answer
-                    response = new Response(agentResponse.getText());
+                    response = new Response(agentResponse);
                     report.setSelectedAgent(agent);
                     report.setResponse(response);
                     break;

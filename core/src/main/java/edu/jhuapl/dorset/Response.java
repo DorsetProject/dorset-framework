@@ -16,14 +16,17 @@
  */
 package edu.jhuapl.dorset;
 
+import edu.jhuapl.dorset.agent.AgentResponse;
+
 /**
  * Dorset Response
  * <p>
  * Represents the response to a request to the application.
+ * The text field can be null if an error occurred.
  */
 public class Response {
-    private String text;
-    private ResponseStatus status;
+    private final String text;
+    private final ResponseStatus status;
 
     /**
      * Create a response
@@ -33,6 +36,16 @@ public class Response {
     public Response(String text) {
         this.text = text;
         this.status = ResponseStatus.createSuccess();
+    }
+
+    /**
+     * Create a response
+     *
+     * @param response  response from an agent
+     */
+    public Response(AgentResponse response) {
+        this.text = response.getText();
+        this.status = response.getStatus();
     }
 
     /**
@@ -52,6 +65,7 @@ public class Response {
      * @param status  the response status (usually an error)
      */
     public Response(ResponseStatus status) {
+        this.text = null;
         this.status = status;
     }
 
@@ -65,30 +79,12 @@ public class Response {
     }
 
     /**
-     * Set the text of the response
-     *
-     * @param text  the text of the response
-     */
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    /**
      * Get the response status
      *
      * @return the status
      */
     public ResponseStatus getStatus() {
         return status;
-    }
-
-    /**
-     * Set the response status
-     *
-     * @param status  the status
-     */
-    public void setStatus(ResponseStatus status) {
-        this.status = status;
     }
 
     /**
