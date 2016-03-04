@@ -27,6 +27,7 @@ import edu.jhuapl.dorset.ResponseStatus;
 public class AgentResponse {
     private final Response.Type type;
     private final String text;
+    private final String payload;
     private final ResponseStatus status;
 
     /**
@@ -37,6 +38,19 @@ public class AgentResponse {
     public AgentResponse(String text) {
         this.type = Response.Type.TEXT;
         this.text = text;
+        this.payload = null;
+        this.status = ResponseStatus.createSuccess();
+    }
+
+    /**
+     * Create an agent response
+     *
+     * @param text  the text of the response
+     */
+    public AgentResponse(String text, String payload) {
+        this.type = Response.Type.TEXT;
+        this.text = text;
+        this.payload = payload;
         this.status = ResponseStatus.createSuccess();
     }
 
@@ -48,6 +62,7 @@ public class AgentResponse {
     public AgentResponse(ResponseStatus.Code code) {
         this.type = Response.Type.ERROR;
         this.text = null;
+        this.payload = null;
         this.status = new ResponseStatus(code);
     }
 
@@ -59,6 +74,7 @@ public class AgentResponse {
     public AgentResponse(ResponseStatus status) {
         this.type = Response.Type.ERROR;
         this.text = null;
+        this.payload = null;
         this.status = status;
     }
 
@@ -78,6 +94,17 @@ public class AgentResponse {
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * Get the payload of the response
+     * <p>
+     * The payload data varies according to the response type
+     *
+     * @return payload string or null if no payload
+     */
+    public String getPayload() {
+        return payload;
     }
 
     /**
@@ -104,7 +131,10 @@ public class AgentResponse {
      * @return true if valid
      */
     public boolean isValid() {
-        if (status == null) {
+        if (type == null || status == null) { 
+            return false;
+        }
+        if (Response.Type.usesPayload(type) && payload == null) {
             return false;
         }
         return !(isSuccess() && text == null);

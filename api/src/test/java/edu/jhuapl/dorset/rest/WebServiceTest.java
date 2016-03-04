@@ -95,6 +95,20 @@ public class WebServiceTest extends JerseyTest {
     }
 
     @Test
+    public void testRequestWithPayload() {
+        Response resp = new Response(Response.Type.EMBEDDED_IMAGE, "Here is your image", "base64_image");
+        when(app.process(any(Request.class))).thenReturn(resp);
+
+        WebRequest wr = new WebRequest("show me a flamingo");
+        Entity<WebRequest> body = Entity.entity(wr, MediaType.APPLICATION_JSON_TYPE);
+        javax.ws.rs.core.Response response = target("/request").request(MediaType.APPLICATION_JSON_TYPE).post(body);
+
+        assertEquals(200, response.getStatus());
+        String expected = "{\"type\":\"embedded_image\",\"text\":\"Here is your image\",\"payload\":\"base64_image\"}";
+        assertEquals(expected, response.readEntity(String.class));
+    }
+
+    @Test
     public void testPing() {
         javax.ws.rs.core.Response response = target("/ping").request(MediaType.APPLICATION_JSON_TYPE).get();
 
