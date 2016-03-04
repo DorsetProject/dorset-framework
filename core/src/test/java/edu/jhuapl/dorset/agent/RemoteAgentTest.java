@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.http.HttpClient;
 
 public class RemoteAgentTest {
@@ -41,7 +42,7 @@ public class RemoteAgentTest {
     public void testProcess() {
         HttpClient client = mock(HttpClient.class);
         when(client.post(eq("http://example.org/request"), any(String.class),
-                        eq(HttpClient.APPLICATION_JSON))).thenReturn("{\"text\":\"2\", \"statusCode\":0}");
+                        eq(HttpClient.APPLICATION_JSON))).thenReturn("{\"text\":\"2\", \"status\":{\"code\":0, \"message\":\"Success\"}}");
         RemoteAgent agent = new RemoteAgent("http://example.org/", client);
         AgentRequest request = new AgentRequest("what is 1 + 1?");
 
@@ -61,7 +62,7 @@ public class RemoteAgentTest {
         AgentResponse response = agent.process(request);
 
         assertNull(response.getText());
-        assertEquals(AgentMessages.INVALID_RESPONSE, response.getStatusCode());
+        assertEquals(ResponseStatus.Code.INVALID_RESPONSE_FROM_AGENT, response.getStatus().getCode());
     }
 
     @Test
@@ -75,7 +76,7 @@ public class RemoteAgentTest {
         AgentResponse response = agent.process(request);
 
         assertNull(response.getText());
-        assertEquals(AgentMessages.INVALID_RESPONSE, response.getStatusCode());
+        assertEquals(ResponseStatus.Code.INVALID_RESPONSE_FROM_AGENT, response.getStatus().getCode());
     }
 
     @Test

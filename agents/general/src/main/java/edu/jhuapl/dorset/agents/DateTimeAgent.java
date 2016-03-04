@@ -16,8 +16,8 @@
  */
 package edu.jhuapl.dorset.agents;
 
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.agent.AbstractAgent;
-import edu.jhuapl.dorset.agent.AgentMessages;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.Description;
@@ -60,23 +60,23 @@ public class DateTimeAgent extends AbstractAgent {
     public AgentResponse process(AgentRequest request) {
         logger.debug("Handling the request: " + request.getText());
         Date now = new Date();
-        AgentResponse response = new AgentResponse();
+        AgentResponse response;
         String requestType = getRequestType(request.getText());
         switch (requestType) {
             case DATE:
-                response.setText(getDate(now));
+                response = new AgentResponse(getDate(now));
                 break;
             case DAY:
-                response.setText(getDay(now));
+                response = new AgentResponse(getDay(now));
                 break;
             case TIME:
-                response.setText(getTime(now));
+                response = new AgentResponse(getTime(now));
                 break;
             default:
-                response.setStatusCode(AgentMessages.BAD_REQUEST);
+                response = new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST);
                 break;
         }
-        
+
         return response;
     }
 

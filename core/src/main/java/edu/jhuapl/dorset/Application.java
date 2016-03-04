@@ -106,7 +106,7 @@ public class Application {
         report.setRouteTime(startTime, System.nanoTime());
         report.setAgents(agents);
         if (agents.length > 0) {
-            response = new Response(new ResponseStatus(Code.AGENT_DID_NOT_ANSWER));
+            response = new Response(new ResponseStatus(Code.NO_RESPONSE_FROM_AGENT));
             startTime = System.nanoTime();
             for (Agent agent : agents) {
                 AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));

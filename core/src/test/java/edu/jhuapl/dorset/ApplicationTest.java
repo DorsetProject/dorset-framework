@@ -72,7 +72,7 @@ public class ApplicationTest {
         Response response = app.process(request);
 
         assertFalse(response.isSuccess());
-        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_ANSWER, response.getStatus().getCode());
+        assertEquals(ResponseStatus.Code.NO_RESPONSE_FROM_AGENT, response.getStatus().getCode());
     }
 
 }

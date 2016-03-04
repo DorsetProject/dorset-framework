@@ -16,12 +16,13 @@
  */
 package edu.jhuapl.dorset.agents;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.agent.Agent;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
@@ -104,7 +105,6 @@ public class RottenTomatoesAgentTest {
                 + apikey + "&q=" + movieTitle;
 
         String testQuestion = "What is the  movie finding nemo?";
-        String correctAnswer = "I'm sorry, I don't understand your question regarding movies.";
 
         HttpClient client = mock(HttpClient.class);
         when(client.get(urlStr)).thenReturn(jsonData);
@@ -113,7 +113,8 @@ public class RottenTomatoesAgentTest {
         AgentRequest request = new AgentRequest(testQuestion);
         AgentResponse response = movie.process(request);
 
-        assertEquals(correctAnswer, response.getText());
+        assertFalse(response.isSuccess());        
+        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST, response.getStatus().getCode());
     }
 
     @Test
@@ -122,11 +123,9 @@ public class RottenTomatoesAgentTest {
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
-                + "badapi_key" + "&q=" + movieTitle;
+                + "otherapi_key" + "&q=" + movieTitle;
 
         String testQuestion = "What is the runtime for the movie finding nemo?";
-        String correctAnswer = "I'm sorry, something went wrong with the Rotten Tomatoes API request. "
-                + "Please make sure you have a proper API key.";
 
         HttpClient client = mock(HttpClient.class);
         when(client.get(urlStr)).thenReturn(jsonData);
@@ -135,7 +134,8 @@ public class RottenTomatoesAgentTest {
         AgentRequest request = new AgentRequest(testQuestion);
         AgentResponse response = movie.process(request);
 
-        assertEquals(correctAnswer, response.getText());
+        assertFalse(response.isSuccess());        
+        assertEquals(ResponseStatus.Code.AGENT_INTERNAL_ERROR, response.getStatus().getCode());
     }
 
 }
