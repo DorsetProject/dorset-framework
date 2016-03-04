@@ -16,16 +16,16 @@
  */
 package edu.jhuapl.dorset.agent;
 
+import edu.jhuapl.dorset.ResponseStatus;
+
 /**
  * Response from an agent to a request
  * <p>
  * This class is part of the public API for remote agent web services.
- * <p>
- * If the statusCode is not AgentMessages.SUCCESS, the text field can be left blank.
  */
 public class AgentResponse {
     private String text;
-    private int statusCode;
+    private ResponseStatus status;
 
     public AgentResponse() {}
 
@@ -36,31 +36,29 @@ public class AgentResponse {
      */
     public AgentResponse(String text) {
         this.text = text;
-        this.statusCode = AgentMessages.SUCCESS;
+        this.status = ResponseStatus.createSuccess();
     }
 
     /**
-     * Create an agent response
-     *
-     * @param text  the text of the response
-     * @param code  the status code
-     */
-    public AgentResponse(String text, int code) {
-        this.text = text;
-        this.statusCode = code;
-    }
-
-    /**
-     * Create an agent response
+     * Create an agent response for an error
      *
      * @param code  the status code
      */
-    public AgentResponse(int code) {
-        this.statusCode = code;
+    public AgentResponse(ResponseStatus.Code code) {
+        this.status = new ResponseStatus(code);
     }
 
     /**
-     * Set the text of the response
+     * Create an agent response for an error with custom message
+     *
+     * @param status  the status of the response
+     */
+    public AgentResponse(ResponseStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * Set the text of the response (for deserialization)
      *
      * @param text  the text of the response
      */
@@ -78,22 +76,41 @@ public class AgentResponse {
     }
 
     /**
-     * Get the status code
+     * Get the status
      *
      * @return the status code
-     * @see AgentMessages
      */
-    public int getStatusCode() {
-        return statusCode;
+    public ResponseStatus getStatus() {
+        return status;
     }
 
     /**
-     * Set the status code
+     * Set the status (for deserialization)
      *
-     * @param code  the status code
-     * @see AgentMessages
+     * @param status  the status
      */
-    public void setStatusCode(int code) {
-        this.statusCode = code;
+    public void setStatus(ResponseStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * Is this a successful response?
+     *
+     * @return true if success
+     */
+    public boolean isSuccess() {
+        return status.isSuccess();
+    }
+
+    /**
+     * Is this a valid response?
+     *
+     * @return true if valid
+     */
+    public boolean isValid() {
+        if (status == null) {
+            return false;
+        }
+        return !(isSuccess() && text == null);
     }
 }

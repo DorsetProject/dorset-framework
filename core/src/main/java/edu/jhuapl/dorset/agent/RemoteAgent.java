@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.http.HttpClient;
 
 /**
@@ -56,22 +57,23 @@ public class RemoteAgent extends AbstractAgent {
 
     @Override
     public AgentResponse process(AgentRequest request) {
-        AgentResponse response = new AgentResponse(AgentMessages.NO_RESPONSE);
+        AgentResponse response;
         String json = gson.toJson(request);
         String resp = client.post(requestUrl, json, HttpClient.APPLICATION_JSON);
         if (resp != null) {
             try {
                 response = gson.fromJson(resp, AgentResponse.class);
                 // the gson deserialization code is very permissive so we verify
-                if (response.getStatusCode() == AgentMessages.SUCCESS
-                                && response.getText() == null) {
-                    response.setStatusCode(AgentMessages.INVALID_RESPONSE);
+                if (!response.isValid()) {
+                    response = new AgentResponse(ResponseStatus.Code.INVALID_RESPONSE_FROM_AGENT);
                     logger.warn("Invalid json for request: " + resp);
                 }
             } catch (JsonSyntaxException e) {
-                response = new AgentResponse(AgentMessages.INVALID_RESPONSE);
+                response = new AgentResponse(ResponseStatus.Code.INVALID_RESPONSE_FROM_AGENT);
                 logger.warn("Invalid json for request: " + resp);
             }
+        } else {
+            response = new AgentResponse(ResponseStatus.Code.NO_RESPONSE_FROM_AGENT);
         }
         return response;
     }

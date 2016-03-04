@@ -16,18 +16,17 @@
  */
 package edu.jhuapl.dorset;
 
-import edu.jhuapl.dorset.agent.AgentMessages;
+import edu.jhuapl.dorset.agent.AgentResponse;
 
 /**
  * Dorset Response
  * <p>
  * Represents the response to a request to the application.
- * <p>
- * If the statusCode is not AgentMessages.SUCCESS, the text field can be left blank.
+ * The text field can be null if an error occurred.
  */
 public class Response {
-    private String text;
-    private int statusCode;
+    private final String text;
+    private final ResponseStatus status;
 
     /**
      * Create a response
@@ -36,66 +35,64 @@ public class Response {
      */
     public Response(String text) {
         this.text = text;
-        this.statusCode = AgentMessages.SUCCESS;
+        this.status = ResponseStatus.createSuccess();
+    }
+
+    /**
+     * Create a response
+     *
+     * @param response  response from an agent
+     */
+    public Response(AgentResponse response) {
+        this.text = response.getText();
+        this.status = response.getStatus();
     }
 
     /**
      * Create a response
      *
      * @param text  the text of the response
-     * @param code  the status code
+     * @param status  the response status
      */
-    public Response(String text, int code) {
+    public Response(String text, ResponseStatus status) {
         this.text = text;
-        this.statusCode = code;
+        this.status = status;
     }
 
     /**
      * Create a response
      *
-     * @param code  the status code
+     * @param status  the response status (usually an error)
      */
-    public Response(int code) {
-        this.statusCode = code;
+    public Response(ResponseStatus status) {
+        this.text = null;
+        this.status = status;
     }
 
     /**
      * Get the text of the response
-     * <p>
-     * Can return a null if an error occurred.
      *
-     * @return the text of the response
+     * @return the text of the response or null if error
      */
     public String getText() {
         return text;
     }
 
     /**
-     * Set the text of the response
+     * Get the response status
      *
-     * @param text  the text of the response
+     * @return the status
      */
-    public void setText(String text) {
-        this.text = text;
+    public ResponseStatus getStatus() {
+        return status;
     }
 
     /**
-     * Get the status code
+     * Is this a successful response to the request?
      *
-     * @return the status code
-     * @see AgentMessages
+     * @return true for success
      */
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    /**
-     * Set the status code
-     *
-     * @param code  the status code
-     * @see AgentMessages
-     */
-    public void setStatusCode(int code) {
-        this.statusCode = code;
+    public boolean isSuccess() {
+        return status.isSuccess();
     }
 }

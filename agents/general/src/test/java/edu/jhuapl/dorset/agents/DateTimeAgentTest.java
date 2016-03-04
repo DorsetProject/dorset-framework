@@ -28,7 +28,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.jhuapl.dorset.agent.AgentMessages;
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 
@@ -65,14 +65,15 @@ public class DateTimeAgentTest {
     public void testBadRequest() {
         AgentResponse response = agent.process(new AgentRequest("where is pluto?"));
         assertNotNull(response);
-        assertEquals(AgentMessages.BAD_REQUEST, response.getStatusCode());
+        assertFalse(response.isSuccess());
+        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST, response.getStatus().getCode());
     }
 
     @Test
     public void testProcessForDayOfWeek() {
         AgentResponse response = agent.process(new AgentRequest("what is today?"));
         assertNotNull(response);
-        assertEquals(AgentMessages.SUCCESS, response.getStatusCode());
+        assertTrue(response.isSuccess());
         Set<String> daysOfWeek = new HashSet<String>(Arrays.asList("Sunday", "Monday", "Tuesday",
                         "Wednesday", "Thursday", "Friday", "Saturday"));
         assertTrue(daysOfWeek.contains(response.getText()));

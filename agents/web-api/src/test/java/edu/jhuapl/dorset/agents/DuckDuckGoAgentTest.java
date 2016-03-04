@@ -22,8 +22,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.agent.AgentMessages;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.http.HttpClient;
@@ -40,7 +40,7 @@ public class DuckDuckGoAgentTest {
         Agent agent = new DuckDuckGoAgent(client);
         AgentResponse response = agent.process(new AgentRequest(query));
 
-        assertEquals(AgentMessages.SUCCESS, response.getStatusCode());
+        assertTrue(response.isSuccess());
         assertTrue(response.getText().startsWith("Barack Hussein Obama II is an American politician"));
     }
 
@@ -53,7 +53,7 @@ public class DuckDuckGoAgentTest {
         Agent agent = new DuckDuckGoAgent(client);
         AgentResponse response = agent.process(new AgentRequest("Who is Barack Obama?"));
 
-        assertEquals(AgentMessages.SUCCESS, response.getStatusCode());
+        assertTrue(response.isSuccess());
         assertTrue(response.getText().startsWith("Barack Hussein Obama II is an American politician"));
     }
 
@@ -67,7 +67,7 @@ public class DuckDuckGoAgentTest {
         Agent agent = new DuckDuckGoAgent(client);
         AgentResponse response = agent.process(new AgentRequest(query));
 
-        assertEquals(AgentMessages.MORE_INFORMATION_NEEDED, response.getStatusCode());
+        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class DuckDuckGoAgentTest {
         Agent agent = new DuckDuckGoAgent(client);
         AgentResponse response = agent.process(new AgentRequest(query));
 
-        assertEquals(AgentMessages.UNKNOWN_ANSWER, response.getStatusCode());
+        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
     }
 
     @Test

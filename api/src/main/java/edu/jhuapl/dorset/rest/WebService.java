@@ -52,9 +52,15 @@ public class WebService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public WebResponse process(WebRequest req) {
+        WebResponse webResp;
         Request request = new Request(req.getText());
         Response response = app.process(request);
-        return new WebResponse(response);
+        if (response.isSuccess()) {
+            webResp = new WebResponse(response);
+        } else {
+            webResp = new WebResponseWithError(response);
+        }
+        return webResp;
     }
 
     /**

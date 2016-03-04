@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.agent.AbstractAgent;
 import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
@@ -56,30 +57,34 @@ public class RottenTomatoesAgent extends AbstractAgent {
         logger.debug("Handling the request: " + request.getText());
 
         String agentRequest = request.getText();
-        String movieTitle = findMovieTitle(agentRequest);
 
+        String movieTitle = findMovieTitle(agentRequest);
         if (movieTitle.equals("")) {
-            return new AgentResponse(
-                    "I'm sorry, I don't understand your question.");
+            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST);
         }
 
         String keyword = findKeyWord(agentRequest);
+        if (keyword == null) {
+            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST);
+        }
 
-        String agentResponse = null;
-        String response = null;
-        response = requestData(movieTitle);
+        AgentResponse response = null;
+        String json = requestData(movieTitle);
 
-        if (response == null) {
-            agentResponse = "I'm sorry, something went wrong with the Rotten Tomatoes API request. "
-                    + "Please make sure you have a proper API key.";
+        if (json == null) {
+            response = new AgentResponse(new ResponseStatus(
+                            ResponseStatus.Code.AGENT_INTERNAL_ERROR,
+                            "Something went wrong with the Rotten Tomatoes API request. Please check your API key."));
         } else {
-            agentResponse = formatResponse(keyword, response);
-            if (agentResponse == null) {
-                agentResponse = "I'm sorry, I don't understand your question regarding movies.";
+            String responseText = formatResponse(keyword, json);
+            if (responseText != null) {
+                response = new AgentResponse(responseText);
+            } else {
+                response = new AgentResponse(ResponseStatus.Code.AGENT_INTERNAL_ERROR);
             }
         }
 
-        return new AgentResponse(agentResponse);
+        return response;
     }
 
     protected String requestData(String movieTitle) {
@@ -111,7 +116,7 @@ public class RottenTomatoesAgent extends AbstractAgent {
     }
 
     protected String findKeyWord(String agentRequest) {
-        String keyword;
+        String keyword = null;
 
         if (agentRequest.toLowerCase().contains("year")) {
             // year the film was made
@@ -125,8 +130,6 @@ public class RottenTomatoesAgent extends AbstractAgent {
         } else if (agentRequest.toLowerCase().contains("actor")) {
             // actor names
             keyword = "name";
-        } else {
-            keyword = "unsure";
         }
         return keyword;
     }
