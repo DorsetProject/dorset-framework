@@ -37,6 +37,7 @@ import org.junit.Test;
 import edu.jhuapl.dorset.Application;
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.Response;
+import edu.jhuapl.dorset.ResponseStatus;
 
 public class WebServiceTest extends JerseyTest {
 
@@ -76,6 +77,20 @@ public class WebServiceTest extends JerseyTest {
 
         assertEquals(200, response.getStatus());
         String expected = "{\"text\":\"this is a test\"}";
+        assertEquals(expected, response.readEntity(String.class));
+    }
+
+    @Test
+    public void testRequestWithError() {
+        Response resp = new Response(new ResponseStatus(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, "Huh?"));
+        when(app.process(any(Request.class))).thenReturn(resp);
+
+        WebRequest wr = new WebRequest("why?");
+        Entity<WebRequest> body = Entity.entity(wr, MediaType.APPLICATION_JSON_TYPE);
+        javax.ws.rs.core.Response response = target("/request").request(MediaType.APPLICATION_JSON_TYPE).post(body);
+
+        assertEquals(200, response.getStatus());
+        String expected = "{\"text\":null,\"error\":{\"code\":201,\"message\":\"Huh?\"}}";
         assertEquals(expected, response.readEntity(String.class));
     }
 
