@@ -42,7 +42,7 @@ public class RemoteAgentTest {
     public void testProcess() {
         HttpClient client = mock(HttpClient.class);
         when(client.post(eq("http://example.org/request"), any(String.class),
-                        eq(HttpClient.APPLICATION_JSON))).thenReturn("{\"text\":\"2\", \"status\":{\"code\":0, \"message\":\"Success\"}}");
+                        eq(HttpClient.APPLICATION_JSON))).thenReturn("{\"type\":\"text\",\"text\":\"2\", \"status\":{\"code\":0, \"message\":\"Success\"}}");
         RemoteAgent agent = new RemoteAgent("http://example.org/", client);
         AgentRequest request = new AgentRequest("what is 1 + 1?");
 

@@ -76,7 +76,7 @@ public class WebServiceTest extends JerseyTest {
         javax.ws.rs.core.Response response = target("/request").request(MediaType.APPLICATION_JSON_TYPE).post(body);
 
         assertEquals(200, response.getStatus());
-        String expected = "{\"text\":\"this is a test\"}";
+        String expected = "{\"type\":\"text\",\"text\":\"this is a test\"}";
         assertEquals(expected, response.readEntity(String.class));
     }
 
@@ -90,7 +90,7 @@ public class WebServiceTest extends JerseyTest {
         javax.ws.rs.core.Response response = target("/request").request(MediaType.APPLICATION_JSON_TYPE).post(body);
 
         assertEquals(200, response.getStatus());
-        String expected = "{\"text\":null,\"error\":{\"code\":201,\"message\":\"Huh?\"}}";
+        String expected = "{\"type\":\"error\",\"text\":null,\"error\":{\"code\":201,\"message\":\"Huh?\"}}";
         assertEquals(expected, response.readEntity(String.class));
     }
 

@@ -25,6 +25,7 @@ import edu.jhuapl.dorset.agent.AgentResponse;
  * The text field can be null if an error occurred.
  */
 public class Response {
+    private final Type type;
     private final String text;
     private final ResponseStatus status;
 
@@ -34,6 +35,7 @@ public class Response {
      * @param text  the text of the response
      */
     public Response(String text) {
+        this.type = Type.TEXT;
         this.text = text;
         this.status = ResponseStatus.createSuccess();
     }
@@ -44,6 +46,7 @@ public class Response {
      * @param response  response from an agent
      */
     public Response(AgentResponse response) {
+        this.type = response.getType();
         this.text = response.getText();
         this.status = response.getStatus();
     }
@@ -55,6 +58,11 @@ public class Response {
      * @param status  the response status
      */
     public Response(String text, ResponseStatus status) {
+        if (status.isSuccess()) {
+            this.type = Type.TEXT;
+        } else {
+            this.type = Type.ERROR;
+        }
         this.text = text;
         this.status = status;
     }
@@ -62,11 +70,21 @@ public class Response {
     /**
      * Create a response
      *
-     * @param status  the response status (usually an error)
+     * @param status  the response status (an error)
      */
     public Response(ResponseStatus status) {
+        this.type = Type.ERROR;
         this.text = null;
         this.status = status;
+    }
+
+    /**
+     * Get the response type
+     *
+     * @return the response type
+     */
+    public Type getType() {
+        return type;
     }
 
     /**
@@ -94,5 +112,52 @@ public class Response {
      */
     public boolean isSuccess() {
         return status.isSuccess();
+    }
+
+    /**
+     * Is this a simple text response?
+     *
+     * @return true if text response
+     */
+    public boolean isTextResponse() {
+        return type == Type.TEXT;
+    }
+
+    /**
+     * Enumeration for response types
+     */
+    public enum Type {
+        ERROR("error"),
+        TEXT("text"),
+        EMBEDDED_IMAGE("embedded_image");
+
+        private final String type;
+        private Type(String type) {
+            this.type = type;
+        }
+
+        /**
+         * Get the value of the type
+         *
+         * @return the value
+         */
+        public String getValue() {
+            return type;
+        }
+
+        /**
+         * Get a Type enum member from a string
+         *
+         * @param value  the type as a string
+         * @return a Type enum member or null if no match
+         */
+        public static Type fromValue(String value) {
+            for (Type type : Type.values()) {
+                if (type.getValue().equals(value)) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 }

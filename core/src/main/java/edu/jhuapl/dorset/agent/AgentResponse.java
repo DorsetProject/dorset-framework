@@ -16,6 +16,7 @@
  */
 package edu.jhuapl.dorset.agent;
 
+import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
 
 /**
@@ -24,6 +25,7 @@ import edu.jhuapl.dorset.ResponseStatus;
  * This class is part of the public API for remote agent web services.
  */
 public class AgentResponse {
+    private final Response.Type type;
     private final String text;
     private final ResponseStatus status;
 
@@ -33,6 +35,7 @@ public class AgentResponse {
      * @param text  the text of the response
      */
     public AgentResponse(String text) {
+        this.type = Response.Type.TEXT;
         this.text = text;
         this.status = ResponseStatus.createSuccess();
     }
@@ -43,6 +46,7 @@ public class AgentResponse {
      * @param code  the status code
      */
     public AgentResponse(ResponseStatus.Code code) {
+        this.type = Response.Type.ERROR;
         this.text = null;
         this.status = new ResponseStatus(code);
     }
@@ -53,8 +57,18 @@ public class AgentResponse {
      * @param status  the status of the response
      */
     public AgentResponse(ResponseStatus status) {
+        this.type = Response.Type.ERROR;
         this.text = null;
         this.status = status;
+    }
+
+    /**
+     * Get the response type
+     *
+     * @return the response type
+     */
+    public Response.Type getType() {
+        return type;
     }
 
     /**

@@ -27,12 +27,9 @@ import edu.jhuapl.dorset.Response;
  */
 @XmlRootElement
 public class WebResponse {
-    private String text;
-
-    /**
-     * Empty constructor required by Jersey
-     */
-    public WebResponse() {}
+    protected final String type;
+    // see Response.Type for the supported type strings
+    protected final String text;
 
     /**
      * Create a web response
@@ -40,16 +37,28 @@ public class WebResponse {
      * @param resp  the response from the Dorset application
      */
     public WebResponse(Response resp) {
+        this.type = resp.getType().getValue();
         this.text = resp.getText();
     }
 
     /**
      * Create a web response
      *
-     * @param text  the text of the response
+     * @param type  the response type
+     * @param text  the response text
      */
-    public WebResponse(String text) {
+    public WebResponse(String type, String text) {
+        this.type = type;
         this.text = text;
+    }
+
+    /**
+     * Get the response type
+     *
+     * @return the response type
+     */
+    public String getType() {
+        return type;
     }
 
     /**
@@ -59,14 +68,5 @@ public class WebResponse {
      */
     public String getText() {
         return text;
-    }
-
-    /**
-     * Set the text of the response
-     *
-     * @param text  the text of the response
-     */
-    public void setText(String text) {
-        this.text = text;
     }
 }
