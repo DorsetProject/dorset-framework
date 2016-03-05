@@ -19,6 +19,7 @@ package edu.jhuapl.dorset.routing;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.jhuapl.dorset.Request;
@@ -49,6 +50,58 @@ public class KeywordRouterTest {
         Agent agents2[] = router.route(new Request("Post this on twitter"));
         Agent expected2[] = new Agent[]{agent2};
         assertArrayEquals(expected2, agents2);
+    }
+
+    @Test
+    public void testRoutingWithNoMatch() {
+        Agent agent1 = mock(Agent.class);
+        MultiValuedMap params1 = new MultiValuedMap();
+        params1.addString(KeywordRouter.KEYWORDS, "time");
+        params1.addString(KeywordRouter.KEYWORDS, "date");
+        Router router = new KeywordRouter(RouterAgentConfig.create().add(agent1, params1));
+
+        Agent agents[] = router.route(new Request("What is the temperature"));
+        Agent expected[] = new Agent[]{};
+        assertArrayEquals(expected, agents);
+    }
+
+    @Test
+    public void testRoutingWithMatchSameAgentTwice() {
+        Agent agent = mock(Agent.class);
+        MultiValuedMap params = new MultiValuedMap();
+        params.addString(KeywordRouter.KEYWORDS, "time");
+        params.addString(KeywordRouter.KEYWORDS, "date");
+        Router router = new KeywordRouter(RouterAgentConfig.create().add(agent, params));
+
+        Agent agents[] = router.route(new Request("What is the time and date"));
+        Agent expected[] = new Agent[]{agent};
+        assertArrayEquals(expected, agents);
+    }
+
+    @Test
+    public void testRoutingWithSubwordMatch() {
+        Agent agent = mock(Agent.class);
+        MultiValuedMap params = new MultiValuedMap();
+        params.addString(KeywordRouter.KEYWORDS, "time");
+        params.addString(KeywordRouter.KEYWORDS, "date");
+        Router router = new KeywordRouter(RouterAgentConfig.create().add(agent, params));
+
+        Agent agents[] = router.route(new Request("Do you have a timer"));
+        Agent expected[] = new Agent[]{};
+        assertArrayEquals(expected, agents);
+    }
+
+    @Ignore
+    public void testRoutingWithPunctuation() {
+        Agent agent = mock(Agent.class);
+        MultiValuedMap params = new MultiValuedMap();
+        params.addString(KeywordRouter.KEYWORDS, "time");
+        params.addString(KeywordRouter.KEYWORDS, "date");
+        Router router = new KeywordRouter(RouterAgentConfig.create().add(agent, params));
+
+        Agent agents[] = router.route(new Request("Do you have the time?"));
+        Agent expected[] = new Agent[]{agent};
+        assertArrayEquals(expected, agents);
     }
 
 }

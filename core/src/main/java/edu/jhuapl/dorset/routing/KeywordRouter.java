@@ -16,9 +16,9 @@
  */
 package edu.jhuapl.dorset.routing;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
@@ -70,7 +70,7 @@ public class KeywordRouter implements Router {
             return new Agent[0];
         }
 
-        ArrayList<Agent> agents = new ArrayList<Agent>();
+        Set<Agent> agents = new HashSet<Agent>();
         for (String token : tokens) {
             if (agentMap.containsKey(token)) {
                 agents.add(agentMap.get(token));
