@@ -24,7 +24,7 @@ import org.junit.Test;
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
 
-public class ChainRouterTest {
+public class ChainedRouterTest {
 
     @Test
     public void testRouteWithFirstEmptyResponse() {
@@ -35,7 +35,7 @@ public class ChainRouterTest {
         Request request = mock(Request.class);
         when(r1.route(request)).thenReturn(new Agent[0]);
         when(r2.route(request)).thenReturn(resp);
-        Router router = new ChainRouter(r1, r2);
+        Router router = new ChainedRouter(r1, r2);
 
         assertArrayEquals(resp, router.route(request));
     }
@@ -51,7 +51,7 @@ public class ChainRouterTest {
         Request request = mock(Request.class);
         when(r1.route(request)).thenReturn(resp1);
         when(r2.route(request)).thenReturn(resp2);
-        Router router = new ChainRouter(r1, r2);
+        Router router = new ChainedRouter(r1, r2);
 
         assertArrayEquals(resp1, router.route(request));
     }

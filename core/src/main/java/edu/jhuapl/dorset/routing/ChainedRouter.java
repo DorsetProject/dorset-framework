@@ -28,7 +28,7 @@ import edu.jhuapl.dorset.agent.Agent;
  * The routing precedes in the order that the routers are passed to the
  * constructor and stops with the first router to return agents.
  */
-public class ChainRouter implements Router {
+public class ChainedRouter implements Router {
     private Router[] routers;
 
     /**
@@ -36,7 +36,7 @@ public class ChainRouter implements Router {
      *
      * @param routers  the routers to use
      */
-    public ChainRouter(Router... routers) {
+    public ChainedRouter(Router... routers) {
         this.routers = Arrays.copyOf(routers, routers.length);
     }
 
