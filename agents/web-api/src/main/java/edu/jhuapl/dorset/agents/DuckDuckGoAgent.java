@@ -34,7 +34,7 @@ import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.Description;
 import edu.jhuapl.dorset.http.HttpClient;
-import edu.jhuapl.dorset.nlp.BasicTokenizer;
+import edu.jhuapl.dorset.nlp.WhiteSpaceTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
 
 /**
@@ -101,7 +101,7 @@ public class DuckDuckGoAgent extends AbstractAgent {
      * Iterate over the words until we think we get to the name of the entity
      */
     protected String extractEntity(String sentence) {
-        Tokenizer tokenizer = new BasicTokenizer();
+        Tokenizer tokenizer = new WhiteSpaceTokenizer();
         String[] words = tokenizer.tokenize(sentence);
         int index = 0;
         for (index = 0; index < words.length; index++) {

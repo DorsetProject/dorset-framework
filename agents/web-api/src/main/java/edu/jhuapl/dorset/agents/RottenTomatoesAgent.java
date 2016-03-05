@@ -29,7 +29,7 @@ import edu.jhuapl.dorset.agent.AgentRequest;
 import edu.jhuapl.dorset.agent.AgentResponse;
 import edu.jhuapl.dorset.agent.Description;
 import edu.jhuapl.dorset.http.HttpClient;
-import edu.jhuapl.dorset.nlp.BasicTokenizer;
+import edu.jhuapl.dorset.nlp.WhiteSpaceTokenizer;
 
 public class RottenTomatoesAgent extends AbstractAgent {
     private final Logger logger = LoggerFactory.getLogger(RottenTomatoesAgent.class);
@@ -96,7 +96,7 @@ public class RottenTomatoesAgent extends AbstractAgent {
 
     protected String findMovieTitle(String agentRequest) {
 
-        BasicTokenizer bt = new BasicTokenizer();
+        WhiteSpaceTokenizer bt = new WhiteSpaceTokenizer();
         String movieTitle = "";
         boolean filmFlag = false;
 

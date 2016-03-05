@@ -22,7 +22,7 @@ import java.util.Set;
 
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.nlp.BasicTokenizer;
+import edu.jhuapl.dorset.nlp.WhiteSpaceTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
 
 /**
@@ -49,7 +49,7 @@ public class KeywordRouter implements Router {
     public KeywordRouter(RouterAgentConfig agentsConfig) {
         agentMap = new HashMap<String, Agent>();
         agents = new HashSet<Agent>();
-        tokenizer = new BasicTokenizer();
+        tokenizer = new WhiteSpaceTokenizer();
         for (RouterAgentConfigEntry entry : agentsConfig) {
             String[] keywords = entry.getParams().getStrings(KEYWORDS);
             if (keywords == null) {
