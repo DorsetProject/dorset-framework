@@ -42,7 +42,7 @@ public class WakeupRequestFilter implements RequestFilter {
     public Request filterRequest(Request request) {
         // TODO Auto-generated method stub
         if (this.wakeupWord != null) {
-            this.req = new Request(request.getText().replace(this.wakeupWord, ""));
+            this.req = new Request(request.getText().replace(this.wakeupWord, "").trim());
         } else {
             this.req = request;
         }

@@ -28,7 +28,7 @@ public class WakeupRequestFilterTest {
     @Test
     public void wakeupFilter() {
         String strRequest = "Dorset 2 + 2";
-        String strFilteredRequest = " 2 + 2";
+        String strFilteredRequest = "2 + 2";
 
         RequestFilter requestFilter = new WakeupRequestFilter("Dorset");
 
