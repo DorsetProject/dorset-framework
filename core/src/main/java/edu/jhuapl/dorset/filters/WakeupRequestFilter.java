@@ -19,6 +19,16 @@ package edu.jhuapl.dorset.filters;
 
 import edu.jhuapl.dorset.Request;
 
+/**
+ * Wakeup Request Filter
+ *
+ * The Wake-up Request Filter allows you to alter the 
+ * Request object before it goes through an Agent to be 
+ * processed. It removes the wake-up word from the Request 
+ * text before passing the Request to an Agent.
+ * 
+ */
+
 public class WakeupRequestFilter implements RequestFilter {
     protected String wakeupWord;
     protected Request req;
@@ -32,7 +42,7 @@ public class WakeupRequestFilter implements RequestFilter {
     public Request filterRequest(Request request) {
         // TODO Auto-generated method stub
         if (this.wakeupWord != null) {
-            this.req = new Request(request.getText().replace(this.wakeupWord,""));
+            this.req = new Request(request.getText().replace(this.wakeupWord, ""));
         } else {
             this.req = request;
         }

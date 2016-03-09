@@ -22,6 +22,12 @@ import edu.jhuapl.dorset.Response;
 /**
  * Dorset Response Filter
  *
+ * The Response Filter allows you to alter the 
+ * Response object after it is processed by an 
+ * Agent. Filters can be used to increase 
+ * AgentResponse success and also be used to 
+ * further personalize your Dorset application.  
+ * 
  */
 public interface ResponseFilter {
 

@@ -26,7 +26,7 @@ import edu.jhuapl.dorset.Request;
 public class WakeupRequestFilterTest {
 
     @Test
-    public void wakeupFilterSimple() {
+    public void wakeupFilter() {
         String strRequest = "Dorset 2 + 2";
         String strFilteredRequest = " 2 + 2";
 
