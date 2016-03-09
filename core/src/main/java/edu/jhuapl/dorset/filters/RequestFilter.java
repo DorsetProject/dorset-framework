@@ -23,7 +23,7 @@ import edu.jhuapl.dorset.Request;
  * Dorset Request Filter
  *
  * The Request Filter allows you to alter the 
- * Request object before it goes through an 
+ * Request text before it goes through an 
  * Agent to be processed. Filters can be used 
  * to increase AgentResponse success and also
  * be used to further personalize your Dorset 
@@ -36,8 +36,8 @@ public interface RequestFilter {
      * Filter the request object
      *
      * @param request unfiltered request object
-     * @return Request filtered request object
+     * @return String filtered request text
      */
-    public Request filterRequest(Request request);
+    public String filterRequest(Request request);
 
 }

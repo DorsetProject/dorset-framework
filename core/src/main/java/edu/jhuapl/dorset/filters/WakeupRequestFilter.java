@@ -31,7 +31,7 @@ import edu.jhuapl.dorset.Request;
 
 public class WakeupRequestFilter implements RequestFilter {
     protected String wakeupWord;
-    protected Request req;
+    protected String requestText;
     
     public WakeupRequestFilter(String wakeupWord) {
         this.wakeupWord = wakeupWord;
@@ -39,14 +39,14 @@ public class WakeupRequestFilter implements RequestFilter {
     }
 
     @Override
-    public Request filterRequest(Request request) {
+    public String filterRequest(Request request) {
         // TODO Auto-generated method stub
         if (this.wakeupWord != null) {
-            this.req = new Request(request.getText().replace(this.wakeupWord, "").trim());
+            this.requestText = request.getText().replace(this.wakeupWord, "").trim();
         } else {
-            this.req = request;
+            this.requestText = request.getText();
         }
-        return req;
+        return requestText;
     }
 
 }
