@@ -36,7 +36,6 @@ public interface RequestFilter {
      * Filter the request object
      *
      * @param request unfiltered request object
-     * @return String filtered request text
      */
     public void filterRequest(Request request);
 
