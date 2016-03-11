@@ -33,7 +33,7 @@ public class WakeupRequestFilterTest {
         RequestFilter requestFilter = new WakeupRequestFilter("Dorset");
 
         Request request = new Request(strRequest);
-        request.setText(requestFilter.filterRequest(request));
+        requestFilter.filterRequest(request);
         assertEquals(strFilteredRequest, request.getText());
     }
 
@@ -44,7 +44,7 @@ public class WakeupRequestFilterTest {
         RequestFilter requestFilter = new WakeupRequestFilter(null);
         
         Request request = new Request(strRequest);
-        request.setText(requestFilter.filterRequest(request));
+        requestFilter.filterRequest(request);
         assertEquals(strRequest, request.getText());
 
     }

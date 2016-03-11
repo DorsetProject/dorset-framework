@@ -30,23 +30,18 @@ import edu.jhuapl.dorset.Request;
  */
 
 public class WakeupRequestFilter implements RequestFilter {
-    protected String wakeupWord;
-    protected String requestText;
+    private String wakeupWord;
     
     public WakeupRequestFilter(String wakeupWord) {
         this.wakeupWord = wakeupWord;
-
     }
 
     @Override
-    public String filterRequest(Request request) {
+    public void filterRequest(Request request) {
         // TODO Auto-generated method stub
         if (this.wakeupWord != null) {
-            this.requestText = request.getText().replace(this.wakeupWord, "").trim();
-        } else {
-            this.requestText = request.getText();
+            request.setText(request.getText().replace(this.wakeupWord, "").trim());
         }
-        return requestText;
     }
 
 }

@@ -38,6 +38,6 @@ public interface RequestFilter {
      * @param request unfiltered request object
      * @return String filtered request text
      */
-    public String filterRequest(Request request);
+    public void filterRequest(Request request);
 
 }
