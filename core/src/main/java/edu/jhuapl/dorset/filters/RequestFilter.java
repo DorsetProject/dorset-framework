@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.jhuapl.dorset.filters;
 
 import edu.jhuapl.dorset.Request;
@@ -22,21 +21,17 @@ import edu.jhuapl.dorset.Request;
 /**
  * Dorset Request Filter
  *
- * The Request Filter allows you to alter the 
- * Request text before it goes through an 
- * Agent to be processed. Filters can be used 
- * to increase AgentResponse success and also
- * be used to further personalize your Dorset 
- * application.  
- * 
+ * A RequestFilter alters the Request object before it is sent to the router.
+ * An example of a RequestFilter is removing a wake-up word from the request text.
  */
 public interface RequestFilter {
 
     /**
      * Filter the request object
      *
-     * @param request unfiltered request object
+     * @param request  current request object
+     * @return filtered request object
      */
-    public void filterRequest(Request request);
+    public Request filter(Request request);
 
 }

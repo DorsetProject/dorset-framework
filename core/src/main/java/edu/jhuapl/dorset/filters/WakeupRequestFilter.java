@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.jhuapl.dorset.filters;
 
 import edu.jhuapl.dorset.Request;
@@ -22,13 +21,9 @@ import edu.jhuapl.dorset.Request;
 /**
  * Wakeup Request Filter
  *
- * The Wake-up Request Filter allows you to alter the 
- * Request object before it goes through an Agent to be 
- * processed. It removes the wake-up word from the Request 
- * text before passing the Request to an Agent.
- * 
+ * This filter removes a wake-up word from the Request text.
+ * A wake-up word is commonly used for speech to text systems that are always listening.
  */
-
 public class WakeupRequestFilter implements RequestFilter {
     private String wakeupWord;
     
@@ -37,11 +32,11 @@ public class WakeupRequestFilter implements RequestFilter {
     }
 
     @Override
-    public void filterRequest(Request request) {
-        // TODO Auto-generated method stub
+    public Request filter(Request request) {
         if (this.wakeupWord != null) {
             request.setText(request.getText().replace(this.wakeupWord, "").trim());
         }
+        return request;
     }
 
 }

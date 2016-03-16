@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.jhuapl.dorset.filters;
 
 import edu.jhuapl.dorset.Response;
@@ -22,21 +21,17 @@ import edu.jhuapl.dorset.Response;
 /**
  * Dorset Response Filter
  *
- * The Response Filter allows you to alter the 
- * Response object after it is processed by an 
- * Agent. Filters can be used to increase 
- * AgentResponse success and also be used to 
- * further personalize your Dorset application.  
- * 
+ * A ResponseFilter alters the Response object before it is returned by the application.
+ * A ResponseFilter example is changing error message text to create a consistent personality.
  */
 public interface ResponseFilter {
 
     /**
      * Filter the response object
      *
-     * @param response unfiltered response object
-     * @return Response filtered response object
+     * @param response  current response object
+     * @return filtered response object
      */
-    public Response filterResponse(Response repsonse);
+    public Response filter(Response repsonse);
 
 }

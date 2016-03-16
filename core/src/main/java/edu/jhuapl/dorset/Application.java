@@ -16,6 +16,9 @@
  */
 package edu.jhuapl.dorset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,8 @@ import edu.jhuapl.dorset.ResponseStatus.Code;
 import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
+import edu.jhuapl.dorset.filters.RequestFilter;
+import edu.jhuapl.dorset.filters.ResponseFilter;
 import edu.jhuapl.dorset.reporting.NullReporter;
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.Reporter;
@@ -57,6 +62,8 @@ public class Application {
     protected Agent[] agents;
     protected Router router;
     protected Reporter reporter;
+    protected List<RequestFilter> requestFilters;
+    protected List<ResponseFilter> responseFilters;
 
     /**
      * Create a Dorset application
@@ -79,6 +86,8 @@ public class Application {
         this.router = router;
         this.reporter = reporter;
         this.agents = router.getAgents();
+        this.requestFilters = new ArrayList<RequestFilter>();
+        this.responseFilters = new ArrayList<ResponseFilter>();
     }
 
     /**
@@ -91,6 +100,24 @@ public class Application {
     }
 
     /**
+     * Add a request filter
+     *
+     * @param filter  a RequestFilter
+     */
+    public void addRequestFilter(RequestFilter filter) {
+        requestFilters.add(filter);
+    }
+
+    /**
+     * Add a response filter
+     *
+     * @param filter  a ResponseFilter
+     */
+    public void addResponseFilter(ResponseFilter filter) {
+        responseFilters.add(filter);
+    }
+
+    /**
      * Process a request
      *
      * @param request  Request object
@@ -98,6 +125,9 @@ public class Application {
      */
     public Response process(Request request) {
         logger.info("Processing request: " + request.getText());
+        for (RequestFilter rf : requestFilters) {
+            request = rf.filter(request);
+        }
         Response response = new Response(new ResponseStatus(Code.NO_AVAILABLE_AGENT));
         Report report = new Report(request);
 

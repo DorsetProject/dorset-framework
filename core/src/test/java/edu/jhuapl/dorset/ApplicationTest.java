@@ -17,6 +17,8 @@
 package edu.jhuapl.dorset;
 
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -24,7 +26,10 @@ import static org.mockito.Mockito.*;
 import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
+import edu.jhuapl.dorset.filters.RequestFilter;
+import edu.jhuapl.dorset.filters.WakeupRequestFilter;
 import edu.jhuapl.dorset.routing.Router;
+import edu.jhuapl.dorset.routing.SingleAgentRouter;
 
 public class ApplicationTest {
     @Test
@@ -73,6 +78,27 @@ public class ApplicationTest {
 
         assertFalse(response.isSuccess());
         assertEquals(ResponseStatus.Code.NO_RESPONSE_FROM_AGENT, response.getStatus().getCode());
+    }
+
+    @Test
+    public void testAddingRequestFilter() {
+        RequestFilter filter = new WakeupRequestFilter("Dorset");
+        Agent agent = mock(Agent.class);
+        when(agent.process((AgentRequest)anyObject())).thenAnswer(new Answer<AgentResponse>() {
+            @Override
+            public AgentResponse answer(InvocationOnMock invocation) {
+                Object[] args = invocation.getArguments();
+                return new AgentResponse(((AgentRequest)args[0]).getText());
+            }
+        });
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        app.addRequestFilter(filter);
+
+        Request request = new Request("Dorset test");
+        Response response = app.process(request);
+
+        assertEquals("test", response.getText());
     }
 
 }
