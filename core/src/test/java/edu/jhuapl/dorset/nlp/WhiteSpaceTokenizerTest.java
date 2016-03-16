@@ -16,16 +16,22 @@
  */
 package edu.jhuapl.dorset.nlp;
 
-/**
- * Tokenizes a string using white space as a delimiter
- * <p>
- * Does not remove punctuation.
- */
-public class BasicTokenizer implements Tokenizer {
+import static org.junit.Assert.*;
 
-    @Override
-    public String[] tokenize(String text) {
-        return text.split("\\s+");
+import org.junit.Test;
+
+public class WhiteSpaceTokenizerTest {
+
+    @Test
+    public void testTokenize() {
+        String testString = "Today is the first day of the rest of your life.";
+        Tokenizer tokenizer = new WhiteSpaceTokenizer();
+        
+        String[] tokens = tokenizer.tokenize(testString);
+        
+        assertEquals("Today", tokens[0]);
+        assertEquals("rest", tokens[7]);
+        assertEquals("life.", tokens[10]);
     }
 
 }
