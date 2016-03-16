@@ -36,6 +36,18 @@ public class RuleBasedTokenizerTest {
     }
 
     @Test
+    public void testTokenizeWithoutPunctuation() {
+        String testString = "George, an athlete, ran a marathon yesterday.";
+        Tokenizer tokenizer = new RuleBasedTokenizer(false);
+
+        String[] tokens = tokenizer.tokenize(testString);
+
+        assertEquals(7, tokens.length);
+        assertEquals("an", tokens[1]);
+        assertEquals("ran", tokens[3]);
+    }
+
+    @Test
     public void testTokenizeWithContraction() {
         String testString = "I can't believe this";
         Tokenizer tokenizer = new RuleBasedTokenizer();
