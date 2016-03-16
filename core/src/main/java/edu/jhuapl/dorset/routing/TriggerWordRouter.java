@@ -21,7 +21,7 @@ import java.util.HashSet;
 
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.nlp.WhiteSpaceTokenizer;
+import edu.jhuapl.dorset.nlp.RuleBasedTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
 
 /**
@@ -45,7 +45,7 @@ public class TriggerWordRouter implements Router {
     public TriggerWordRouter(RouterAgentConfig agentsConfig) {
         agentMap = new HashMap<String, Agent>();
         agents = new HashSet<Agent>();
-        tokenizer = new WhiteSpaceTokenizer();
+        tokenizer = new RuleBasedTokenizer();
         for (RouterAgentConfigEntry entry : agentsConfig) {
             String[] triggers = entry.getParams().getStrings(TRIGGERS);
             if (triggers == null) {

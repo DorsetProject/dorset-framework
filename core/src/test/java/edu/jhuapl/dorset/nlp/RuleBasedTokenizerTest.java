@@ -38,7 +38,7 @@ public class RuleBasedTokenizerTest {
     @Test
     public void testTokenizeWithoutPunctuation() {
         String testString = "George, an athlete, ran a marathon yesterday.";
-        Tokenizer tokenizer = new RuleBasedTokenizer(false);
+        Tokenizer tokenizer = new RuleBasedTokenizer(true);
 
         String[] tokens = tokenizer.tokenize(testString);
 

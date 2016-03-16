@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Does not handle email addresses, URLs, or acronyms.
  */
 public class RuleBasedTokenizer implements Tokenizer {
-    private boolean keepPunctuation;
+    private boolean ignorePunctuation;
 
     /**
      * Create a rule based tokenizer
@@ -35,16 +35,16 @@ public class RuleBasedTokenizer implements Tokenizer {
      * By default, return punctuation only tokens 
      */
     public RuleBasedTokenizer() {
-        this(true);
+        this(false);
     }
 
     /**
      * Create a rule based tokenizer
      *
-     * @param keepPunctuation  should this return punctuation only tokens
+     * @param ignorePunctuation  should the tokenizer ignore punctuation only tokens
      */
-    public RuleBasedTokenizer(boolean keepPunctuation) {
-        this.keepPunctuation = keepPunctuation;
+    public RuleBasedTokenizer(boolean ignorePunctuation) {
+        this.ignorePunctuation = ignorePunctuation;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class RuleBasedTokenizer implements Tokenizer {
             if (!Character.isLetterOrDigit(currentChar)) {
                 tokens.add(sb.toString());
                 sb.setLength(0);
-                if (keepPunctuation) {
+                if (!ignorePunctuation) {
                     tokens.add(String.valueOf(currentChar));
                 }
                 continue;                
