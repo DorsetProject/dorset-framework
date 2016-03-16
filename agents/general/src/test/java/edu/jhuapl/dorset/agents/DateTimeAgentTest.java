@@ -29,8 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.jhuapl.dorset.ResponseStatus;
-import edu.jhuapl.dorset.agent.AgentRequest;
-import edu.jhuapl.dorset.agent.AgentResponse;
+import edu.jhuapl.dorset.agents.AgentRequest;
+import edu.jhuapl.dorset.agents.AgentResponse;
 
 public class DateTimeAgentTest {
 

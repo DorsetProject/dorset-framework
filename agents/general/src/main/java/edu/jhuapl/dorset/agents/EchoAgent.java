@@ -19,10 +19,10 @@ package edu.jhuapl.dorset.agents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.jhuapl.dorset.agent.AbstractAgent;
-import edu.jhuapl.dorset.agent.AgentRequest;
-import edu.jhuapl.dorset.agent.AgentResponse;
-import edu.jhuapl.dorset.agent.Description;
+import edu.jhuapl.dorset.agents.AbstractAgent;
+import edu.jhuapl.dorset.agents.AgentRequest;
+import edu.jhuapl.dorset.agents.AgentResponse;
+import edu.jhuapl.dorset.agents.Description;
 
 /**
  * Echoes back the text that it receives

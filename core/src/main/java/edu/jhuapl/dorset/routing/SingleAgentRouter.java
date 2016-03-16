@@ -17,7 +17,7 @@
 package edu.jhuapl.dorset.routing;
 
 import edu.jhuapl.dorset.Request;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 
 /**
  * Routes all requests to a single agent

@@ -16,7 +16,7 @@
  */
 package edu.jhuapl.dorset;
 
-import edu.jhuapl.dorset.agent.AgentResponse;
+import edu.jhuapl.dorset.agents.AgentResponse;
 
 /**
  * Dorset Response

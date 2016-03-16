@@ -20,7 +20,7 @@ import java.util.Date;
 
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.Response;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 
 /**
  * A report of handling a request

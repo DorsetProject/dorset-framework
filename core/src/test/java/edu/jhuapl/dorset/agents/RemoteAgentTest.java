@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset.agent;
+package edu.jhuapl.dorset.agents;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -22,6 +22,9 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 import edu.jhuapl.dorset.ResponseStatus;
+import edu.jhuapl.dorset.agents.AgentRequest;
+import edu.jhuapl.dorset.agents.AgentResponse;
+import edu.jhuapl.dorset.agents.RemoteAgent;
 import edu.jhuapl.dorset.http.HttpClient;
 
 public class RemoteAgentTest {

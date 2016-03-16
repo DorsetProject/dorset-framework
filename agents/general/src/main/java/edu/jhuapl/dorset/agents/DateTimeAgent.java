@@ -17,10 +17,10 @@
 package edu.jhuapl.dorset.agents;
 
 import edu.jhuapl.dorset.ResponseStatus;
-import edu.jhuapl.dorset.agent.AbstractAgent;
-import edu.jhuapl.dorset.agent.AgentRequest;
-import edu.jhuapl.dorset.agent.AgentResponse;
-import edu.jhuapl.dorset.agent.Description;
+import edu.jhuapl.dorset.agents.AbstractAgent;
+import edu.jhuapl.dorset.agents.AgentRequest;
+import edu.jhuapl.dorset.agents.AgentResponse;
+import edu.jhuapl.dorset.agents.Description;
 
 import java.util.Calendar;
 import java.util.Date;

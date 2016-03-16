@@ -37,7 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.jhuapl.dorset.Request;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.Reporter;
 import edu.jhuapl.dorset.reporting.SqlReporter;

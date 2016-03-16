@@ -21,7 +21,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import edu.jhuapl.dorset.Request;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 
 public class SingleAgentRouterTest {
     @Test

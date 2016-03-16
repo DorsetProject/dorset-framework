@@ -16,7 +16,7 @@
  */
 package edu.jhuapl.dorset.routing;
 
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.config.MultiValuedMap;
 
 public class RouterAgentConfigEntry {

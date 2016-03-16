@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import edu.jhuapl.dorset.Request;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.nlp.RuleBasedTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
 

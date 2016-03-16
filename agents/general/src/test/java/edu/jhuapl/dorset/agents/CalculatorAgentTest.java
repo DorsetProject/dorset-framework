@@ -20,9 +20,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.agent.AgentRequest;
-import edu.jhuapl.dorset.agent.AgentResponse;
+import edu.jhuapl.dorset.agents.Agent;
+import edu.jhuapl.dorset.agents.AgentRequest;
+import edu.jhuapl.dorset.agents.AgentResponse;
 
 public class CalculatorAgentTest {
 

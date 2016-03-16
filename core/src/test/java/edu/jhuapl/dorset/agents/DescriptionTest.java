@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset.agent;
+package edu.jhuapl.dorset.agents;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import edu.jhuapl.dorset.agents.Description;
 
 public class DescriptionTest {
 

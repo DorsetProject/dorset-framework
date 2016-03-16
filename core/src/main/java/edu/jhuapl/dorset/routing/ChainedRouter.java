@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import edu.jhuapl.dorset.Request;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 
 /**
  * Chain routers together

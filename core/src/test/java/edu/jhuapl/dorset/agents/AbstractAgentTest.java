@@ -14,11 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.jhuapl.dorset.agent;
+package edu.jhuapl.dorset.agents;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import edu.jhuapl.dorset.agents.AbstractAgent;
+import edu.jhuapl.dorset.agents.Agent;
+import edu.jhuapl.dorset.agents.AgentRequest;
+import edu.jhuapl.dorset.agents.AgentResponse;
 
 public class AbstractAgentTest {
 
@@ -32,7 +37,7 @@ public class AbstractAgentTest {
     @Test
     public void testDefaultDescription() {
         Agent agent = new TestAgent();
-        assertEquals("edu.jhuapl.dorset.agent.abstractagenttest.testagent", agent.getName());
+        assertEquals("edu.jhuapl.dorset.agents.abstractagenttest.testagent", agent.getName());
     }
 
 }

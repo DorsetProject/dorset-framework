@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 
 import edu.jhuapl.dorset.Request;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.config.MultiValuedMap;
 
 public class TriggerWordRouterTest {

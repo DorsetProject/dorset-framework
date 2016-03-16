@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 import edu.jhuapl.dorset.Request;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 
 public class ChainedRouterTest {
 

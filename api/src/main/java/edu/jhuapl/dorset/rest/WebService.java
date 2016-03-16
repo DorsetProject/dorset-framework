@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 import edu.jhuapl.dorset.Application;
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.Response;
-import edu.jhuapl.dorset.agent.Agent;
-import edu.jhuapl.dorset.agent.Description;
+import edu.jhuapl.dorset.agents.Agent;
+import edu.jhuapl.dorset.agents.Description;
 
 @Path("/")
 public class WebService {

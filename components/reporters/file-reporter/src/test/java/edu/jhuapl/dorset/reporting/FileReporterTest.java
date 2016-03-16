@@ -37,7 +37,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import edu.jhuapl.dorset.Request;
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.reporting.FileReporter;
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.ReportQuery;

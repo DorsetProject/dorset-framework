@@ -19,7 +19,7 @@ package edu.jhuapl.dorset.routing;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import edu.jhuapl.dorset.agent.Agent;
+import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.config.MultiValuedMap;
 
 /**
