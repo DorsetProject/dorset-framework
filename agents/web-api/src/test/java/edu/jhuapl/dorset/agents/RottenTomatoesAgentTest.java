@@ -34,7 +34,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testRuntime() {
-        String jsonData = FileReader.getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -55,7 +55,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testYear() {
-        String jsonData = FileReader.getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -76,7 +76,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testActors() {
-        String jsonData = FileReader.getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -98,7 +98,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testNoKeyword() {
-        String jsonData = FileReader.getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
@@ -119,7 +119,7 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testBadApiKey() {
-        String jsonData = FileReader.getFileAsString("test.json");
+        String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
 
         String movieTitle = "finding%20nemo";
         String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
