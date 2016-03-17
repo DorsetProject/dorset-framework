@@ -165,11 +165,22 @@ public class Response {
 
     /**
      * Enumeration for response types
+     * <p>
+     * The response types are
+     * <ul>
+     * <li>ERROR - an error occurred
+     * <li>TEXT - a simple text response
+     * <li>IMAGE_EMBED - base64 encoded image
+     * <li>IMAGE_URL - URL to an image
+     * <li>JSON - JSON data
+     * </ul>
      */
     public enum Type {
         ERROR("error"),
         TEXT("text"),
-        EMBEDDED_IMAGE("embedded_image");
+        IMAGE_EMBED("image_embed"),
+        IMAGE_URL("image_url"),
+        JSON("json");
 
         private final String type;
         private Type(String type) {
@@ -207,12 +218,10 @@ public class Response {
          * @return true if it uses the payload field
          */
         public static boolean usesPayload(Type type) {
-            switch (type) {
-                case EMBEDDED_IMAGE:
-                    return true;
-                default:
-                    return false;
+            if (type == ERROR || type == TEXT) {
+                return false;
             }
+            return true;
         }
     }
 }

@@ -31,4 +31,11 @@ public class ResponseTest {
         assertNull(Type.fromValue("nonsuch"));
     }
 
+    @Test
+    public void testUsesPayload() {
+        assertFalse(Type.usesPayload(Type.ERROR));
+        assertFalse(Type.usesPayload(Type.TEXT));
+        assertTrue(Type.usesPayload(Type.IMAGE_EMBED));
+    }
+
 }
