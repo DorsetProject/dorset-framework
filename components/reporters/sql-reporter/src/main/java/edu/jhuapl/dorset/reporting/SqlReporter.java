@@ -83,7 +83,7 @@ public class SqlReporter implements Reporter {
         String hql = "from SqlReport where (:ts_start is null or timestamp > :ts_start)" 
                         + " and (:ts_stop is null or timestamp < :ts_stop)";
         if (query.getAgentNames() != null) {
-            hql += " and selectedAgentName in (:agents)";
+            hql += " and agentName in (:agents)";
         }
         return hql;
     }

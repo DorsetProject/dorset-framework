@@ -58,7 +58,7 @@ public class FileReporter implements Reporter {
     private static final Logger logger = LoggerFactory.getLogger(FileReporter.class);
     private static final CsvPreference FORMAT = CsvPreference.EXCEL_PREFERENCE;
     private static final String[] FIELDS = {"timestamp", "requestId", "requestText",
-            "selectedAgentName", "responseText", "responseCode", "routeTime", "agentTime"};
+            "agentName", "responseText", "responseCode", "routeTime", "agentTime"};
     public static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
     // timestamp, request id, request text, and route time are the required fields
     private static final CellProcessor[] WRITE_PROCESSORS = new CellProcessor[] {
@@ -201,10 +201,10 @@ public class FileReporter implements Reporter {
 
         public boolean isAgent(Report report) {
             if (names != null) {
-                if (report.getSelectedAgentName() == null) {
+                if (report.getAgentName() == null) {
                     return false;
                 }
-                if (!names.contains(report.getSelectedAgentName())) {
+                if (!names.contains(report.getAgentName())) {
                     return false;
                 }
             }

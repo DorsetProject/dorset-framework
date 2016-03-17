@@ -31,8 +31,7 @@ public class Report {
     protected Date timestamp;
     protected String requestId;
     protected String requestText;
-    protected String[] agentNames;
-    protected String selectedAgentName;
+    protected String agentName;
     protected String responseText;
     protected int responseCode;
     protected long routeTime;
@@ -56,8 +55,7 @@ public class Report {
         requestText = request.getText();
         routeTime = 0;
         agentTime = 0;
-        agentNames = new String[0];
-        selectedAgentName = "";
+        agentName = "";
         responseText = "";
         responseCode = NO_RESPONSE;
     }
@@ -71,8 +69,7 @@ public class Report {
         timestamp = report.timestamp;
         requestId = report.requestId;
         requestText = report.requestText;
-        agentNames = report.agentNames;
-        selectedAgentName = report.selectedAgentName;
+        agentName = report.agentName;
         responseText = report.responseText;
         responseCode = report.responseCode;
         routeTime = report.routeTime;
@@ -181,24 +178,12 @@ public class Report {
     }
 
     /**
-     * Set the agents the router nominated to handle the request
-     *
-     * @param agents  Array of Agent objects
-     */
-    public void setAgents(Agent[] agents) {
-        agentNames = new String[agents.length];
-        for (int i = 0; i < agents.length; i++) {
-            agentNames[i] = agents[i].getName();
-        }
-    }
-
-    /**
      * Set the agent that handled the request
      *
      * @param agent  Agent object
      */
-    public void setSelectedAgent(Agent agent) {
-        selectedAgentName = agent.getName();
+    public void setAgent(Agent agent) {
+        agentName = agent.getName();
     }
 
     /**
@@ -206,8 +191,8 @@ public class Report {
      *
      * @param name  the name of the agent
      */
-    public void setSelectedAgentName(String name) {
-        selectedAgentName = name;
+    public void setAgentName(String name) {
+        agentName = name;
     }
 
     /**
@@ -215,8 +200,8 @@ public class Report {
      *
      * @return name of the agent
      */
-    public String getSelectedAgentName() {
-        return selectedAgentName;
+    public String getAgentName() {
+        return agentName;
     }
 
     /**

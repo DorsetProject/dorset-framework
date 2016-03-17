@@ -89,7 +89,7 @@ public class SqlReporterTest {
             r.setAgentTime(9876);
             r.setResponse(new Response("2"));
             when(agent.getName()).thenReturn(dateAndAgent[1]);
-            r.setSelectedAgent(agent);
+            r.setAgent(agent);
             r.setTimestamp(df.parse(dateAndAgent[0]));
             reporter.store(r);
         }
@@ -104,7 +104,7 @@ public class SqlReporterTest {
         Report r = new Report(req);
         Date d = new Date();
         r.setTimestamp(d);
-        r.setSelectedAgent(agent);
+        r.setAgent(agent);
         r.setRouteTime(30, 47);
         r.setAgentTime(78, 450000);
         r.setResponse(new Response("yesterday"));
@@ -120,7 +120,7 @@ public class SqlReporterTest {
         ResultSet rs = stmt.executeQuery();
         rs.next();
         assertEquals(d, rs.getTimestamp("timestamp"));
-        assertEquals("date", rs.getString("selectedAgentName"));
+        assertEquals("date", rs.getString("agentName"));
         assertEquals("abcdef", rs.getString("requestId"));
         assertEquals("What is today's date?", rs.getString("requestText"));
         assertEquals("yesterday", rs.getString("responseText"));
@@ -141,7 +141,7 @@ public class SqlReporterTest {
         Report r = new Report(req);
         Date d = new Date();
         r.setTimestamp(d);
-        r.setSelectedAgent(agent);
+        r.setAgent(agent);
         r.setRouteTime(123);
         r.setAgentTime(987654321);
         r.setResponse(new Response("tuesday"));
@@ -155,7 +155,7 @@ public class SqlReporterTest {
         assertEquals(r.getTimestamp(), reports[0].getTimestamp());
         assertEquals(r.getAgentTime(), reports[0].getAgentTime());
         assertEquals(r.getRouteTime(), reports[0].getRouteTime());
-        assertEquals(r.getSelectedAgentName(), reports[0].getSelectedAgentName());
+        assertEquals(r.getAgentName(), reports[0].getAgentName());
     }
 
     @Test

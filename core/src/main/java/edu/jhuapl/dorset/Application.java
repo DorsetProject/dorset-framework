@@ -134,16 +134,15 @@ public class Application {
         long startTime = System.nanoTime();
         Agent[] agents = router.route(request);
         report.setRouteTime(startTime, System.nanoTime());
-        report.setAgents(agents);
         if (agents.length > 0) {
             response = new Response(new ResponseStatus(Code.NO_RESPONSE_FROM_AGENT));
             startTime = System.nanoTime();
             for (Agent agent : agents) {
+                report.setAgent(agent);
                 AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
                 if (agentResponse != null) {
                     // take first answer
                     response = new Response(agentResponse);
-                    report.setSelectedAgent(agent);
                     break;
                 }
             }

@@ -48,7 +48,7 @@ public class FileReporterTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    private String header = "timestamp,requestId,requestText,selectedAgentName,responseText,responseCode,routeTime,agentTime";
+    private String header = "timestamp,requestId,requestText,agentName,responseText,responseCode,routeTime,agentTime";
 
     private int fileCounter = 1;
     private File getTempFile() {
@@ -77,7 +77,7 @@ public class FileReporterTest {
         Agent agent = mock(Agent.class);
         when(agent.getName()).thenReturn("date");
         Report r = new Report(req);
-        r.setSelectedAgent(agent);
+        r.setAgent(agent);
         r.setRouteTime(30, 47);
         r.setAgentTime(78, 450000);
         r.setResponse(new Response("yesterday"));
@@ -109,7 +109,7 @@ public class FileReporterTest {
         assertEquals(1, reports.length);
         assertEquals("abcdef", reports[0].getRequestId());
         assertEquals("Why?", reports[0].getRequestText());
-        assertEquals("all", reports[0].getSelectedAgentName());
+        assertEquals("all", reports[0].getAgentName());
         assertEquals("because", reports[0].getResponseText());
         assertEquals(87, reports[0].getRouteTime());
         assertEquals(123456789, reports[0].getAgentTime());

@@ -11,8 +11,7 @@
     <property name="requestId" column="requestId" length="36" />
     <property name="timestamp" column="timestamp" type="timestamp" />
     <property name="requestText" column="requestText" length="1000" />
-<!-- <property name="agentNames" column="agentNames" /> -->
-    <property name="selectedAgentName" column="selectedAgentName" length="255" />
+    <property name="agentName" column="agentName" length="255" />
     <property name="responseText" column="responseText" length="1000" />
     <property name="responseCode" column="responseCode" />
     <property name="routeTime" column="routeTime" />
