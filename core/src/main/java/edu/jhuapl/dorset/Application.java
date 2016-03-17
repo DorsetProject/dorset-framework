@@ -64,6 +64,7 @@ public class Application {
     protected Reporter reporter;
     protected List<RequestFilter> requestFilters;
     protected List<ResponseFilter> responseFilters;
+    protected List<ShutdownListener> shutdownListeners;
 
     /**
      * Create a Dorset application
@@ -88,6 +89,7 @@ public class Application {
         this.agents = router.getAgents();
         this.requestFilters = new ArrayList<RequestFilter>();
         this.responseFilters = new ArrayList<ResponseFilter>();
+        this.shutdownListeners = new ArrayList<ShutdownListener>();
     }
 
     /**
@@ -115,6 +117,10 @@ public class Application {
      */
     public void addResponseFilter(ResponseFilter filter) {
         responseFilters.add(filter);
+    }
+
+    public void addShutdownListener(ShutdownListener listener) {
+        shutdownListeners.add(listener);
     }
 
     /**
@@ -152,6 +158,15 @@ public class Application {
         reporter.store(report);
 
         return response;
+    }
+
+    /**
+     * Call this when the application is done running
+     */
+    public void shutdown() {
+        for (ShutdownListener listener : shutdownListeners) {
+            listener.shutdown();
+        }
     }
 
 }

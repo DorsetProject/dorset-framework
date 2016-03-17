@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigValue;
 
+import edu.jhuapl.dorset.ShutdownListener;
+
 /**
  * Service to configure the Hibernate session factory
  * <p>
@@ -49,7 +51,7 @@ import com.typesafe.config.ConfigValue;
  * <p>
  * see SqlReporter for an example of a mapping configuration.
  */
-public class HibernateService {
+public class HibernateService implements ShutdownListener {
     private static final String HIBERNATE_KEY = "hibernate";
     private static final String MAPPING_KEY = "hibernate.mapping";
     private final Logger logger = LoggerFactory.getLogger(HibernateService.class);
@@ -97,6 +99,7 @@ public class HibernateService {
      * <p>
      * Must be called before exiting the application
      */
+    @Override
     public void shutdown() {
         logger.info("Shutting down the hibernate service");
         sessionFactory.close();
