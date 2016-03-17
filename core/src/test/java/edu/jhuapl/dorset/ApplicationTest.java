@@ -101,4 +101,15 @@ public class ApplicationTest {
         assertEquals("test", response.getText());
     }
 
+    @Test
+    public void testShutdown() {
+        Router router = mock(Router.class);
+        Application app = new Application(router);
+        ShutdownListener listener = mock(ShutdownListener.class);
+        app.addShutdownListener(listener);
+
+        app.shutdown();
+
+        verify(listener, times(1)).shutdown();
+    }
 }
