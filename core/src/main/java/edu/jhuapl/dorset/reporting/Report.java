@@ -26,12 +26,15 @@ import edu.jhuapl.dorset.agents.Agent;
  * A report of handling a request
  */
 public class Report {
+    public static final int NO_RESPONSE = -1;
+
     protected Date timestamp;
     protected String requestId;
     protected String requestText;
     protected String[] agentNames;
     protected String selectedAgentName;
     protected String responseText;
+    protected int responseCode;
     protected long routeTime;
     protected long agentTime;
 
@@ -56,6 +59,7 @@ public class Report {
         agentNames = new String[0];
         selectedAgentName = "";
         responseText = "";
+        responseCode = NO_RESPONSE;
     }
 
     /**
@@ -70,6 +74,7 @@ public class Report {
         agentNames = report.agentNames;
         selectedAgentName = report.selectedAgentName;
         responseText = report.responseText;
+        responseCode = report.responseCode;
         routeTime = report.routeTime;
         agentTime = report.agentTime;
     }
@@ -220,7 +225,10 @@ public class Report {
      * @param response  Response object
      */
     public void setResponse(Response response) {
-        responseText = response.getText();
+        if (response.getText() != null) {
+            responseText = response.getText();
+        }
+        responseCode = response.getStatus().getCode().getValue();
     }
 
     /**
@@ -239,6 +247,24 @@ public class Report {
      */
     public String getResponseText() {
         return responseText;
+    }
+
+    /**
+     * Set the response code
+     *
+     * @param code  response code
+     */
+    public void setResponseCode(int code) {
+        responseCode = code;
+    }
+
+    /**
+     * Get the response code
+     *
+     * @return response code or -1 if not set
+     */
+    public int getResponseCode() {
+        return responseCode;
     }
 
     /**

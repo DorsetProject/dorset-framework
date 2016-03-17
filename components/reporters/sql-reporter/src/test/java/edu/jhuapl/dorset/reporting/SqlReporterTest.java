@@ -37,6 +37,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.jhuapl.dorset.Request;
+import edu.jhuapl.dorset.Response;
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.Reporter;
@@ -85,7 +87,7 @@ public class SqlReporterTest {
             Report r = new Report(req);
             r.setRouteTime(123);
             r.setAgentTime(9876);
-            r.setResponseText("2");
+            r.setResponse(new Response("2"));
             when(agent.getName()).thenReturn(dateAndAgent[1]);
             r.setSelectedAgent(agent);
             r.setTimestamp(df.parse(dateAndAgent[0]));
@@ -105,7 +107,7 @@ public class SqlReporterTest {
         r.setSelectedAgent(agent);
         r.setRouteTime(30, 47);
         r.setAgentTime(78, 450000);
-        r.setResponseText("yesterday");
+        r.setResponse(new Response("yesterday"));
 
         Reporter reporter = new SqlReporter(sessionFactory);
         reporter.store(r);
@@ -122,6 +124,7 @@ public class SqlReporterTest {
         assertEquals("abcdef", rs.getString("requestId"));
         assertEquals("What is today's date?", rs.getString("requestText"));
         assertEquals("yesterday", rs.getString("responseText"));
+        assertEquals(ResponseStatus.Code.SUCCESS.getValue(), rs.getInt("responseCode"));
         assertEquals(17, rs.getLong("routeTime"));
         assertEquals(449922, rs.getLong("agentTime"));
         assertFalse(rs.next());
@@ -141,7 +144,7 @@ public class SqlReporterTest {
         r.setSelectedAgent(agent);
         r.setRouteTime(123);
         r.setAgentTime(987654321);
-        r.setResponseText("tuesday");
+        r.setResponse(new Response("tuesday"));
         Reporter reporter = new SqlReporter(sessionFactory);
         reporter.store(r);
 

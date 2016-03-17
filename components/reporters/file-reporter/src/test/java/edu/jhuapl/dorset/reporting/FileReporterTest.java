@@ -37,6 +37,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import edu.jhuapl.dorset.Request;
+import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.reporting.FileReporter;
 import edu.jhuapl.dorset.reporting.Report;
@@ -47,7 +48,7 @@ public class FileReporterTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    private String header = "timestamp,requestId,requestText,selectedAgentName,responseText,routeTime,agentTime";
+    private String header = "timestamp,requestId,requestText,selectedAgentName,responseText,responseCode,routeTime,agentTime";
 
     private int fileCounter = 1;
     private File getTempFile() {
@@ -79,12 +80,12 @@ public class FileReporterTest {
         r.setSelectedAgent(agent);
         r.setRouteTime(30, 47);
         r.setAgentTime(78, 450000);
-        r.setResponseText("yesterday");
+        r.setResponse(new Response("yesterday"));
 
         Reporter reporter = new FileReporter(file.toString());
         reporter.store(r);
 
-        String expected = "request-1,What is today's date?,date,yesterday,17,449922";
+        String expected = "request-1,What is today's date?,date,yesterday,0,17,449922";
         List<String> lines = Files.readLines(file, Charsets.UTF_8);
         String actual = lines.get(1);
         // skip timestamp to make check easier
@@ -98,7 +99,7 @@ public class FileReporterTest {
         PrintWriter out = new PrintWriter(file.toString());
         out.println(header);
         DateFormat df = new SimpleDateFormat(FileReporter.ISO_8601);
-        String line = df.format(new Date()) + ",abcdef,Why?,all,because,87,123456789";
+        String line = df.format(new Date()) + ",abcdef,Why?,all,because,0,87,123456789";
         out.println(line);
         out.close();
 
@@ -119,11 +120,11 @@ public class FileReporterTest {
         File file = getTempFile();
         PrintWriter out = new PrintWriter(file.toString());
         out.println(header);
-        out.println("2016-02-02T15:43:34UTC,req-1,Why?,all,because,87,123456789");
-        out.println("2016-02-03T15:43:34UTC,req-2,Why?,all,because,87,123456789");
-        out.println("2016-02-04T15:43:34UTC,req-3,Why?,all,because,87,123456789");
-        out.println("2016-02-05T15:43:34UTC,req-4,Why?,all,because,87,123456789");
-        out.println("2016-02-06T15:43:34UTC,req-5,Why?,all,because,87,123456789");
+        out.println("2016-02-02T15:43:34UTC,req-1,Why?,all,because,0,87,123456789");
+        out.println("2016-02-03T15:43:34UTC,req-2,Why?,all,because,0,87,123456789");
+        out.println("2016-02-04T15:43:34UTC,req-3,Why?,all,because,0,87,123456789");
+        out.println("2016-02-05T15:43:34UTC,req-4,Why?,all,because,0,87,123456789");
+        out.println("2016-02-06T15:43:34UTC,req-5,Why?,all,because,0,87,123456789");
         out.close();
         DateFormat df = new SimpleDateFormat(FileReporter.ISO_8601);
 
@@ -142,11 +143,11 @@ public class FileReporterTest {
         File file = getTempFile();
         PrintWriter out = new PrintWriter(file.toString());
         out.println(header);
-        out.println("2016-02-02T15:43:34UTC,req-1,Why?,all,because,87,123456789");
-        out.println("2016-02-03T15:43:34UTC,req-2,Why?,all,because,87,123456789");
-        out.println("2016-02-04T15:43:34UTC,req-3,Why?,all,because,87,123456789");
-        out.println("2016-02-05T15:43:34UTC,req-4,Why?,all,because,87,123456789");
-        out.println("2016-02-06T15:43:34UTC,req-5,Why?,all,because,87,123456789");
+        out.println("2016-02-02T15:43:34UTC,req-1,Why?,all,because,0,87,123456789");
+        out.println("2016-02-03T15:43:34UTC,req-2,Why?,all,because,0,87,123456789");
+        out.println("2016-02-04T15:43:34UTC,req-3,Why?,all,because,0,87,123456789");
+        out.println("2016-02-05T15:43:34UTC,req-4,Why?,all,because,0,87,123456789");
+        out.println("2016-02-06T15:43:34UTC,req-5,Why?,all,because,0,87,123456789");
         out.close();
         DateFormat df = new SimpleDateFormat(FileReporter.ISO_8601);
 
@@ -166,11 +167,11 @@ public class FileReporterTest {
         File file = getTempFile();
         PrintWriter out = new PrintWriter(file.toString());
         out.println(header);
-        out.println("2016-02-02T15:43:34UTC,req-1,Why?,all,because,87,123456789");
-        out.println("2016-02-03T15:43:34UTC,req-2,Why?,time,because,87,123456789");
-        out.println("2016-02-04T15:43:34UTC,req-3,Why?,date,because,87,123456789");
-        out.println("2016-02-05T15:43:34UTC,req-4,Why?,all,because,87,123456789");
-        out.println("2016-02-06T15:43:34UTC,req-5,Why?,all,because,87,123456789");
+        out.println("2016-02-02T15:43:34UTC,req-1,Why?,all,because,0,87,123456789");
+        out.println("2016-02-03T15:43:34UTC,req-2,Why?,time,because,0,87,123456789");
+        out.println("2016-02-04T15:43:34UTC,req-3,Why?,date,because,0,87,123456789");
+        out.println("2016-02-05T15:43:34UTC,req-4,Why?,all,because,0,87,123456789");
+        out.println("2016-02-06T15:43:34UTC,req-5,Why?,all,because,0,87,123456789");
         out.close();
         DateFormat df = new SimpleDateFormat(FileReporter.ISO_8601);
 
@@ -190,11 +191,11 @@ public class FileReporterTest {
         File file = getTempFile();
         PrintWriter out = new PrintWriter(file.toString());
         out.println(header);
-        out.println("2016-02-02T15:43:34UTC,req-1,Why?,all,because,87,123456789");
-        out.println("2016-02-03T15:43:34UTC,req-2,Why?,time,because,87,123456789");
-        out.println("2016-02-04T15:43:34UTC,req-3,Why?,date,because,87,123456789");
-        out.println("2016-02-05T15:43:34UTC,req-4,Why?,all,because,87,123456789");
-        out.println("2016-02-06T15:43:34UTC,req-5,Why?,all,because,87,123456789");
+        out.println("2016-02-02T15:43:34UTC,req-1,Why?,all,because,0,87,123456789");
+        out.println("2016-02-03T15:43:34UTC,req-2,Why?,time,because,0,87,123456789");
+        out.println("2016-02-04T15:43:34UTC,req-3,Why?,date,because,0,87,123456789");
+        out.println("2016-02-05T15:43:34UTC,req-4,Why?,all,because,0,87,123456789");
+        out.println("2016-02-06T15:43:34UTC,req-5,Why?,all,because,0,87,123456789");
         out.close();
         DateFormat df = new SimpleDateFormat(FileReporter.ISO_8601);
 
