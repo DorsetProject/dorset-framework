@@ -40,8 +40,7 @@ public class AliasRequestFilter implements RequestFilter {
             this.patternAliasMap = new HashMap<Pattern, String>();
             for (Map.Entry<String, String> entry : this.aliasMap.entrySet()) {
                 String regex = "\\b" + entry.getKey() + "\\b";
-                Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-                this.patternAliasMap.put(p, entry.getValue());
+                this.patternAliasMap.put(Pattern.compile(regex, Pattern.CASE_INSENSITIVE), entry.getValue());
             }
         }
     }
