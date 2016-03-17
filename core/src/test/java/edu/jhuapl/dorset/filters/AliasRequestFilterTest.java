@@ -17,8 +17,7 @@ public class AliasRequestFilterTest {
         String strFilteredRequest = "What is the runtime for the movie Finding Nemo?";
 
         Map<String, String> aliasMap = new HashMap<String, String>();
-
-        aliasMap.put("movie", "film");
+        aliasMap.put("film", "movie");
 
         RequestFilter requestFilter = new AliasRequestFilter(aliasMap);
 
@@ -34,14 +33,14 @@ public class AliasRequestFilterTest {
         String strFilteredRequest = "What is the runtime for the movie Finding Nemo?";
 
         Map<String, String> aliasMap = new HashMap<String, String>();
-
-        aliasMap.put("movie", "film");
-        aliasMap.put("runtime", "total time");
+        aliasMap.put("film", "movie");
+        aliasMap.put("total time", "runtime");
 
         RequestFilter requestFilter = new AliasRequestFilter(aliasMap);
 
         Request request = new Request(strRequest);
         request = requestFilter.filter(request);
+
         assertEquals(strFilteredRequest, request.getText());
 
     }
@@ -59,4 +58,21 @@ public class AliasRequestFilterTest {
         assertEquals(strRequest, request.getText());
 
     }
+
+    @Test
+    public void AliasRequestFilterRegex() {
+        String strRequest = "Is the film \"Abe Lincoln: Vampire Slayer\" playing in Va?";
+        String strFilteredRequest = "Is the film \"Abe Lincoln: Vampire Slayer\" playing in Virginia?";
+
+        Map<String, String> aliasMap = new HashMap<String, String>();
+        aliasMap.put("Va", "Virginia");
+
+        RequestFilter requestFilter = new AliasRequestFilter(aliasMap);
+
+        Request request = new Request(strRequest);
+        request = requestFilter.filter(request);
+        assertEquals(strFilteredRequest, request.getText());
+
+    }
+
 }

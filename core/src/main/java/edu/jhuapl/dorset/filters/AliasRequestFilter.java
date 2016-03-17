@@ -16,30 +16,43 @@
  */
 package edu.jhuapl.dorset.filters;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import edu.jhuapl.dorset.Request;
 
 public class AliasRequestFilter implements RequestFilter {
     private Map<String, String> aliasMap;
+    private Map<Pattern, String> patternAliasMap;
 
     /**
      * Alias Request Filter
-     *     
-     * Each map key will act as an alias and replace its 
-     * corresponding value in the Response text.
+     * 
+     * Each map key will be replaced by its corresponding value. This value will
+     * act as an alias in the Response text.
      * 
      */
     public AliasRequestFilter(Map<String, String> aliasMap) {
         this.aliasMap = aliasMap;
+        if (this.aliasMap != null) {
+            this.patternAliasMap = new HashMap<Pattern, String>();
+            for (Map.Entry<String, String> entry : this.aliasMap.entrySet()) {
+                String regex = "\\b" + entry.getKey() + "\\b";
+                Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+                this.patternAliasMap.put(p, entry.getValue());
+            }
+        }
     }
 
     @Override
     public Request filter(Request request) {
-        if (this.aliasMap != null) {
+        if (this.patternAliasMap != null) {
             String filteredResponseText = request.getText();
-            for (Map.Entry<String, String> entry : this.aliasMap.entrySet()) {
-                filteredResponseText = filteredResponseText.replaceAll(entry.getValue(), entry.getKey()).trim();
+            for (Entry<Pattern, String> entry : this.patternAliasMap.entrySet()) {
+                filteredResponseText = entry.getKey().matcher(filteredResponseText)
+                        .replaceAll(entry.getValue());
             }
             request.setText(filteredResponseText);
         }
