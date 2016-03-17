@@ -144,12 +144,12 @@ public class Application {
                     // take first answer
                     response = new Response(agentResponse);
                     report.setSelectedAgent(agent);
-                    report.setResponse(response);
                     break;
                 }
             }
             report.setAgentTime(startTime, System.nanoTime());
         }
+        report.setResponse(response);
         reporter.store(report);
 
         return response;

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.FmtDate;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseDate;
+import org.supercsv.cellprocessor.ParseInt;
 import org.supercsv.cellprocessor.ParseLong;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -57,15 +58,15 @@ public class FileReporter implements Reporter {
     private static final Logger logger = LoggerFactory.getLogger(FileReporter.class);
     private static final CsvPreference FORMAT = CsvPreference.EXCEL_PREFERENCE;
     private static final String[] FIELDS = {"timestamp", "requestId", "requestText",
-            "selectedAgentName", "responseText", "routeTime", "agentTime"};
+            "selectedAgentName", "responseText", "responseCode", "routeTime", "agentTime"};
     public static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
     // timestamp, request id, request text, and route time are the required fields
     private static final CellProcessor[] WRITE_PROCESSORS = new CellProcessor[] {
             new FmtDate(ISO_8601), new NotNull(), new NotNull(), new Optional(), new Optional(),
-            new NotNull(), new Optional()};
+            new Optional(), new NotNull(), new Optional()};
     private static final CellProcessor[] READ_PROCESSORS = new CellProcessor[] {
             new ParseDate(ISO_8601), new NotNull(), new NotNull(), new Optional(), new Optional(),
-            new ParseLong(), new Optional(new ParseLong())};
+            new Optional(new ParseInt()), new ParseLong(), new Optional(new ParseLong())};
 
     private final String filename;
     private ICsvBeanWriter csvWriter = null;

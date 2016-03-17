@@ -14,6 +14,7 @@
 <!-- <property name="agentNames" column="agentNames" /> -->
     <property name="selectedAgentName" column="selectedAgentName" length="255" />
     <property name="responseText" column="responseText" length="1000" />
+    <property name="responseCode" column="responseCode" />
     <property name="routeTime" column="routeTime" />
     <property name="agentTime" column="agentTime" />
   </class>
