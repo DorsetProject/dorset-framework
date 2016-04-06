@@ -67,14 +67,16 @@ public class StockAgent extends AbstractAgent {
 
         this.stockSymbolMap = new HashMap<String, String>();
         try {
-            csvBeanReader = new CsvBeanReader(new BufferedReader(new InputStreamReader(nasdaq_companies)), CsvPreference.STANDARD_PREFERENCE);
+            csvBeanReader = new CsvBeanReader(new BufferedReader(
+                    new InputStreamReader(nasdaq_companies)),
+                    CsvPreference.STANDARD_PREFERENCE);
             final String[] header = csvBeanReader.getHeader(true);
             CompanyInfo companyInfo;
             while ((companyInfo = csvBeanReader.read(CompanyInfo.class, header,
                     processors)) != null) {
                 this.stockSymbolMap.put(
-                        companyInfo.getName().replace("\"", ""), 
-                        companyInfo.getSymbol().replace("\"", ""));
+                        companyInfo.getName().replace("\"", ""), companyInfo
+                                .getSymbol().replace("\"", ""));
             }
 
         } catch (IOException e) {
@@ -92,14 +94,16 @@ public class StockAgent extends AbstractAgent {
             }
         }
 
-        InputStream nyse_companies = StockAgent.class.getClassLoader().getResourceAsStream(
-                "stockagent/NYSE_Companies.csv");
+        InputStream nyse_companies = StockAgent.class.getClassLoader().getResourceAsStream("stockagent/NYSE_Companies.csv");
 
         try {
-            csvBeanReader = new CsvBeanReader(new BufferedReader(new InputStreamReader(nyse_companies)), CsvPreference.STANDARD_PREFERENCE);
+            csvBeanReader = new CsvBeanReader(new BufferedReader(
+                    new InputStreamReader(nyse_companies)),
+                    CsvPreference.STANDARD_PREFERENCE);
             final String[] header = csvBeanReader.getHeader(true);
             CompanyInfo companyInfo;
-            while ((companyInfo = csvBeanReader.read(CompanyInfo.class, header, processors)) != null) {
+            while ((companyInfo = csvBeanReader.read(CompanyInfo.class, header,
+                    processors)) != null) {
 
                 if (!this.stockSymbolMap.containsKey("apple")) {
                     this.stockSymbolMap.put(
@@ -127,14 +131,16 @@ public class StockAgent extends AbstractAgent {
     @Override
     public AgentResponse process(AgentRequest request) {
 
-        String request_company_name = request.getText().toLowerCase().replace("stocks ", "").replace("stock ", "");
+        String request_company_name = request.getText().toLowerCase()
+                .replace("stocks ", "").replace("stock ", "");
         String[] stock_company_info = findStockSymbol(request_company_name);
         String keyword_company_name = stock_company_info[0];
         String keyword_company_symbol = stock_company_info[1];
         String json = null;
 
         if (keyword_company_symbol == null) {
-            return new AgentResponse("I am sorry, I don't understand which company you are asking about.");
+            return new AgentResponse(
+                    "I am sorry, I don't understand which company you are asking about.");
         } else {
             json = requestData(keyword_company_symbol);
         }
@@ -169,13 +175,16 @@ public class StockAgent extends AbstractAgent {
             returnObj.addProperty("plotType", "lineplot");
             returnObj.addProperty("data", returnDataArray.toString());
             returnObj.addProperty("labels", returnLabelsArray.toString());
-            returnObj.addProperty("title", keyword_company_name + " Stock Ticker");
+            returnObj.addProperty("title", keyword_company_name
+                    + " Stock Ticker");
             returnObj.addProperty("xaxis", "Day");
             returnObj.addProperty("yaxis", "Close of day market price ($)");
 
-            return new AgentResponse(Response.Type.JSON,
+            return new AgentResponse(
+                    Response.Type.JSON,
                     ("Here is the longitudinal stock market data from the last 30 days for "
-                            + keyword_company_name + ".").replace("..", "."), returnObj.toString());
+                            + keyword_company_name + ".").replace("..", "."),
+                    returnObj.toString());
 
         } catch (Exception e) {
             return new AgentResponse(
@@ -200,12 +209,14 @@ public class StockAgent extends AbstractAgent {
                 keyword_company_symbol = entry.getValue();
             }
 
-            else if ((StringUtils.getLevenshteinDistance(entry.getKey().toLowerCase(),
+            else if ((StringUtils
+                    .getLevenshteinDistance(entry.getKey().toLowerCase(),
                             stockCompanyName.toLowerCase(), minDistance)) < minDistance
                     && ((StringUtils.getLevenshteinDistance(entry.getKey(),
                             stockCompanyName, minDistance)) != -1)) {
 
-                minDistance = (StringUtils.getLevenshteinDistance(entry.getKey(), stockCompanyName, minDistance));
+                minDistance = (StringUtils.getLevenshteinDistance(
+                        entry.getKey(), stockCompanyName, minDistance));
 
                 keyword_company_name = entry.getKey();
                 keyword_company_symbol = entry.getValue();

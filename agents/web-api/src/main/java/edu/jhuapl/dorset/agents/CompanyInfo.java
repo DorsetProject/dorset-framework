@@ -26,8 +26,9 @@ public class CompanyInfo {
     protected String sector;
     protected String industry;
     protected String summary;
-    
-    public CompanyInfo(){}
+
+    public CompanyInfo() {
+    }
 
     public CompanyInfo(CompanyInfo companyInfo) {
         this.symbol = companyInfo.symbol;
@@ -40,7 +41,6 @@ public class CompanyInfo {
         this.summary = companyInfo.summary;
     }
 
-    
     public String getSymbol() {
         return symbol;
     }
@@ -104,6 +104,5 @@ public class CompanyInfo {
     public void setSummary(String summary) {
         this.summary = summary;
     }
-    
-    
+
 }

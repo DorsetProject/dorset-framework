@@ -196,7 +196,7 @@ public class StockAgentTest {
         String keywordSymbol = "FRBA";
 
         String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
-                + keyword + ".json?api_key=" + apikey;
+                + keywordSymbol + ".json?api_key=" + apikey;
 
         HttpClient client = mock(HttpClient.class);
         when(client.get(urlStr)).thenReturn("");
