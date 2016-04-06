@@ -72,7 +72,7 @@ public class StockAgent extends AbstractAgent {
             final String[] header = csv_bean_reader.getHeader(true);
             CompanyInfo companyInfo;
             while ((companyInfo = csv_bean_reader.read(CompanyInfo.class, header, processors)) != null) {
-                this.stockSymbolMap.put(companyInfo.getName().replace("\"", ""), companyInfo.getSymbol().replace("\"", ""));
+                this.stockSymbolMap.put(companyInfo.getName(), companyInfo.getSymbol());
             }
 
         } catch (IOException e) {
@@ -100,7 +100,7 @@ public class StockAgent extends AbstractAgent {
             while ((companyInfo = csv_bean_reader.read(CompanyInfo.class, header, processors)) != null) {
 
                 if (!this.stockSymbolMap.containsKey("apple")) {
-                    this.stockSymbolMap.put(companyInfo.getName().replace("\"", ""), companyInfo.getSymbol().replace("\"", ""));
+                    this.stockSymbolMap.put(companyInfo.getName(), companyInfo.getSymbol());
                 }
             }
 
