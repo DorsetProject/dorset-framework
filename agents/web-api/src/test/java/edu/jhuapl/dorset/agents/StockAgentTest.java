@@ -69,7 +69,7 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest("Stocks" + keyword);
+        AgentRequest request = new AgentRequest("Stocks " + keyword);
         AgentResponse response = stocks.process(request);
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",

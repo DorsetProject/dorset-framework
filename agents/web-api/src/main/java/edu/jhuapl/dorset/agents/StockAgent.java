@@ -123,8 +123,7 @@ public class StockAgent extends AbstractAgent {
     @Override
     public AgentResponse process(AgentRequest request) {
 
-        String request_company_name = request.getText().toLowerCase()
-                .replace("stocks ", "").replace("stock ", "");
+        String request_company_name = request.getText().toLowerCase().replace("stocks ", "").replace("stock ", "");
         String[] stock_company_info = findStockSymbol(request_company_name);
         String keyword_company_name = stock_company_info[0];
         String keyword_company_symbol = stock_company_info[1];
@@ -181,6 +180,7 @@ public class StockAgent extends AbstractAgent {
     }
 
     protected String[] findStockSymbol(String stockCompanyName) {
+     
         String keyword_company_name = null;
         String keyword_company_symbol = null;
 
@@ -189,20 +189,21 @@ public class StockAgent extends AbstractAgent {
         for (Map.Entry<String, String> entry : stockSymbolMap.entrySet()) {
 
             if ((entry.getKey().toLowerCase().startsWith(stockCompanyName.toLowerCase()))) {
-
-                minDistance = 4;
-                keyword_company_name = entry.getKey();
-                keyword_company_symbol = entry.getValue();
+               int companyNameLength = stockCompanyName.length();
+               int keywordCompanyNameLength = entry.getKey().length();
+               if ( ((double) companyNameLength/keywordCompanyNameLength) > 0.35){
+                       minDistance = 4;
+                       keyword_company_name = entry.getKey();
+                       keyword_company_symbol = entry.getValue();
+               }
             }
-
             else if ((StringUtils.getLevenshteinDistance(entry.getKey().toLowerCase(), stockCompanyName.toLowerCase(), minDistance)) < minDistance
                     && ((StringUtils.getLevenshteinDistance(entry.getKey(), stockCompanyName, minDistance)) != -1)) {
 
                 minDistance = (StringUtils.getLevenshteinDistance(entry.getKey(), stockCompanyName, minDistance));
-
                 keyword_company_name = entry.getKey();
                 keyword_company_symbol = entry.getValue();
-
+  
             }
         }
         return new String[] { keyword_company_name, keyword_company_symbol };
