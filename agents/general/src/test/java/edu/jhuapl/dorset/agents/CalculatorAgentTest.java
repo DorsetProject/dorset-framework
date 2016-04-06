@@ -35,4 +35,15 @@ public class CalculatorAgentTest {
         assertEquals("145", response.getText());
     }
 
+    @Test
+    public void testBadExpressions() {
+        Agent agent = new CalculatorAgent();
+
+        AgentResponse response = agent.process(new AgentRequest("2 + "));
+        assertFalse(response.isSuccess());
+
+        response = agent.process(new AgentRequest("two plus two"));
+        assertFalse(response.isSuccess());
+    }
+
 }
