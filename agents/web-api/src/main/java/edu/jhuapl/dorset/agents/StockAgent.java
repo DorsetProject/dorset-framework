@@ -41,6 +41,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import edu.jhuapl.dorset.Response;
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.agents.AbstractAgent;
 import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
@@ -52,6 +53,7 @@ public class StockAgent extends AbstractAgent {
     private String apiKey;
     private HttpClient client;
     private HashMap<String, String> stockSymbolMap;
+    private final int daysInAMonth = 30;
 
     private static final CellProcessor[] processors = new CellProcessor[] {
             new NotNull(), new NotNull(), new NotNull(), new Optional(),
@@ -105,7 +107,7 @@ public class StockAgent extends AbstractAgent {
             CompanyInfo companyInfo;
             while ((companyInfo = csvBeanReader.read(CompanyInfo.class, header, processors)) != null) {
 
-                if (!this.stockSymbolMap.containsKey("apple")) {
+                if (!this.stockSymbolMap.containsKey(companyInfo.getName())) {
                     this.stockSymbolMap.put(companyInfo.getName(), companyInfo.getSymbol());
                 }
             }
@@ -140,54 +142,23 @@ public class StockAgent extends AbstractAgent {
         } else {
             json = requestData(keywordCompanySymbol);
         }
-
-        ArrayList<JsonElement> responseArray = new ArrayList<>();
-        ArrayList<JsonElement> responseLabelsArray = new ArrayList<>();
-
-        Gson gson = new Gson();
-
-        try {
-            JsonObject jsonObj = gson.fromJson(json.toString(),
-                    JsonObject.class);
-
-            JsonArray jsonDataArray = (JsonArray) (((JsonObject) jsonObj
-                    .get("dataset")).get("data"));
-
-            for (int i = 0; i < jsonDataArray.size(); i++) {
-                JsonArray jsonDataArrayNested = (JsonArray) (jsonDataArray
-                        .get(i));
-                responseArray.add(jsonDataArrayNested.get(4));
-                responseLabelsArray.add(jsonDataArrayNested.get(0));
-            }
-            Collections.reverse(responseArray);
-            Collections.reverse(responseLabelsArray);
-
-            List<JsonElement> returnDataArray = (responseArray.subList(
-                    responseArray.size() - 30, responseArray.size()));
-            List<JsonElement> returnLabelsArray = (responseLabelsArray
-                    .subList(responseLabelsArray.size() - 30,
-                            responseLabelsArray.size()));
-
-            JsonObject returnObj = gson.fromJson(json.toString(),
-                    JsonObject.class);
-
-            returnObj.addProperty("plotType", "lineplot");
-            returnObj.addProperty("data", returnDataArray.toString());
-            returnObj.addProperty("labels", returnLabelsArray.toString());
-            returnObj.addProperty("title", keywordCompanyName + " Stock Ticker");
-            returnObj.addProperty("xaxis", "Day");
-            returnObj.addProperty("yaxis", "Close of day market price ($)");
-
-            return new AgentResponse(Response.Type.JSON,
-                    ("Here is the longitudinal stock market data from the last 30 days for "
+        
+        JsonObject returnObj = processData(json, keywordCompanyName);
+        
+        if (returnObj != null ) {
+            return new AgentResponse(
+                    Response.Type.JSON,
+                    ("Here is the longitudinal stock market data from the last " + daysInAMonth + " days for "
                             + keywordCompanyName + ".").replace("..", "."),
                     returnObj.toString());
-
-        } catch (Exception e) {
+        } else if ( returnObj == null && keywordCompanyName != null) {
             return new AgentResponse(
                     ("I am sorry, I can't find the proper stock data for the company "
                             + keywordCompanyName + ".").replace("..", "."));
+        } else {
+            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
         }
+
     }
 
     protected String[] findStockSymbol(String stockCompanyName) {
@@ -209,9 +180,11 @@ public class StockAgent extends AbstractAgent {
                 }
             } else if ((StringUtils.getLevenshteinDistance(entry.getKey().toLowerCase(),
                             stockCompanyName.toLowerCase(), minDistance)) < minDistance
-                    && ((StringUtils.getLevenshteinDistance(entry.getKey(), stockCompanyName, minDistance)) != -1)) {
+                    && ((StringUtils.getLevenshteinDistance(entry.getKey(),
+                            stockCompanyName, minDistance)) != -1)) {
 
-                minDistance = (StringUtils.getLevenshteinDistance(entry.getKey(), stockCompanyName, minDistance));
+                minDistance = (StringUtils.getLevenshteinDistance(
+                        entry.getKey(), stockCompanyName, minDistance));
                 keywordCompanyName = entry.getKey();
                 keywordCompanySymbol = entry.getValue();
 
@@ -220,6 +193,47 @@ public class StockAgent extends AbstractAgent {
         return new String[] { keywordCompanyName, keywordCompanySymbol };
     }
 
+    
+    protected JsonObject processData(String json, String keyWordCompanyName) {
+
+        Gson gson = new Gson();
+        JsonObject returnObj = null;
+        try {
+            JsonObject jsonObj = gson.fromJson(json.toString(), JsonObject.class);
+
+            JsonArray jsonDataArray = (JsonArray) (((JsonObject) jsonObj.get("dataset")).get("data"));
+
+            ArrayList<JsonElement> responseDataArrayList = new ArrayList<>();
+            ArrayList<JsonElement> responseLabelsArrayList = new ArrayList<>();
+            
+            for (int i = 0; i < jsonDataArray.size(); i++) {
+                JsonArray jsonDataArrayNested = (JsonArray) (jsonDataArray.get(i));
+                responseDataArrayList.add(jsonDataArrayNested.get(4));
+                responseLabelsArrayList.add(jsonDataArrayNested.get(0));
+            }
+            Collections.reverse(responseDataArrayList);
+            Collections.reverse(responseLabelsArrayList);
+
+            returnObj = gson.fromJson(json.toString(), JsonObject.class);
+           
+            returnObj.addProperty("plotType", "lineplot");
+            
+            List<JsonElement> returnDataJsonList = responseDataArrayList.subList(responseDataArrayList.size() - daysInAMonth, responseDataArrayList.size());
+            returnObj.addProperty("data", returnDataJsonList.toString());
+            
+            List<JsonElement> returnLabelsJsonList = responseLabelsArrayList.subList(responseLabelsArrayList.size() - daysInAMonth, responseLabelsArrayList.size());
+            returnObj.addProperty("labels", returnLabelsJsonList.toString());
+            returnObj.addProperty("title", keyWordCompanyName + " Stock Ticker");
+            returnObj.addProperty("xaxis", "Day");
+            returnObj.addProperty("yaxis", "Close of day market price ($)");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return returnObj;
+    }
+    
     protected String requestData(String keyword) {
         String url = this.baseurl + keyword + ".json?api_key=" + apiKey;
         return client.get(url);
