@@ -61,31 +61,27 @@ public class StockAgent extends AbstractAgent {
         this.client = client;
         this.apiKey = apiKey;
 
-        ICsvBeanReader csvBeanReader = null;
+        ICsvBeanReader csv_bean_reader = null;
 
         InputStream nasdaq_companies = StockAgent.class.getClassLoader().getResourceAsStream("stockagent/NASDAQ_Companies.csv");
 
         this.stockSymbolMap = new HashMap<String, String>();
         try {
-            csvBeanReader = new CsvBeanReader(new BufferedReader(
-                    new InputStreamReader(nasdaq_companies)),
+            csv_bean_reader = new CsvBeanReader(new BufferedReader(new InputStreamReader(nasdaq_companies)),
                     CsvPreference.STANDARD_PREFERENCE);
-            final String[] header = csvBeanReader.getHeader(true);
+            final String[] header = csv_bean_reader.getHeader(true);
             CompanyInfo companyInfo;
-            while ((companyInfo = csvBeanReader.read(CompanyInfo.class, header,
-                    processors)) != null) {
-                this.stockSymbolMap.put(
-                        companyInfo.getName().replace("\"", ""), companyInfo
-                                .getSymbol().replace("\"", ""));
+            while ((companyInfo = csv_bean_reader.read(CompanyInfo.class, header, processors)) != null) {
+                this.stockSymbolMap.put(companyInfo.getName().replace("\"", ""), companyInfo.getSymbol().replace("\"", ""));
             }
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } finally {
-            if (csvBeanReader != null) {
+            if (csv_bean_reader != null) {
                 try {
-                    csvBeanReader.close();
+                    csv_bean_reader.close();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -97,18 +93,14 @@ public class StockAgent extends AbstractAgent {
         InputStream nyse_companies = StockAgent.class.getClassLoader().getResourceAsStream("stockagent/NYSE_Companies.csv");
 
         try {
-            csvBeanReader = new CsvBeanReader(new BufferedReader(
-                    new InputStreamReader(nyse_companies)),
+            csv_bean_reader = new CsvBeanReader(new BufferedReader(new InputStreamReader(nyse_companies)),
                     CsvPreference.STANDARD_PREFERENCE);
-            final String[] header = csvBeanReader.getHeader(true);
+            final String[] header = csv_bean_reader.getHeader(true);
             CompanyInfo companyInfo;
-            while ((companyInfo = csvBeanReader.read(CompanyInfo.class, header,
-                    processors)) != null) {
+            while ((companyInfo = csv_bean_reader.read(CompanyInfo.class, header, processors)) != null) {
 
                 if (!this.stockSymbolMap.containsKey("apple")) {
-                    this.stockSymbolMap.put(
-                            companyInfo.getName().replace("\"", ""),
-                            companyInfo.getSymbol().replace("\"", ""));
+                    this.stockSymbolMap.put(companyInfo.getName().replace("\"", ""), companyInfo.getSymbol().replace("\"", ""));
                 }
             }
 
@@ -116,9 +108,9 @@ public class StockAgent extends AbstractAgent {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } finally {
-            if (csvBeanReader != null) {
+            if (csv_bean_reader != null) {
                 try {
-                    csvBeanReader.close();
+                    csv_bean_reader.close();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -139,8 +131,7 @@ public class StockAgent extends AbstractAgent {
         String json = null;
 
         if (keyword_company_symbol == null) {
-            return new AgentResponse(
-                    "I am sorry, I don't understand which company you are asking about.");
+            return new AgentResponse("I am sorry, I don't understand which company you are asking about.");
         } else {
             json = requestData(keyword_company_symbol);
         }
@@ -180,16 +171,12 @@ public class StockAgent extends AbstractAgent {
             returnObj.addProperty("xaxis", "Day");
             returnObj.addProperty("yaxis", "Close of day market price ($)");
 
-            return new AgentResponse(
-                    Response.Type.JSON,
-                    ("Here is the longitudinal stock market data from the last 30 days for "
-                            + keyword_company_name + ".").replace("..", "."),
+            return new AgentResponse(Response.Type.JSON,
+                    ("Here is the longitudinal stock market data from the last 30 days for " + keyword_company_name + ".").replace("..", "."),
                     returnObj.toString());
 
         } catch (Exception e) {
-            return new AgentResponse(
-                    ("I am sorry, I can't find the proper stock data for the company "
-                            + keyword_company_name + ".").replace("..", "."));
+            return new AgentResponse(("I am sorry, I can't find the proper stock data for the company " + keyword_company_name + ".").replace("..", "."));
         }
     }
 
@@ -201,22 +188,17 @@ public class StockAgent extends AbstractAgent {
 
         for (Map.Entry<String, String> entry : stockSymbolMap.entrySet()) {
 
-            if ((entry.getKey().toLowerCase().startsWith(stockCompanyName
-                    .toLowerCase()))) {
+            if ((entry.getKey().toLowerCase().startsWith(stockCompanyName.toLowerCase()))) {
 
                 minDistance = 4;
                 keyword_company_name = entry.getKey();
                 keyword_company_symbol = entry.getValue();
             }
 
-            else if ((StringUtils
-                    .getLevenshteinDistance(entry.getKey().toLowerCase(),
-                            stockCompanyName.toLowerCase(), minDistance)) < minDistance
-                    && ((StringUtils.getLevenshteinDistance(entry.getKey(),
-                            stockCompanyName, minDistance)) != -1)) {
+            else if ((StringUtils.getLevenshteinDistance(entry.getKey().toLowerCase(), stockCompanyName.toLowerCase(), minDistance)) < minDistance
+                    && ((StringUtils.getLevenshteinDistance(entry.getKey(), stockCompanyName, minDistance)) != -1)) {
 
-                minDistance = (StringUtils.getLevenshteinDistance(
-                        entry.getKey(), stockCompanyName, minDistance));
+                minDistance = (StringUtils.getLevenshteinDistance(entry.getKey(), stockCompanyName, minDistance));
 
                 keyword_company_name = entry.getKey();
                 keyword_company_symbol = entry.getValue();
