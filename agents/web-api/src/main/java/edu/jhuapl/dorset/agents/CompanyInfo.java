@@ -30,6 +30,10 @@ public class CompanyInfo {
     public CompanyInfo() {
     }
 
+    /**
+     * Company information for Stock Agent
+     *
+     */
     public CompanyInfo(CompanyInfo companyInfo) {
         this.symbol = companyInfo.symbol;
         this.name = companyInfo.name;
