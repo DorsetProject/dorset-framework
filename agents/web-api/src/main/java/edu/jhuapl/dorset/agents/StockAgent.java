@@ -58,6 +58,9 @@ public class StockAgent extends AbstractAgent {
     private TreeMap<String, String> stockSymbolMap;
     private static final int DAYS_IN_A_MONTH = 30;
     private static final Logger logger = LoggerFactory.getLogger(StockAgent.class);
+   
+    private static final String SUMMARY =
+            "Stock ticker that gives historical stock information for NASDAQ and NYSE companies";
 
     private static final CellProcessor[] processors = new CellProcessor[] {
             new NotNull(), new NotNull(), new NotNull(), new Optional(),
