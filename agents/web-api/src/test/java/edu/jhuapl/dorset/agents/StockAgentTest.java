@@ -41,7 +41,7 @@ public class StockAgentTest {
 
     @Test
     public void testStockAgentExactMatch() {
-        String keyword = "Facebook, Inc.";
+        String keyword = "facebook, Inc.";
         String keywordSymbol = "FB";
 
         ClassLoader classLoader = StockAgent.class.getClassLoader();
@@ -69,7 +69,7 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest("Stocks " + keyword);
+        AgentRequest request = new AgentRequest( keyword);
         AgentResponse response = stocks.process(request);
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",
@@ -79,7 +79,7 @@ public class StockAgentTest {
 
     @Test
     public void testStockAgentCloseMatch() {
-        String keyword = "Facebook";
+        String keyword = "facebook";
         String keywordSymbol = "FB";
 
         ClassLoader classLoader = StockAgent.class.getClassLoader();
@@ -107,7 +107,7 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest("Stocks " + keyword);
+        AgentRequest request = new AgentRequest( keyword);
         AgentResponse response = stocks.process(request);
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",
@@ -117,7 +117,7 @@ public class StockAgentTest {
 
     @Test
     public void testStockAgentExactMatch2() {
-        String keyword = "Apple Inc.";
+        String keyword = "Apple inc.";
         String keywordSymbol = "AAPL";
 
         ClassLoader classLoader = StockAgent.class.getClassLoader();
@@ -145,16 +145,16 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest("Stocks " + keyword);
+        AgentRequest request = new AgentRequest( keyword);
         AgentResponse response = stocks.process(request);
-        assertEquals("Here is the longitudinal stock market data from the last 30 days for Apple Inc.",
+        assertEquals("Here is the longitudinal stock market data from the last 30 days for Apple inc.",
                 response.getText());
 
     }
 
     @Test
     public void testStockAgentCloseMatch2() {
-        String keyword = "Apple";
+        String keyword = "apple";
         String keywordSymbol = "AAPL";
 
         ClassLoader classLoader = StockAgent.class.getClassLoader();
@@ -182,7 +182,7 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest("Stocks " + keyword);
+        AgentRequest request = new AgentRequest( keyword);
         AgentResponse response = stocks.process(request);
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Apple Inc.",
@@ -191,22 +191,22 @@ public class StockAgentTest {
     }
 
     @Test
-    public void testStockAgentNullReturn() {
-        String keyword = "first bank";
+    public void testStockAgentQuandlError() {
+        String keyword = "First bank";
         String keywordSymbol = "FRBA";
 
         String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
                 + keywordSymbol + ".json?api_key=" + apikey;
 
         HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn("");
+        when(client.get(urlStr)).thenReturn(null);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest("Stocks " + keyword);
+        AgentRequest request = new AgentRequest(keyword);
         AgentResponse response = stocks.process(request);
 
-        assertEquals("I am sorry, I can't find the proper stock data for the company First Bank.",
-                response.getText());
+        assertEquals("I am sorry, I can't find the proper stock data for the company "
+                + keyword + ".",response.getText());
 
     }
 
@@ -218,7 +218,7 @@ public class StockAgentTest {
                 + keyword + ".json?api_key=" + apikey;
 
         HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn("");
+        when(client.get(urlStr)).thenReturn(null);
 
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest(keyword);

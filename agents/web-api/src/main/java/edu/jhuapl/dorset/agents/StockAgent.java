@@ -26,8 +26,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -42,9 +48,6 @@ import com.google.gson.JsonObject;
 
 import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
-import edu.jhuapl.dorset.agents.AbstractAgent;
-import edu.jhuapl.dorset.agents.AgentRequest;
-import edu.jhuapl.dorset.agents.AgentResponse;
 import edu.jhuapl.dorset.http.HttpClient;
 
 public class StockAgent extends AbstractAgent {
@@ -52,8 +55,9 @@ public class StockAgent extends AbstractAgent {
     private String baseurl = "https://www.quandl.com/api/v3/datasets/WIKI/";
     private String apiKey;
     private HttpClient client;
-    private HashMap<String, String> stockSymbolMap;
-    private final int daysInAMonth = 30;
+    private TreeMap<String, String> stockSymbolMap;
+    private static final int DAYS_IN_A_MONTH = 30;
+    private static final Logger logger = LoggerFactory.getLogger(StockAgent.class);
 
     private static final CellProcessor[] processors = new CellProcessor[] {
             new NotNull(), new NotNull(), new NotNull(), new Optional(),
@@ -62,8 +66,8 @@ public class StockAgent extends AbstractAgent {
     /**
      * Stock agent
      *
-     * @param client  An http client object
-     * @param apiKey  A Quandl API key 
+     * @param client An http client object
+     * @param apiKey A Quandl API key
      */
     public StockAgent(HttpClient client, String apiKey) {
         this.client = client;
@@ -73,9 +77,10 @@ public class StockAgent extends AbstractAgent {
 
         InputStream nasdaqCompanies = StockAgent.class.getClassLoader().getResourceAsStream("stockagent/NASDAQ_Companies.csv");
 
-        this.stockSymbolMap = new HashMap<String, String>();
+        this.stockSymbolMap = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+
         try {
-            csvBeanReader = new CsvBeanReader(new BufferedReader( new InputStreamReader(nasdaqCompanies)),
+            csvBeanReader = new CsvBeanReader(new BufferedReader(new InputStreamReader(nasdaqCompanies)),
                     CsvPreference.STANDARD_PREFERENCE);
             final String[] header = csvBeanReader.getHeader(true);
             CompanyInfo companyInfo;
@@ -85,23 +90,14 @@ public class StockAgent extends AbstractAgent {
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-            if (csvBeanReader != null) {
-                try {
-                    csvBeanReader.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-
-                }
-            }
+            logger.debug("Failed to load stockagent/NASDAQ_Companies.csv");
         }
 
-        InputStream nyseCompanies = StockAgent.class.getClassLoader().getResourceAsStream("stockagent/NYSE_Companies.csv");
+        InputStream nyseCompanies = StockAgent.class.getClassLoader()
+                .getResourceAsStream("stockagent/NYSE_Companies.csv");
 
         try {
-            csvBeanReader = new CsvBeanReader(new BufferedReader( new InputStreamReader(nyseCompanies)),
+            csvBeanReader = new CsvBeanReader(new BufferedReader(new InputStreamReader(nyseCompanies)),
                     CsvPreference.STANDARD_PREFERENCE);
             final String[] header = csvBeanReader.getHeader(true);
             CompanyInfo companyInfo;
@@ -114,49 +110,57 @@ public class StockAgent extends AbstractAgent {
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-            if (csvBeanReader != null) {
-                try {
-                    csvBeanReader.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
+            logger.debug("Failed to load stockagent/NYSE_Companies.csv");
+        } 
 
     }
 
     @Override
     public AgentResponse process(AgentRequest request) {
+        logger.debug("Handling the request: " + request.getText());
 
-        String requestCompanyName = request.getText().toLowerCase().replace("stocks ", "").replace("stock ", "");
+        String requestCompanyName = request.getText();
         String[] stockCompanyInfo = findStockSymbol(requestCompanyName);
-        String keywordCompanyName = stockCompanyInfo[0];
-        String keywordCompanySymbol = stockCompanyInfo[1];
+        String keywordCompanyName = null;
+        String keywordCompanySymbol = null;
+
+        if (stockCompanyInfo[0] != null) {
+            keywordCompanyName = stockCompanyInfo[0].substring(0, 1).toUpperCase()
+                    + stockCompanyInfo[0].substring(1, stockCompanyInfo[0].length());
+            keywordCompanySymbol = stockCompanyInfo[1];
+        }
+
         String json = null;
 
         if (keywordCompanySymbol == null) {
-            return new AgentResponse("I am sorry, I don't understand which company you are asking about.");
+            return new AgentResponse(
+                    "I am sorry, I don't understand which company you are asking about.");
         } else {
             json = requestData(keywordCompanySymbol);
+
         }
-        
-        JsonObject returnObj = processData(json, keywordCompanyName);
-        
-        if (returnObj != null ) {
-            return new AgentResponse(
-                    Response.Type.JSON,
-                    ("Here is the longitudinal stock market data from the last " + daysInAMonth + " days for "
-                            + keywordCompanyName + ".").replace("..", "."),
-                    returnObj.toString());
-        } else if ( returnObj == null && keywordCompanyName != null) {
-            return new AgentResponse(
-                    ("I am sorry, I can't find the proper stock data for the company "
-                            + keywordCompanyName + ".").replace("..", "."));
+
+        if (json == null) {
+            if (keywordCompanyName != null) {
+                return new AgentResponse(("I am sorry, I can't find the proper stock data for the company "
+                                + keywordCompanyName + ".").replace("..", "."));
+            } else {
+                return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
+            }
+
         } else {
-            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
+            JsonObject returnObj = processData(json, keywordCompanyName);
+
+            if (returnObj != null) {
+                return new AgentResponse(Response.Type.JSON,
+                        ("Here is the longitudinal stock market data from the last "
+                                + DAYS_IN_A_MONTH
+                                + " days for "
+                                + keywordCompanyName + ".").replace("..", "."),
+                        returnObj.toString());
+            } else {
+                return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
+            }
         }
 
     }
@@ -166,74 +170,102 @@ public class StockAgent extends AbstractAgent {
         String keywordCompanyName = null;
         String keywordCompanySymbol = null;
 
-        int minDistance = 8;
+        ArrayList<String> regexMatches = new ArrayList<String>();
 
-        for (Map.Entry<String, String> entry : stockSymbolMap.entrySet()) {
+        if (this.stockSymbolMap.get(stockCompanyName) != null) {
+            keywordCompanyName = stockCompanyName;
+            keywordCompanySymbol = this.stockSymbolMap.get(stockCompanyName);
 
-            if ((entry.getKey().toLowerCase().startsWith(stockCompanyName.toLowerCase()))) {
-                int companyNameLength = stockCompanyName.length();
-                int keywordCompanyNameLength = entry.getKey().length();
-                if (((double) companyNameLength / keywordCompanyNameLength) > 0.35) {
-                    minDistance = 4;
-                    keywordCompanyName = entry.getKey();
-                    keywordCompanySymbol = entry.getValue();
+        } else {
+            String regex = "\\b" + stockCompanyName + "\\b";
+
+            Pattern pat = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+
+            for (Map.Entry<String, String> entry : stockSymbolMap.entrySet()) {
+                Matcher matcher = pat.matcher(entry.getKey());
+
+                if (matcher.find()) {
+                    regexMatches.add(entry.getKey());
                 }
-            } else if ((StringUtils.getLevenshteinDistance(entry.getKey().toLowerCase(),
-                            stockCompanyName.toLowerCase(), minDistance)) < minDistance
-                    && ((StringUtils.getLevenshteinDistance(entry.getKey(),
-                            stockCompanyName, minDistance)) != -1)) {
+            }
 
-                minDistance = (StringUtils.getLevenshteinDistance(
-                        entry.getKey(), stockCompanyName, minDistance));
-                keywordCompanyName = entry.getKey();
-                keywordCompanySymbol = entry.getValue();
+            if (regexMatches.size() == 0) {
+                keywordCompanyName = null;
+                keywordCompanySymbol = null;
+            } else if (regexMatches.size() == 1) {
+                keywordCompanyName = regexMatches.get(0);
+                keywordCompanySymbol = this.stockSymbolMap.get(regexMatches.get(0));
+
+            } else {
+                int distance;
+                HashMap<String, Integer> matchDistanceMap = new HashMap<String, Integer>();
+                for (int i = 0; i < regexMatches.size(); i++) {
+                    distance = (StringUtils.getLevenshteinDistance(
+                            regexMatches.get(i), stockCompanyName));
+                    matchDistanceMap.put(regexMatches.get(i), distance);
+                }
+
+                Entry<String, Integer> minDistancePair = null;
+                for (Entry<String, Integer> entry : matchDistanceMap.entrySet()) {
+                    if (minDistancePair == null || minDistancePair.getValue() > entry.getValue()) {
+                        minDistancePair = entry;
+                    }
+                }
+
+                keywordCompanyName = minDistancePair.getKey();
+                keywordCompanySymbol = this.stockSymbolMap.get(minDistancePair.getKey());
 
             }
+
         }
+
         return new String[] { keywordCompanyName, keywordCompanySymbol };
     }
 
-    
     protected JsonObject processData(String json, String keyWordCompanyName) {
 
         Gson gson = new Gson();
         JsonObject returnObj = null;
-        try {
-            JsonObject jsonObj = gson.fromJson(json.toString(), JsonObject.class);
+        JsonObject jsonObj = gson.fromJson(json, JsonObject.class);
 
-            JsonArray jsonDataArray = (JsonArray) (((JsonObject) jsonObj.get("dataset")).get("data"));
+        if (jsonObj != null) {
 
-            ArrayList<JsonElement> responseDataArrayList = new ArrayList<>();
-            ArrayList<JsonElement> responseLabelsArrayList = new ArrayList<>();
-            
-            for (int i = 0; i < jsonDataArray.size(); i++) {
-                JsonArray jsonDataArrayNested = (JsonArray) (jsonDataArray.get(i));
-                responseDataArrayList.add(jsonDataArrayNested.get(4));
-                responseLabelsArrayList.add(jsonDataArrayNested.get(0));
+            if ((jsonObj.get("dataset")) != null) {
+                JsonArray jsonDataArray = (JsonArray) (((JsonObject) jsonObj.get("dataset")).get("data"));
+
+                ArrayList<JsonElement> responseDataArrayList = new ArrayList<>();
+                ArrayList<JsonElement> responseLabelsArrayList = new ArrayList<>();
+
+                for (int i = 0; i < jsonDataArray.size(); i++) {
+                    JsonArray jsonDataArrayNested = (JsonArray) (jsonDataArray
+                            .get(i));
+                    responseDataArrayList.add(jsonDataArrayNested.get(4));
+                    responseLabelsArrayList.add(jsonDataArrayNested.get(0));
+                }
+                Collections.reverse(responseDataArrayList);
+                Collections.reverse(responseLabelsArrayList);
+
+                returnObj = gson.fromJson(json.toString(), JsonObject.class);
+
+                returnObj.addProperty("plotType", "lineplot");
+
+                List<JsonElement> returnDataJsonList = responseDataArrayList.subList(responseDataArrayList.size() - DAYS_IN_A_MONTH,
+                                responseDataArrayList.size());
+                returnObj.addProperty("data", returnDataJsonList.toString());
+
+                List<JsonElement> returnLabelsJsonList = responseLabelsArrayList.subList(responseLabelsArrayList.size() - DAYS_IN_A_MONTH,
+                                responseLabelsArrayList.size());
+                returnObj.addProperty("labels", returnLabelsJsonList.toString());
+                returnObj.addProperty("title", keyWordCompanyName + " Stock Ticker");
+                returnObj.addProperty("xaxis", "Day");
+                returnObj.addProperty("yaxis", "Close of day market price ($)");
             }
-            Collections.reverse(responseDataArrayList);
-            Collections.reverse(responseLabelsArrayList);
 
-            returnObj = gson.fromJson(json.toString(), JsonObject.class);
-           
-            returnObj.addProperty("plotType", "lineplot");
-            
-            List<JsonElement> returnDataJsonList = responseDataArrayList.subList(responseDataArrayList.size() - daysInAMonth, responseDataArrayList.size());
-            returnObj.addProperty("data", returnDataJsonList.toString());
-            
-            List<JsonElement> returnLabelsJsonList = responseLabelsArrayList.subList(responseLabelsArrayList.size() - daysInAMonth, responseLabelsArrayList.size());
-            returnObj.addProperty("labels", returnLabelsJsonList.toString());
-            returnObj.addProperty("title", keyWordCompanyName + " Stock Ticker");
-            returnObj.addProperty("xaxis", "Day");
-            returnObj.addProperty("yaxis", "Close of day market price ($)");
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return null;
         }
 
         return returnObj;
     }
-    
+
     protected String requestData(String keyword) {
         String url = this.baseurl + keyword + ".json?api_key=" + apiKey;
         return client.get(url);
