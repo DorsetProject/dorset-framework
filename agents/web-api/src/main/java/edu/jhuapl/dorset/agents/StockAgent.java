@@ -97,8 +97,7 @@ public class StockAgent extends AbstractAgent {
         // remove trigger word "stocks"
         String regex = "\\bstocks\\b";
         Pattern pat = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        String requestCompanyName = pat.matcher(request.getText())
-                .replaceAll("").trim();
+        String requestCompanyName = pat.matcher(request.getText()).replaceAll("").trim();
 
         CompanyInfo stockCompanyInfo = findStockSymbol(requestCompanyName);
         String keywordCompanyName = null;
@@ -123,28 +122,29 @@ public class StockAgent extends AbstractAgent {
             // replace ".." with "." to maintain proper grammar when the
             // keyword contains an abbreviation
             if (keywordCompanyName != null) {
-                return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
+                return new AgentResponse(
+                        new ResponseStatus(
+                                ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
                                 ("I am sorry, I can't find the proper stock data for the company "
                                         + keywordCompanyName + ".").replace(
                                         "..", ".")));
-            } else {
-                return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
             }
-
+            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
         }
+        
         JsonObject returnObj = processData(json, keywordCompanyName);
 
         // replace ".." with "." to maintain proper grammar when the
         // keyword contains an abbreviation
         if (returnObj != null) {
-            return new AgentResponse(Response.Type.JSON, ("Here is the longitudinal stock market data from the last "
+            return new AgentResponse(Response.Type.JSON,
+                    ("Here is the longitudinal stock market data from the last "
                             + DAYS_IN_A_MONTH
                             + " days for "
                             + keywordCompanyName + ".").replace("..", "."),
                     returnObj.toString());
-        } else {
-            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
         }
+        return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
 
     }
 
