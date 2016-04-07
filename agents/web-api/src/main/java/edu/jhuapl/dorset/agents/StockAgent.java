@@ -83,8 +83,8 @@ public class StockAgent extends AbstractAgent {
         this.apiKey = apiKey;
 
         this.stockSymbolMap = new TreeMap<String, CompanyInfo>(String.CASE_INSENSITIVE_ORDER);
-        CsvFileReader("stockagent/NASDAQ_Companies.csv");
-        CsvFileReader("stockagent/NYSE_Companies.csv");
+        csvFileReader("stockagent/NASDAQ_Companies.csv");
+        csvFileReader("stockagent/NYSE_Companies.csv");
 
         this.setDescription(new Description("stock ticker", SUMMARY, EXAMPLE));
 
@@ -249,7 +249,7 @@ public class StockAgent extends AbstractAgent {
         return client.get(url);
     }
 
-    protected void CsvFileReader(String filename) {
+    protected void csvFileReader(String filename) {
         InputStream companiesCsvInput = StockAgent.class.getClassLoader()
                 .getResourceAsStream(filename);
 
