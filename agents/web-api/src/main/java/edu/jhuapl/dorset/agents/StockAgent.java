@@ -267,7 +267,7 @@ public class StockAgent extends AbstractAgent {
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            logger.debug("Failed to load " + filename + ".");
+            logger.error("Failed to load " + filename + ".", e);
         }
     }
 
