@@ -69,7 +69,7 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest( keyword);
+        AgentRequest request = new AgentRequest("Stocks " + keyword);
         AgentResponse response = stocks.process(request);
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",
@@ -107,7 +107,7 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest( keyword);
+        AgentRequest request = new AgentRequest(keyword);
         AgentResponse response = stocks.process(request);
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",
@@ -145,9 +145,9 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest( keyword);
+        AgentRequest request = new AgentRequest(keyword);
         AgentResponse response = stocks.process(request);
-        assertEquals("Here is the longitudinal stock market data from the last 30 days for Apple inc.",
+        assertEquals("Here is the longitudinal stock market data from the last 30 days for Apple Inc.",
                 response.getText());
 
     }
@@ -182,7 +182,7 @@ public class StockAgentTest {
         when(client.get(urlStr)).thenReturn(jsonData);
 
         Agent stocks = new StockAgent(client, apikey);
-        AgentRequest request = new AgentRequest( keyword);
+        AgentRequest request = new AgentRequest(keyword);
         AgentResponse response = stocks.process(request);
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Apple Inc.",
@@ -192,7 +192,7 @@ public class StockAgentTest {
 
     @Test
     public void testStockAgentQuandlError() {
-        String keyword = "First bank";
+        String keyword = "First Bank";
         String keywordSymbol = "FRBA";
 
         String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
@@ -206,7 +206,7 @@ public class StockAgentTest {
         AgentResponse response = stocks.process(request);
 
         assertEquals("I am sorry, I can't find the proper stock data for the company "
-                + keyword + ".",response.getText());
+                        + keyword + ".", response.getStatus().getMessage());
 
     }
 
@@ -225,7 +225,7 @@ public class StockAgentTest {
         AgentResponse response = stocks.process(request);
 
         assertEquals("I am sorry, I don't understand which company you are asking about.",
-                response.getText());
+                response.getStatus().getMessage());
 
     }
 }
