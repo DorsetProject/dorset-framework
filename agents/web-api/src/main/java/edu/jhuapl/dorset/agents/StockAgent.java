@@ -83,8 +83,8 @@ public class StockAgent extends AbstractAgent {
         this.apiKey = apiKey;
 
         this.stockSymbolMap = new TreeMap<String, CompanyInfo>(String.CASE_INSENSITIVE_ORDER);
-        csvFileReader("stockagent/NASDAQ_Companies.csv");
-        csvFileReader("stockagent/NYSE_Companies.csv");
+        readCsvFile("stockagent/NASDAQ_Companies.csv");
+        readCsvFile("stockagent/NYSE_Companies.csv");
 
         this.setDescription(new Description("stock ticker", SUMMARY, EXAMPLE));
 
@@ -100,20 +100,16 @@ public class StockAgent extends AbstractAgent {
         String requestCompanyName = pat.matcher(request.getText()).replaceAll("").trim();
 
         CompanyInfo stockCompanyInfo = findStockSymbol(requestCompanyName);
-        String keywordCompanyName = null;
-        String keywordCompanySymbol = null;
 
-        if (stockCompanyInfo != null) {
-            keywordCompanyName = stockCompanyInfo.getName();
-            keywordCompanySymbol = stockCompanyInfo.getSymbol();
+        if (stockCompanyInfo == null) {
+            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
+                    "I am sorry, I don't understand which company you are asking about."));  
         }
+        
+        String keywordCompanyName = stockCompanyInfo.getName();
+        String keywordCompanySymbol = stockCompanyInfo.getSymbol();
 
         String json = null;
-
-        if (keywordCompanySymbol == null) {
-            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
-                            "I am sorry, I don't understand which company you are asking about."));
-        }
 
         json = requestData(keywordCompanySymbol);
 
@@ -121,17 +117,12 @@ public class StockAgent extends AbstractAgent {
 
             // replace ".." with "." to maintain proper grammar when the
             // keyword contains an abbreviation
-            if (keywordCompanyName != null) {
-                return new AgentResponse(
-                        new ResponseStatus(
-                                ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
-                                ("I am sorry, I can't find the proper stock data for the company "
-                                        + keywordCompanyName + ".").replace(
-                                        "..", ".")));
-            }
-            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
+            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
+                    ("I am sorry, I can't find the proper stock data for the company "
+                            + keywordCompanyName + ".").replace("..", ".")));
         }
         
+        //See examples of the Json data returned by the API in src/test/resources/stockAgent
         JsonObject returnObj = processData(json, keywordCompanyName);
 
         // replace ".." with "." to maintain proper grammar when the
@@ -249,7 +240,7 @@ public class StockAgent extends AbstractAgent {
         return client.get(url);
     }
 
-    protected void csvFileReader(String filename) {
+    protected void readCsvFile(String filename) {
         InputStream companiesCsvInput = StockAgent.class.getClassLoader()
                 .getResourceAsStream(filename);
 
@@ -266,7 +257,6 @@ public class StockAgent extends AbstractAgent {
             }
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             logger.error("Failed to load " + filename + ".", e);
         }
     }

@@ -45,7 +45,7 @@ public class StockAgentTest {
         String keywordSymbol = "FB";
 
         ClassLoader classLoader = StockAgent.class.getClassLoader();
-        URL url = classLoader.getResource("stockagent/MockJson_Facebook");
+        URL url = classLoader.getResource("stockagent/MockJson_Facebook.json");
 
         Path path = null;
         try {
@@ -83,7 +83,7 @@ public class StockAgentTest {
         String keywordSymbol = "FB";
 
         ClassLoader classLoader = StockAgent.class.getClassLoader();
-        URL url = classLoader.getResource("stockagent/MockJson_Facebook");
+        URL url = classLoader.getResource("stockagent/MockJson_Facebook.json");
 
         Path path = null;
         try {
@@ -121,7 +121,7 @@ public class StockAgentTest {
         String keywordSymbol = "AAPL";
 
         ClassLoader classLoader = StockAgent.class.getClassLoader();
-        URL url = classLoader.getResource("stockagent/MockJson_Apple");
+        URL url = classLoader.getResource("stockagent/MockJson_Apple.json");
 
         Path path = null;
         try {
@@ -158,7 +158,7 @@ public class StockAgentTest {
         String keywordSymbol = "AAPL";
 
         ClassLoader classLoader = StockAgent.class.getClassLoader();
-        URL url = classLoader.getResource("stockagent/MockJson_Apple");
+        URL url = classLoader.getResource("stockagent/MockJson_Apple.json");
 
         Path path = null;
         try {
