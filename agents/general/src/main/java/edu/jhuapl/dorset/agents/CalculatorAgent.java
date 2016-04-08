@@ -19,6 +19,7 @@ package edu.jhuapl.dorset.agents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.agents.AbstractAgent;
 import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
@@ -42,8 +43,21 @@ public class CalculatorAgent extends AbstractAgent {
     @Override
     public AgentResponse process(AgentRequest request) {
         logger.debug("Handling the request: " + request.getText());
-        Expression exp = new ExpressionBuilder(request.getText()).build();
-        double result = exp.evaluate();
+        Expression exp = null;
+        try {
+            exp = new ExpressionBuilder(request.getText()).build();
+        } catch (IllegalArgumentException e) {
+            logger.debug("CalculatorAgent could not parse " + request.getText());
+            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST);
+        }
+
+        double result = 0;
+        try {
+            result = exp.evaluate();
+        } catch (IllegalArgumentException e) {
+            logger.debug("CalculatorAgent could not parse " + request.getText());
+            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST);
+        }
 
         // handle integers differently from floating point 
         String answer;
