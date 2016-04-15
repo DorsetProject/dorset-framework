@@ -29,6 +29,8 @@ import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
 import edu.jhuapl.dorset.agents.Description;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 import edu.jhuapl.dorset.nlp.WhiteSpaceTokenizer;
 
 public class RottenTomatoesAgent extends AbstractAgent {
@@ -91,7 +93,8 @@ public class RottenTomatoesAgent extends AbstractAgent {
         movieTitle = movieTitle.replace(" ", "%20");
         String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
                 + this.apikey + "&q=" + movieTitle;
-        return client.get(url);
+        HttpResponse response = client.execute(HttpRequest.Get(url));
+        return response.asString();
     }
 
     protected String findMovieTitle(String agentRequest) {

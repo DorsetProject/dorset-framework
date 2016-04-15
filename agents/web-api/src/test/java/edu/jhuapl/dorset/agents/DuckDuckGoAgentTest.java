@@ -17,8 +17,7 @@
 package edu.jhuapl.dorset.agents;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
@@ -27,6 +26,7 @@ import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
 
 public class DuckDuckGoAgentTest {
 
@@ -35,7 +35,7 @@ public class DuckDuckGoAgentTest {
         String query = "Barack Obama";
         String jsonData = FileReader.getFileAsString("duckduckgo/barack_obama.json");
         HttpClient client = mock(HttpClient.class);
-        when(client.get(DuckDuckGoAgent.createUrl(query))).thenReturn(jsonData);
+        when(client.execute(DuckDuckGoAgent.createUrl(query))).thenReturn(jsonData);
 
         Agent agent = new DuckDuckGoAgent(client);
         AgentResponse response = agent.process(new AgentRequest(query));
@@ -48,7 +48,7 @@ public class DuckDuckGoAgentTest {
     public void testWithFullSentence() {
         String jsonData = FileReader.getFileAsString("duckduckgo/barack_obama.json");
         HttpClient client = mock(HttpClient.class);
-        when(client.get(DuckDuckGoAgent.createUrl("Barack Obama"))).thenReturn(jsonData);
+        when(client.execute(any(HttpRequest.class))).thenReturn(jsonData);
 
         Agent agent = new DuckDuckGoAgent(client);
         AgentResponse response = agent.process(new AgentRequest("Who is Barack Obama?"));

@@ -49,6 +49,8 @@ import com.google.gson.JsonObject;
 import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 
 public class StockAgent extends AbstractAgent {
 
@@ -237,7 +239,8 @@ public class StockAgent extends AbstractAgent {
 
     protected String requestData(String keyword) {
         String url = this.baseurl + keyword + ".json?api_key=" + apiKey;
-        return client.get(url);
+        HttpResponse response = client.execute(HttpRequest.Get(url));
+        return response.asString();
     }
 
     protected void readCsvFile(String filename) {

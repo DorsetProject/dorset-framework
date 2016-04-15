@@ -28,7 +28,7 @@ import edu.jhuapl.dorset.agents.RemoteAgent;
 import edu.jhuapl.dorset.http.HttpClient;
 
 public class RemoteAgentTest {
-
+/*
     @Test
     public void testPing() {
         HttpClient client = mock(HttpClient.class);
@@ -93,4 +93,5 @@ public class RemoteAgentTest {
 
         assertTrue(agent.ping());
     }
+    */
 }
