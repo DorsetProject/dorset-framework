@@ -34,6 +34,8 @@ import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
 import edu.jhuapl.dorset.agents.Description;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 import edu.jhuapl.dorset.nlp.RuleBasedTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
 
@@ -75,7 +77,11 @@ public class DuckDuckGoAgent extends AbstractAgent {
     }
 
     protected String requestData(String entity) {
-        return client.get(createUrl(entity));
+        HttpResponse response = client.execute(HttpRequest.get(createUrl(entity)));
+        if (response == null || response.isError()) {
+            return null;
+        }
+        return response.asString();
     }
 
     protected AgentResponse createResponse(String json) {
