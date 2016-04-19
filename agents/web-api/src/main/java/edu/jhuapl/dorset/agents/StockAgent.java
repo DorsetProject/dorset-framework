@@ -262,7 +262,7 @@ public class StockAgent extends AbstractAgent {
             while ((companyInfo = csvBeanReader.read(CompanyInfo.class, header, processors)) != null) {
                 this.stockSymbolMap.put(companyInfo.getName(), companyInfo);
             }
-
+            csvBeanReader.close();
         } catch (IOException e) {
             logger.error("Failed to load " + filename + ".", e);
         }
