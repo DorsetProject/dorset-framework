@@ -34,6 +34,10 @@ public class ApacheHttpResponse extends AbstractHttpResponse implements HttpResp
     private Content content;
     private StatusLine status;
 
+    /**
+     * Create a response for the Apache Http Client
+     * @param response  An Apache response object
+     */
     public ApacheHttpResponse(Response response) throws IOException {
         this.response = response;
         handleResponse();

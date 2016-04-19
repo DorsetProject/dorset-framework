@@ -239,8 +239,12 @@ public class StockAgent extends AbstractAgent {
 
     protected String requestData(String keyword) {
         String url = this.baseurl + keyword + ".json?api_key=" + apiKey;
-        HttpResponse response = client.execute(HttpRequest.Get(url));
-        return response.asString();
+        HttpResponse response = client.execute(HttpRequest.get(url));
+        if (response.isSuccess()) {
+            return response.asString();
+        } else {
+            return null; 
+        }
     }
 
     protected void readCsvFile(String filename) {

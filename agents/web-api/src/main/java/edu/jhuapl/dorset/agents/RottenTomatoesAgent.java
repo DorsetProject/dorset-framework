@@ -93,8 +93,12 @@ public class RottenTomatoesAgent extends AbstractAgent {
         movieTitle = movieTitle.replace(" ", "%20");
         String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
                 + this.apikey + "&q=" + movieTitle;
-        HttpResponse response = client.execute(HttpRequest.Get(url));
-        return response.asString();
+        HttpResponse response = client.execute(HttpRequest.get(url));
+        if (response.isSuccess()) {
+            return response.asString();
+        } else {
+            return null;
+        }
     }
 
     protected String findMovieTitle(String agentRequest) {

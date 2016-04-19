@@ -43,7 +43,7 @@ public class ApacheHttpClientTest {
     public void testSimpleGet() {
         HttpClient client = new ApacheHttpClient();
 
-        HttpResponse response = client.execute(HttpRequest.Get("http://httpbin.org/get?test=32"));
+        HttpResponse response = client.execute(HttpRequest.get("http://httpbin.org/get?test=32"));
 
         assertNotNull(response);
         assertFalse(response.isError());
@@ -57,7 +57,7 @@ public class ApacheHttpClientTest {
     public void testSimpleDelete() {
         HttpClient client = new ApacheHttpClient();
 
-        HttpResponse response = client.execute(HttpRequest.Delete("http://httpbin.org/delete"));
+        HttpResponse response = client.execute(HttpRequest.delete("http://httpbin.org/delete"));
 
         assertNotNull(response);
         assertTrue(response.isSuccess());
@@ -68,7 +68,7 @@ public class ApacheHttpClientTest {
         HttpClient client = new ApacheHttpClient();
         HttpParameter[] p = new HttpParameter[]{new HttpParameter("a", "b"), new HttpParameter("c", "d")};
 
-        HttpRequest request = HttpRequest.Post("http://httpbin.org/post").setBodyForm(p);
+        HttpRequest request = HttpRequest.post("http://httpbin.org/post").setBodyForm(p);
         HttpResponse response = client.execute(request);
 
         assertNotNull(response);
@@ -83,7 +83,7 @@ public class ApacheHttpClientTest {
     public void testPostWithJsonBody() {
         HttpClient client = new ApacheHttpClient();
 
-        HttpRequest request = HttpRequest.Post("http://httpbin.org/post").setBody("{\"value\":\"bar\"}", ContentType.APPLICATION_JSON);
+        HttpRequest request = HttpRequest.post("http://httpbin.org/post").setBody("{\"value\":\"bar\"}", ContentType.APPLICATION_JSON);
         HttpResponse response = client.execute(request);
 
         assertNotNull(response);
@@ -100,7 +100,7 @@ public class ApacheHttpClientTest {
         HttpClient client = new ApacheHttpClient();
         HttpParameter[] p = new HttpParameter[]{new HttpParameter("a", "b"), new HttpParameter("c", "d")};
 
-        HttpRequest request = HttpRequest.Put("http://httpbin.org/put").setBodyForm(p);
+        HttpRequest request = HttpRequest.put("http://httpbin.org/put").setBodyForm(p);
         HttpResponse response = client.execute(request);
 
         assertNotNull(response);
@@ -116,7 +116,7 @@ public class ApacheHttpClientTest {
         HttpClient client = new ApacheHttpClient();
 
         client.setUserAgent("Dorset HttpClient Test");
-        HttpResponse response = client.execute(HttpRequest.Get("http://httpbin.org/user-agent"));
+        HttpResponse response = client.execute(HttpRequest.get("http://httpbin.org/user-agent"));
 
         assertNotNull(response);
         assertTrue(response.isSuccess());
@@ -132,7 +132,7 @@ public class ApacheHttpClientTest {
         // non-routable ip address that should cause a connection timeout
         // this does not test the setTimeout method as much as it tests that
         // a null is returned for a timeout
-        HttpResponse response = client.execute(HttpRequest.Get("http://10.255.255.1/"));
+        HttpResponse response = client.execute(HttpRequest.get("http://10.255.255.1/"));
 
         assertNull(response);
     }
@@ -141,18 +141,18 @@ public class ApacheHttpClientTest {
     public void testSetReadTimeout() {
         HttpClient client = new ApacheHttpClient();
         client.setReadTimeout(2000);
-        HttpResponse response = client.execute(HttpRequest.Get("http://httpbin.org/delay/4"));
+        HttpResponse response = client.execute(HttpRequest.get("http://httpbin.org/delay/4"));
         assertNull(response);
 
         client.setReadTimeout(4000);
-        response = client.execute(HttpRequest.Get("http://httpbin.org/delay/3"));
+        response = client.execute(HttpRequest.get("http://httpbin.org/delay/3"));
         assertNotNull(response);
     }
 
     @Test
     public void test404Status() {
         HttpClient client = new ApacheHttpClient();
-        HttpResponse response = client.execute(HttpRequest.Get("https://httpbin.org/status/404"));
+        HttpResponse response = client.execute(HttpRequest.get("https://httpbin.org/status/404"));
         assertNotNull(response);
         assertTrue(response.isClientError());
         assertFalse(response.isServerError());
@@ -164,7 +164,7 @@ public class ApacheHttpClientTest {
     @Test
     public void test500Status() {
         HttpClient client = new ApacheHttpClient();
-        HttpResponse response = client.execute(HttpRequest.Get("https://httpbin.org/status/500"));
+        HttpResponse response = client.execute(HttpRequest.get("https://httpbin.org/status/500"));
         assertNotNull(response);
         assertFalse(response.isClientError());
         assertTrue(response.isServerError());
@@ -177,7 +177,7 @@ public class ApacheHttpClientTest {
     public void testRedirect() {
         HttpClient client = new ApacheHttpClient();
         // 302 redirect to a get request
-        HttpResponse response = client.execute(HttpRequest.Get("http://httpbin.org/redirect-to?url=http%3A%2F%2Fhttpbin.org%2Fget%3Ftest%3D32"));
+        HttpResponse response = client.execute(HttpRequest.get("http://httpbin.org/redirect-to?url=http%3A%2F%2Fhttpbin.org%2Fget%3Ftest%3D32"));
         assertNotNull(response);
         assertTrue(response.isSuccess());
         JsonObject jsonObj = getJsonObject(response.asString());
@@ -189,7 +189,7 @@ public class ApacheHttpClientTest {
     public void testHttpHeaders() {
         HttpClient client = new ApacheHttpClient();
         client.addDefaultRequestHeader("Testing", "dorset");
-        HttpResponse response = client.execute(HttpRequest.Get("https://httpbin.org/headers"));
+        HttpResponse response = client.execute(HttpRequest.get("https://httpbin.org/headers"));
         assertNotNull(response);
         JsonObject jsonObj = getJsonObject(response.asString());
         JsonObject headers = jsonObj.get("headers").getAsJsonObject();
@@ -200,7 +200,7 @@ public class ApacheHttpClientTest {
     public void testGetImage() {
         HttpClient client = new ApacheHttpClient();
 
-        HttpResponse response = client.execute(HttpRequest.Get("https://httpbin.org/image/jpeg"));
+        HttpResponse response = client.execute(HttpRequest.get("https://httpbin.org/image/jpeg"));
 
         assertNotNull(response);
         assertTrue(response.isSuccess());

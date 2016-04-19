@@ -77,7 +77,7 @@ public class DuckDuckGoAgent extends AbstractAgent {
     }
 
     protected String requestData(String entity) {
-        HttpResponse response = client.execute(HttpRequest.Get(createUrl(entity)));
+        HttpResponse response = client.execute(HttpRequest.get(createUrl(entity)));
         if (response == null || response.isError()) {
             return null;
         }

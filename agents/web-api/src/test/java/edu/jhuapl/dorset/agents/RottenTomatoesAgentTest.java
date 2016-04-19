@@ -17,8 +17,7 @@
 package edu.jhuapl.dorset.agents;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
@@ -27,6 +26,8 @@ import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 
 public class RottenTomatoesAgentTest {
 
@@ -35,16 +36,9 @@ public class RottenTomatoesAgentTest {
     @Test
     public void testRuntime() {
         String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
-
-        String movieTitle = "finding%20nemo";
-        String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
-                + apikey + "&q=" + movieTitle;
-
         String testQuestion = "What is the runtime for the film finding nemo?";
         String correctAnswer = "The runtime for the film, Finding Nemo, is 100 minutes long.";
-
-        HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
         Agent movie = new RottenTomatoesAgent(client, apikey);
         AgentRequest request = new AgentRequest(testQuestion);
@@ -56,16 +50,9 @@ public class RottenTomatoesAgentTest {
     @Test
     public void testYear() {
         String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
-
-        String movieTitle = "finding%20nemo";
-        String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
-                + apikey + "&q=" + movieTitle;
-
         String testQuestion = "What is the creation year for the film finding nemo?";
         String correctAnswer = "The year the film, Finding Nemo, was created is 2003.";
-
-        HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
         Agent movie = new RottenTomatoesAgent(client, apikey);
         AgentRequest request = new AgentRequest(testQuestion);
@@ -77,17 +64,11 @@ public class RottenTomatoesAgentTest {
     @Test
     public void testActors() {
         String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
-
-        String movieTitle = "finding%20nemo";
-        String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
-                + apikey + "&q=" + movieTitle;
-
         String testQuestion = "Who are the main actors in the movie finding nemo?";
         String correctAnswer = "The film, Finding Nemo, stars actors Albert Brooks, "
                 + "Ellen DeGeneres, Alexander Gould, Willem Dafoe, Brad Garrett.";
 
-        HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
         Agent movie = new RottenTomatoesAgent(client, apikey);
         AgentRequest request = new AgentRequest(testQuestion);
@@ -99,15 +80,8 @@ public class RottenTomatoesAgentTest {
     @Test
     public void testNoKeyword() {
         String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
-
-        String movieTitle = "finding%20nemo";
-        String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
-                + apikey + "&q=" + movieTitle;
-
         String testQuestion = "What is the  movie finding nemo?";
-
-        HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
         Agent movie = new RottenTomatoesAgent(client, apikey);
         AgentRequest request = new AgentRequest(testQuestion);
@@ -119,16 +93,14 @@ public class RottenTomatoesAgentTest {
 
     @Test
     public void testBadApiKey() {
-        String jsonData = FileReader.getFileAsString("rotten_tomatoes/test.json");
-
-        String movieTitle = "finding%20nemo";
-        String urlStr = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey="
-                + "otherapi_key" + "&q=" + movieTitle;
-
+        String jsonData = FileReader.getFileAsString("rotten_tomatoes/bad_key.json");
         String testQuestion = "What is the runtime for the movie finding nemo?";
-
+        
+        HttpResponse httpResponse = mock(HttpResponse.class);
+        when(httpResponse.isSuccess()).thenReturn(false);
+        when(httpResponse.asString()).thenReturn(jsonData);
         HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
+        when(client.execute(any(HttpRequest.class))).thenReturn(httpResponse);
 
         Agent movie = new RottenTomatoesAgent(client, apikey);
         AgentRequest request = new AgentRequest(testQuestion);

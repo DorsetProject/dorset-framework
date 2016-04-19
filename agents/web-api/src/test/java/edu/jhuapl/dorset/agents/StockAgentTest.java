@@ -17,6 +17,7 @@
 package edu.jhuapl.dorset.agents;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,77 +35,45 @@ import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 
 public class StockAgentTest {
 
     private String apikey = "default_apikey";
+    
+    protected String getJsonData(String filename) {
+        ClassLoader classLoader = StockAgent.class.getClassLoader();
+        URL url = classLoader.getResource(filename);
+        try {
+            Path path = Paths.get(url.toURI());
+            try (Scanner scanner = new Scanner(new File(path.toString()))) {
+                return scanner.useDelimiter("\\Z").next();
+            }
+        } catch (URISyntaxException | FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     public void testStockAgentExactMatch() {
         String keyword = "facebook, Inc.";
-        String keywordSymbol = "FB";
-
-        ClassLoader classLoader = StockAgent.class.getClassLoader();
-        URL url = classLoader.getResource("stockagent/MockJson_Facebook.json");
-
-        Path path = null;
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        String jsonData = "";
-        try {
-            jsonData = new Scanner(new File(path.toString())).useDelimiter("\\Z").next();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
-                + keywordSymbol + ".json?api_key=" + apikey;
-
-        HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
-
+        String jsonData = getJsonData("stockagent/MockJson_Facebook.json");
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
+        
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest("Stocks " + keyword);
         AgentResponse response = stocks.process(request);
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",
                 response.getText());
-
     }
 
     @Test
     public void testStockAgentCloseMatch() {
         String keyword = "facebook";
-        String keywordSymbol = "FB";
-
-        ClassLoader classLoader = StockAgent.class.getClassLoader();
-        URL url = classLoader.getResource("stockagent/MockJson_Facebook.json");
-
-        Path path = null;
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        String jsonData = "";
-        try {
-            jsonData = new Scanner(new File(path.toString())).useDelimiter("\\Z").next();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
-                + keywordSymbol + ".json?api_key=" + apikey;
-
-        HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
+        String jsonData = getJsonData("stockagent/MockJson_Facebook.json");
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest(keyword);
@@ -112,74 +81,26 @@ public class StockAgentTest {
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",
                 response.getText());
-
     }
 
     @Test
     public void testStockAgentExactMatch2() {
         String keyword = "Apple inc.";
-        String keywordSymbol = "AAPL";
-
-        ClassLoader classLoader = StockAgent.class.getClassLoader();
-        URL url = classLoader.getResource("stockagent/MockJson_Apple.json");
-
-        Path path = null;
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        String jsonData = "";
-        try {
-            jsonData = new Scanner(new File(path.toString())).useDelimiter("\\Z").next();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
-                + keywordSymbol + ".json?api_key=" + apikey;
-
-        HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
+        String jsonData = getJsonData("stockagent/MockJson_Apple.json");
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest(keyword);
         AgentResponse response = stocks.process(request);
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Apple Inc.",
                 response.getText());
-
     }
 
     @Test
     public void testStockAgentCloseMatch2() {
         String keyword = "apple";
-        String keywordSymbol = "AAPL";
-
-        ClassLoader classLoader = StockAgent.class.getClassLoader();
-        URL url = classLoader.getResource("stockagent/MockJson_Apple.json");
-
-        Path path = null;
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        String jsonData = "";
-        try {
-            jsonData = new Scanner(new File(path.toString())).useDelimiter("\\Z").next();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
-                + keywordSymbol + ".json?api_key=" + apikey;
-
-        HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(jsonData);
+        String jsonData = getJsonData("stockagent/MockJson_Apple.json");
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest(keyword);
@@ -187,19 +108,17 @@ public class StockAgentTest {
 
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Apple Inc.",
                 response.getText());
-
     }
 
     @Test
-    public void testStockAgentQuandlError() {
-        String keyword = "First Bank";
-        String keywordSymbol = "FRBA";
-
-        String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
-                + keywordSymbol + ".json?api_key=" + apikey;
-
+    public void testStockAgentNoQuandlData() {
+        String keyword = "First Bank"; // maps to FRBA in NASDAQ
+        String jsonData = getJsonData("stockagent/MockJson_404.json");
+        HttpResponse httpResponse = mock(HttpResponse.class);
+        when(httpResponse.isSuccess()).thenReturn(false);
+        when(httpResponse.asString()).thenReturn(jsonData);
         HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(null);
+        when(client.execute(any(HttpRequest.class))).thenReturn(httpResponse);
 
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest(keyword);
@@ -207,18 +126,12 @@ public class StockAgentTest {
 
         assertEquals("I am sorry, I can't find the proper stock data for the company "
                         + keyword + ".", response.getStatus().getMessage());
-
     }
 
     @Test
     public void testStockAgentFailure() {
         String keyword = "company that does not exist";
-
-        String urlStr = "https://www.quandl.com/api/v3/datasets/WIKI/"
-                + keyword + ".json?api_key=" + apikey;
-
         HttpClient client = mock(HttpClient.class);
-        when(client.get(urlStr)).thenReturn(null);
 
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest(keyword);
@@ -226,6 +139,6 @@ public class StockAgentTest {
 
         assertEquals("I am sorry, I don't understand which company you are asking about.",
                 response.getStatus().getMessage());
-
     }
+
 }

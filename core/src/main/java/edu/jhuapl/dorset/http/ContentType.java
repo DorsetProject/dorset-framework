@@ -35,10 +35,18 @@ public class ContentType {
         this.charset = charset;
     }
 
+    /**
+     * Get the MIME type
+     * @return the MIME string
+     */
     public String getMimeType() {
         return mimeType;
     }
 
+    /**
+     * Get the character set
+     * @return a Charset object
+     */
     public Charset getCharset() {
         return charset;
     }

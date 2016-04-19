@@ -96,7 +96,7 @@ public class RemoteAgent extends AbstractAgent {
      * @return boolean
      */
     public boolean ping() {
-        HttpResponse httpResponse = client.execute(HttpRequest.Get(pingUrl));
+        HttpResponse httpResponse = client.execute(HttpRequest.get(pingUrl));
         if (httpResponse != null) {
             String resp = httpResponse.asString();
             try {

@@ -28,48 +28,99 @@ public class HttpRequest {
         this.url = url;
     }
 
-    public static HttpRequest Get(String url) {
+    /**
+     * Create a GET request
+     * @param url  the URL to get
+     * @return http request object
+     */
+    public static HttpRequest get(String url) {
         return new HttpRequest(HttpMethod.GET, url);
     }
 
-    public static HttpRequest Post(String url) {
+    /**
+     * Create a POST request
+     * @param url  the URL to post to
+     * @return http request object
+     */
+    public static HttpRequest post(String url) {
         return new HttpRequest(HttpMethod.POST, url);
     }
 
-    public static HttpRequest Put(String url) {
+    /**
+     * Create a PUT request
+     * @param url  the URL 
+     * @return http request object
+     */
+    public static HttpRequest put(String url) {
         return new HttpRequest(HttpMethod.PUT, url);
     }
 
-    public static HttpRequest Delete(String url) {
+    /**
+     * Create a DELETE request
+     * @param url  the URL to delete
+     * @return http request object
+     */
+    public static HttpRequest delete(String url) {
         return new HttpRequest(HttpMethod.DELETE, url);
     }
 
+    /**
+     * Get the method of the http request
+     * @return the http method
+     */
     public HttpMethod getMethod() {
         return method;
     }
 
+    /**
+     * Get the URL of the http request
+     * @return the URL
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * Get the body of the http request
+     * @return the body as a string
+     */
     public String getBody() {
         return body;
     }
 
+    /**
+     * Get the content type of the http request
+     * @return the content type object
+     */
     public ContentType getContentType() {
         return contentType;
     }
 
+    /**
+     * Set the body of the http request
+     * @param body  the body as a string
+     * @param contentType  the content type for the request
+     * @return self
+     */
     public HttpRequest setBody(String body, ContentType contentType) {
         this.body = body;
         this.contentType = contentType;
         return this;
     }
 
+    /**
+     * Get the http parameters for the body of the request
+     * @return an array of http parameters
+     */
     public HttpParameter[] getBodyForm() {
         return bodyForm;
     }
 
+    /**
+     * Set the body form http parameters
+     * @param parameters  the http parameters to set in the body
+     * @return self
+     */
     public HttpRequest setBodyForm(HttpParameter[] parameters) {
         bodyForm = parameters.clone();
         return this;
