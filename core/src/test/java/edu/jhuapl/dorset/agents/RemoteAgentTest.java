@@ -26,14 +26,33 @@ import edu.jhuapl.dorset.agents.AgentRequest;
 import edu.jhuapl.dorset.agents.AgentResponse;
 import edu.jhuapl.dorset.agents.RemoteAgent;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 
 public class RemoteAgentTest {
-/*
+
+    private HttpClient getMockClient(String json) {
+        HttpResponse httpResponse = mock(HttpResponse.class);
+        when(httpResponse.asString()).thenReturn(json);
+        HttpClient client = mock(HttpClient.class);
+        when(client.execute(any(HttpRequest.class))).thenReturn(httpResponse);
+        return client;
+    }
+
     @Test
     public void testPing() {
+        HttpResponse httpResponse1 = mock(HttpResponse.class);
+        when(httpResponse1.asString()).thenReturn("\"pong\"");
+        when(httpResponse1.isSuccess()).thenReturn(true);
+        HttpResponse httpResponse2 = mock(HttpResponse.class);
+        when(httpResponse2.asString()).thenReturn("{\"pong\"}");
+        when(httpResponse2.isSuccess()).thenReturn(true);
+        HttpResponse httpResponse3 = mock(HttpResponse.class);
+        when(httpResponse3.asString()).thenReturn(null);
+        when(httpResponse3.isSuccess()).thenReturn(false);
         HttpClient client = mock(HttpClient.class);
-        when(client.get("http://example.org/ping")).thenReturn("pong").thenReturn(null)
-                        .thenReturn("{\"pong\"}");
+        when(client.execute(any(HttpRequest.class))).thenReturn(httpResponse1)
+                        .thenReturn(httpResponse2).thenReturn(httpResponse3);
         RemoteAgent agent = new RemoteAgent("http://example.org/", client);
 
         assertTrue(agent.ping());
@@ -43,9 +62,8 @@ public class RemoteAgentTest {
 
     @Test
     public void testProcess() {
-        HttpClient client = mock(HttpClient.class);
-        when(client.post(eq("http://example.org/request"), any(String.class),
-                        eq(HttpClient.APPLICATION_JSON))).thenReturn("{\"type\":\"text\",\"text\":\"2\", \"status\":{\"code\":0, \"message\":\"Success\"}}");
+        String json = "{\"type\":\"text\",\"text\":\"2\", \"status\":{\"code\":0, \"message\":\"Success\"}}";
+        HttpClient client = getMockClient(json);
         RemoteAgent agent = new RemoteAgent("http://example.org/", client);
         AgentRequest request = new AgentRequest("what is 1 + 1?");
 
@@ -57,9 +75,7 @@ public class RemoteAgentTest {
 
     @Test
     public void testProcessWithInvalidJson() {
-        HttpClient client = mock(HttpClient.class);
-        when(client.post(eq("http://example.org/request"), any(String.class),
-                        eq(HttpClient.APPLICATION_JSON))).thenReturn("{\"ans\":, \"statusCode\":0}");
+        HttpClient client = getMockClient("{\"ans\":, \"statusCode\":0}");
         RemoteAgent agent = new RemoteAgent("http://example.org/", client);
         AgentRequest request = new AgentRequest("what is 1 + 1?");
 
@@ -71,9 +87,7 @@ public class RemoteAgentTest {
 
     @Test
     public void testProcessWithInvalidResponse() {
-        HttpClient client = mock(HttpClient.class);
-        when(client.post(eq("http://example.org/request"), any(String.class),
-                        eq(HttpClient.APPLICATION_JSON))).thenReturn("{\"ans\":\"2\", \"statusCode\":0}");
+        HttpClient client = getMockClient("{\"ans\":\"2\", \"statusCode\":0}");
         RemoteAgent agent = new RemoteAgent("http://example.org/", client);
         AgentRequest request = new AgentRequest("what is 1 + 1?");
 
@@ -82,16 +96,4 @@ public class RemoteAgentTest {
         assertNull(response.getText());
         assertEquals(ResponseStatus.Code.INVALID_RESPONSE_FROM_AGENT, response.getStatus().getCode());
     }
-
-    @Test
-    public void testUrlForming() {
-        HttpClient client = mock(HttpClient.class);
-        when(client.get("http://example.org/ping")).thenReturn("pong").thenReturn(null)
-                        .thenReturn("{\"pong\"}");
-        // passing url without trailing slash to make sure we add it
-        RemoteAgent agent = new RemoteAgent("http://example.org", client);
-
-        assertTrue(agent.ping());
-    }
-    */
 }

@@ -97,7 +97,7 @@ public class RemoteAgent extends AbstractAgent {
      */
     public boolean ping() {
         HttpResponse httpResponse = client.execute(HttpRequest.get(pingUrl));
-        if (httpResponse != null) {
+        if (httpResponse.isSuccess()) {
             String resp = httpResponse.asString();
             try {
                 String text = gson.fromJson(resp, String.class);
