@@ -16,6 +16,8 @@
  */
 package edu.jhuapl.dorset.agents;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -42,6 +44,27 @@ public class FileReader {
             e.printStackTrace();
         }
 
+        return data;
+    }
+
+    static public byte[] getFileAsBytes(String filename) {
+        byte[] data = null;
+        ClassLoader classLoader = FileReader.class.getClassLoader();
+        URL url = classLoader.getResource(filename);
+        File file = null;
+        try {
+            file = new File(url.toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            data = new byte[(int)file.length()];
+            fis.read(data);
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return data;
     }
 }

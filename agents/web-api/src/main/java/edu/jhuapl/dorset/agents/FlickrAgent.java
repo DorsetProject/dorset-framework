@@ -32,18 +32,20 @@ import com.google.gson.JsonObject;
 
 import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
-import edu.jhuapl.dorset.agent.AbstractAgent;
-import edu.jhuapl.dorset.agent.AgentRequest;
-import edu.jhuapl.dorset.agent.AgentResponse;
-import edu.jhuapl.dorset.agent.Description;
+import edu.jhuapl.dorset.agents.AbstractAgent;
+import edu.jhuapl.dorset.agents.AgentRequest;
+import edu.jhuapl.dorset.agents.AgentResponse;
+import edu.jhuapl.dorset.agents.Description;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 
 public class FlickrAgent extends AbstractAgent {
     private final Logger logger = LoggerFactory.getLogger(FlickrAgent.class);
     
     private static final String SUMMARY = "Search for images based on keywords";
     private static final String EXAMPLE = "Show me an apple";
-    private static final String REGEX = "Show me (a|an|the) (.*)";
+    private static final String REGEX = "Show me (an |a |the )?(.*)";
 
     private String apikey;
     private HttpClient client;
@@ -59,7 +61,7 @@ public class FlickrAgent extends AbstractAgent {
         this.apikey = apikey;
         this.client = client;
         this.setDescription(new Description("images", SUMMARY, EXAMPLE));
-        this.pattern = Pattern.compile(REGEX);
+        this.pattern = Pattern.compile(REGEX, Pattern.CASE_INSENSITIVE);
     }
 
     @Override
@@ -68,23 +70,32 @@ public class FlickrAgent extends AbstractAgent {
 
         String agentRequest = request.getText();
         String searchPhrase = getSearchPhrase(agentRequest);
+        logger.debug("Search phrase: " + searchPhrase);
         if (searchPhrase == null) {
             return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST);
         }
         String json = getFlickrJson(searchPhrase);
+        logger.debug("Flickr JSON: " + json);
+        if (json == null) {
+            return new AgentResponse(ResponseStatus.Code.AGENT_INTERNAL_ERROR);
+        }
         String url = getImageUrl(json);
+        logger.debug("Flickr image URL: " + url);
         byte[] data = getImage(url);
+        if (data == null) {
+            return new AgentResponse(ResponseStatus.Code.AGENT_INTERNAL_ERROR);
+        }
         String payload = encodeImage(data);
 
-        return new AgentResponse(Response.Type.EMBEDDED_IMAGE, "Here is your image", payload);
+        return new AgentResponse(Response.Type.IMAGE_EMBED, "Here is your image", payload);
     }
 
     protected String getSearchPhrase(String request) {
         String phrase = null;
-        Matcher m = pattern.matcher(request);
-        if (m.find()) {
-            if (m.group(2) != null) {
-                phrase = m.group(2);
+        Matcher matcher = pattern.matcher(request);
+        if (matcher.find()) {
+            if (matcher.group(2) != null) {
+                phrase = matcher.group(2).trim();
             }
         }
         return phrase;
@@ -98,13 +109,19 @@ public class FlickrAgent extends AbstractAgent {
             logger.error("Unexpected exception when encoding url", e);
         }
         return "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=" + apikey
-                        + "&text=" + searchPhrase
+                        + "&text=" + searchPhrase + "&sort=relevance"
                         + "&per_page=1&page=1&format=json&nojsoncallback=1";
     }
 
     protected String getFlickrJson(String searchPhrase) {
         String url = createFlickrRequestUrl(searchPhrase);
-        return client.get(url);
+        HttpRequest httpRequest = HttpRequest.get(url);
+        HttpResponse httpResponse = client.execute(httpRequest);
+        if (httpResponse.isSuccess()) {
+            return httpResponse.asString();
+        } else {
+            return null;
+        }
     }
 
     protected String getImageUrl(String json) {
@@ -121,16 +138,14 @@ public class FlickrAgent extends AbstractAgent {
         return "https://farm" + farm + ".staticflickr.com/" + server + "/" + id + "_" + secret + "_z.jpg";
     }
 
-    // TODO
     protected byte[] getImage(String url) {
-        // need to extend http client to get binary data
-        byte[] data = new byte[4];
-        data[0] = 32;
-        data[1] = 76;
-        data[2] = 98;
-        data[3] = 125;
-
-        return data;
+        HttpRequest httpRequest = HttpRequest.get(url);
+        HttpResponse httpResponse = client.execute(httpRequest);
+        if (httpResponse.isSuccess()) {
+            return httpResponse.asBytes();
+        } else {
+            return null;
+        }
     }
 
     protected String encodeImage(byte[] data) {
