@@ -194,7 +194,7 @@ public class StockAgent extends AbstractAgent {
     protected JsonObject processData(String json, String keyWordCompanyName) {
 
         Gson gson = new Gson();
-        JsonObject returnObj = null;
+        JsonObject returnObj = new JsonObject();
         JsonObject jsonObj = gson.fromJson(json, JsonObject.class);
 
         if (jsonObj != null) {
@@ -213,10 +213,6 @@ public class StockAgent extends AbstractAgent {
                 Collections.reverse(responseDataArrayList);
                 Collections.reverse(responseLabelsArrayList);
 
-                returnObj = gson.fromJson(json.toString(), JsonObject.class);
-
-                returnObj.addProperty("plotType", "lineplot");
-
                 List<JsonElement> returnDataJsonList = responseDataArrayList
                         .subList(responseDataArrayList.size() - DAYS_IN_A_MONTH,
                                 responseDataArrayList.size());
@@ -225,18 +221,21 @@ public class StockAgent extends AbstractAgent {
                         .subList(responseLabelsArrayList.size() - DAYS_IN_A_MONTH,
                                 responseLabelsArrayList.size());
                 
-                //format json data
-                ArrayList<String> returnDataJsonListStr = new ArrayList<String>();
-                for (int i = 0 ; i < responseDataArrayList.size(); i++) {
-                    returnDataJsonListStr.add("\"" + responseDataArrayList.get(i) + "\"");
+                JsonArray returnDataJsonListStr = new JsonArray();
+                for (int i = 0 ; i < returnDataJsonList.size(); i++) {
+                    returnDataJsonListStr.add(returnDataJsonList.get(i));
                 } 
-                String jsonData = "{\"" + keyWordCompanyName + "\":" + returnDataJsonList.toString() + "}";
                 
-                returnObj.addProperty("data", jsonData);                
+                JsonObject jsonData = new JsonObject();
+                jsonData.add(keyWordCompanyName, returnDataJsonListStr);
+                
+                returnObj.addProperty("data", jsonData.toString());                
                 returnObj.addProperty("labels", returnLabelsJsonList.toString());
                 returnObj.addProperty("title", keyWordCompanyName + " Stock Ticker");
                 returnObj.addProperty("xaxis", "Day");
                 returnObj.addProperty("yaxis", "Close of day market price ($)");
+                returnObj.addProperty("plotType", "lineplot");
+
             }
 
         }
