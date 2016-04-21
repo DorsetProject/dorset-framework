@@ -217,9 +217,6 @@ public class StockAgent extends AbstractAgent {
                         .subList(responseDataArrayList.size() - DAYS_IN_A_MONTH,
                                 responseDataArrayList.size());
               
-                List<JsonElement> returnLabelsJsonList = responseLabelsArrayList
-                        .subList(responseLabelsArrayList.size() - DAYS_IN_A_MONTH,
-                                responseLabelsArrayList.size());
                 
                 JsonArray returnDataJsonListStr = new JsonArray();
                 for (int i = 0 ; i < returnDataJsonList.size(); i++) {
@@ -229,8 +226,14 @@ public class StockAgent extends AbstractAgent {
                 JsonObject jsonData = new JsonObject();
                 jsonData.add(keyWordCompanyName, returnDataJsonListStr);
                 
-                returnObj.addProperty("data", jsonData.toString());                
+                returnObj.addProperty("data", jsonData.toString());         
+                
+                List<JsonElement> returnLabelsJsonList = responseLabelsArrayList
+                        .subList(responseLabelsArrayList.size() - DAYS_IN_A_MONTH,
+                                responseLabelsArrayList.size());
+                
                 returnObj.addProperty("labels", returnLabelsJsonList.toString());
+                
                 returnObj.addProperty("title", keyWordCompanyName + " Stock Ticker");
                 returnObj.addProperty("xaxis", "Day");
                 returnObj.addProperty("yaxis", "Close of day market price ($)");
