@@ -71,7 +71,7 @@ public class StockAgentTest {
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest("Stocks " + keyword);
         AgentResponse response = stocks.process(request);
-
+        
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",
                 response.getText());
 
@@ -96,7 +96,6 @@ public class StockAgentTest {
         try {
             jsonData = new Scanner(new File(path.toString())).useDelimiter("\\Z").next();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -134,7 +133,6 @@ public class StockAgentTest {
         try {
             jsonData = new Scanner(new File(path.toString())).useDelimiter("\\Z").next();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -171,7 +169,6 @@ public class StockAgentTest {
         try {
             jsonData = new Scanner(new File(path.toString())).useDelimiter("\\Z").next();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

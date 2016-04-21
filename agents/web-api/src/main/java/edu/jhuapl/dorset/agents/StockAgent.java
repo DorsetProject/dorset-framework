@@ -198,8 +198,7 @@ public class StockAgent extends AbstractAgent {
         if (jsonObj != null) {
 
             if ((jsonObj.get("dataset")) != null) {
-                JsonArray jsonDataArray = (JsonArray) (((JsonObject) jsonObj
-                        .get("dataset")).get("data"));
+                JsonArray jsonDataArray = (JsonArray) (((JsonObject) jsonObj.get("dataset")).get("data"));
 
                 ArrayList<JsonElement> responseDataArrayList = new ArrayList<>();
                 ArrayList<JsonElement> responseLabelsArrayList = new ArrayList<>();
@@ -219,11 +218,19 @@ public class StockAgent extends AbstractAgent {
                 List<JsonElement> returnDataJsonList = responseDataArrayList
                         .subList(responseDataArrayList.size() - DAYS_IN_A_MONTH,
                                 responseDataArrayList.size());
-                returnObj.addProperty("data", returnDataJsonList.toString());
-
+              
                 List<JsonElement> returnLabelsJsonList = responseLabelsArrayList
                         .subList(responseLabelsArrayList.size() - DAYS_IN_A_MONTH,
                                 responseLabelsArrayList.size());
+                
+                //format json data
+                ArrayList<String> returnDataJsonListStr = new ArrayList<String>();
+                for (int i = 0 ; i < responseDataArrayList.size(); i++){
+                    returnDataJsonListStr.add("\"" + responseDataArrayList.get(i) + "\"");
+                } 
+                String jsonData = "{\""+keyWordCompanyName+"\":"+returnDataJsonList.toString()+"}";
+                
+                returnObj.addProperty("data", jsonData);                
                 returnObj.addProperty("labels", returnLabelsJsonList.toString());
                 returnObj.addProperty("title", keyWordCompanyName + " Stock Ticker");
                 returnObj.addProperty("xaxis", "Day");
