@@ -194,14 +194,13 @@ public class StockAgent extends AbstractAgent {
     protected JsonObject processData(String json, String keyWordCompanyName) {
 
         Gson gson = new Gson();
-        JsonObject returnObj = null;
+        JsonObject returnObj = new JsonObject();
         JsonObject jsonObj = gson.fromJson(json, JsonObject.class);
 
         if (jsonObj != null) {
 
             if ((jsonObj.get("dataset")) != null) {
-                JsonArray jsonDataArray = (JsonArray) (((JsonObject) jsonObj
-                        .get("dataset")).get("data"));
+                JsonArray jsonDataArray = (JsonArray) (((JsonObject) jsonObj.get("dataset")).get("data"));
 
                 ArrayList<JsonElement> responseDataArrayList = new ArrayList<>();
                 ArrayList<JsonElement> responseLabelsArrayList = new ArrayList<>();
@@ -214,22 +213,32 @@ public class StockAgent extends AbstractAgent {
                 Collections.reverse(responseDataArrayList);
                 Collections.reverse(responseLabelsArrayList);
 
-                returnObj = gson.fromJson(json.toString(), JsonObject.class);
-
-                returnObj.addProperty("plotType", "lineplot");
-
                 List<JsonElement> returnDataJsonList = responseDataArrayList
                         .subList(responseDataArrayList.size() - DAYS_IN_A_MONTH,
                                 responseDataArrayList.size());
-                returnObj.addProperty("data", returnDataJsonList.toString());
-
+              
+                
+                JsonArray returnDataJsonListStr = new JsonArray();
+                for (int i = 0 ; i < returnDataJsonList.size(); i++) {
+                    returnDataJsonListStr.add(returnDataJsonList.get(i));
+                } 
+                
+                JsonObject jsonData = new JsonObject();
+                jsonData.add(keyWordCompanyName, returnDataJsonListStr);
+                
+                returnObj.addProperty("data", jsonData.toString());         
+                
                 List<JsonElement> returnLabelsJsonList = responseLabelsArrayList
                         .subList(responseLabelsArrayList.size() - DAYS_IN_A_MONTH,
                                 responseLabelsArrayList.size());
+                
                 returnObj.addProperty("labels", returnLabelsJsonList.toString());
+                
                 returnObj.addProperty("title", keyWordCompanyName + " Stock Ticker");
                 returnObj.addProperty("xaxis", "Day");
                 returnObj.addProperty("yaxis", "Close of day market price ($)");
+                returnObj.addProperty("plotType", "lineplot");
+
             }
 
         }

@@ -64,14 +64,15 @@ public class StockAgentTest {
         Agent stocks = new StockAgent(client, apikey);
         AgentRequest request = new AgentRequest("Stocks " + keyword);
         AgentResponse response = stocks.process(request);
-
+                
         assertEquals("Here is the longitudinal stock market data from the last 30 days for Facebook, Inc.",
                 response.getText());
     }
 
     @Test
     public void testStockAgentCloseMatch() {
-        String keyword = "facebook";
+        String keyword = "facebook";        
+
         String jsonData = getJsonData("stockagent/MockJson_Facebook.json");
         HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
@@ -86,6 +87,7 @@ public class StockAgentTest {
     @Test
     public void testStockAgentExactMatch2() {
         String keyword = "Apple inc.";
+
         String jsonData = getJsonData("stockagent/MockJson_Apple.json");
         HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
@@ -99,6 +101,7 @@ public class StockAgentTest {
     @Test
     public void testStockAgentCloseMatch2() {
         String keyword = "apple";
+
         String jsonData = getJsonData("stockagent/MockJson_Apple.json");
         HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
 
