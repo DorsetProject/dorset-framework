@@ -24,7 +24,7 @@
  * <http://www.apache.org/>.
  *
  */
-package edu.jhuapl.dorset.http;
+package edu.jhuapl.dorset.http.apache;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

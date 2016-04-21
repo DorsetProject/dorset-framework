@@ -49,6 +49,8 @@ import com.google.gson.JsonObject;
 import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 
 public class StockAgent extends AbstractAgent {
 
@@ -244,7 +246,12 @@ public class StockAgent extends AbstractAgent {
 
     protected String requestData(String keyword) {
         String url = this.baseurl + keyword + ".json?api_key=" + apiKey;
-        return client.get(url);
+        HttpResponse response = client.execute(HttpRequest.get(url));
+        if (response.isSuccess()) {
+            return response.asString();
+        } else {
+            return null; 
+        }
     }
 
     protected void readCsvFile(String filename) {
@@ -262,7 +269,7 @@ public class StockAgent extends AbstractAgent {
             while ((companyInfo = csvBeanReader.read(CompanyInfo.class, header, processors)) != null) {
                 this.stockSymbolMap.put(companyInfo.getName(), companyInfo);
             }
-
+            csvBeanReader.close();
         } catch (IOException e) {
             logger.error("Failed to load " + filename + ".", e);
         }

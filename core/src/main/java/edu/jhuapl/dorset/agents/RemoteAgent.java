@@ -25,7 +25,11 @@ import com.google.gson.JsonSyntaxException;
 
 import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
+import edu.jhuapl.dorset.http.ContentType;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.http.HttpMethod;
+import edu.jhuapl.dorset.http.HttpRequest;
+import edu.jhuapl.dorset.http.HttpResponse;
 
 /**
  * Agent wrapper for remote web services that implement the agent API
@@ -64,18 +68,21 @@ public class RemoteAgent extends AbstractAgent {
     public AgentResponse process(AgentRequest request) {
         AgentResponse response;
         String json = gson.toJson(request);
-        String resp = client.post(requestUrl, json, HttpClient.APPLICATION_JSON);
-        if (resp != null) {
+        HttpRequest httpRequest = new HttpRequest(HttpMethod.POST, requestUrl).setBody(json,
+                        ContentType.APPLICATION_JSON);
+        HttpResponse httpResponse = client.execute(httpRequest);
+        if (httpResponse != null) {
+            String text = httpResponse.asString();
             try {
-                response = gson.fromJson(resp, AgentResponse.class);
+                response = gson.fromJson(text, AgentResponse.class);
                 // the gson deserialization code is very permissive so we verify
                 if (!response.isValid()) {
                     response = new AgentResponse(ResponseStatus.Code.INVALID_RESPONSE_FROM_AGENT);
-                    logger.warn("Invalid json for request: " + resp);
+                    logger.warn("Invalid json for request: " + text);
                 }
             } catch (JsonSyntaxException e) {
                 response = new AgentResponse(ResponseStatus.Code.INVALID_RESPONSE_FROM_AGENT);
-                logger.warn("Invalid json for request: " + resp);
+                logger.warn("Invalid json for request: " + text);
             }
         } else {
             response = new AgentResponse(ResponseStatus.Code.NO_RESPONSE_FROM_AGENT);
@@ -89,8 +96,9 @@ public class RemoteAgent extends AbstractAgent {
      * @return boolean
      */
     public boolean ping() {
-        String resp = client.get(pingUrl);
-        if (resp != null) {
+        HttpResponse httpResponse = client.execute(HttpRequest.get(pingUrl));
+        if (httpResponse.isSuccess()) {
+            String resp = httpResponse.asString();
             try {
                 String text = gson.fromJson(resp, String.class);
                 return text.equals(PING_RESPONSE);
