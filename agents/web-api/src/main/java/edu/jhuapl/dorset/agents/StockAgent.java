@@ -227,10 +227,10 @@ public class StockAgent extends AbstractAgent {
                 
                 //format json data
                 ArrayList<String> returnDataJsonListStr = new ArrayList<String>();
-                for (int i = 0 ; i < responseDataArrayList.size(); i++){
+                for (int i = 0 ; i < responseDataArrayList.size(); i++) {
                     returnDataJsonListStr.add("\"" + responseDataArrayList.get(i) + "\"");
                 } 
-                String jsonData = "{\""+keyWordCompanyName+"\":"+returnDataJsonList.toString()+"}";
+                String jsonData = "{\"" + keyWordCompanyName + "\":" + returnDataJsonList.toString() + "}";
                 
                 returnObj.addProperty("data", jsonData);                
                 returnObj.addProperty("labels", returnLabelsJsonList.toString());
