@@ -13,6 +13,7 @@ Deploying to Sonatype's maven central repository
     Restrict access to the settings.xml to your user account only.
 
 2. Create and distribute a public key. Details at http://central.sonatype.org/pages/working-with-pgp-signatures.html
+
     You may need to authenticate before running maven with something like:
     ```
     gpg --output /dev/null --sign [some file]
@@ -30,5 +31,6 @@ Deploying to Sonatype's maven central repository
     ```
 
 5. Approve the release using the web interface at https://oss.sonatype.org/
+
     Login, select Staging Repositories, find dorset at the bottom of the list, click the Release button at the top
 
