@@ -16,6 +16,7 @@
   <modules>
     <module>hibernate-service</module>
     <module>reporters</module>
+    <module>tools</module>
   </modules>
 
   <dependencies>
