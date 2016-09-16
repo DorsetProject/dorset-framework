@@ -25,24 +25,49 @@ import edu.jhuapl.dorset.routing.SingleAgentRouter;
  * CommandLineClient client = new CommandLineClient(agent);
  * client.go();
  * </pre>
- *  
+ * 
  */
 public class CommandLineClient {
 
     private Application app;
 
+    /**
+     * Creates a command line client with a SingleAgentRouter for the agent passed in. All command
+     * line requests will be sent to this agent, and the text response will be displayed to standard
+     * out.
+     * 
+     * @param agent the agent to handle requests
+     */
     public CommandLineClient(AbstractAgent agent) {
         this(new SingleAgentRouter(agent));
     }
 
+    /**
+     * Creates a command line client for the router passed in. All command line requests will be
+     * sent to this router, and the text response will be displayed to standard out.
+     * 
+     * @param router the router to handle requests
+     */
     public CommandLineClient(Router router) {
         this(new Application(router));
     }
 
+    /**
+     * Creates a command line client for the application passed in. All command line requests will
+     * be sent to this application, and the text response will be displayed to standard out.
+     * 
+     * @param app the application to handle requests
+     */
     public CommandLineClient(Application app) {
         this.app = app;
     }
 
+    /**
+     * Starts monitoring standard input for text to send to the application. This method is blocking
+     * until the system receives the message to quit from the text in standard in, as defined by the
+     * {@link #isQuitString(String)} method.
+     * 
+     */
     public void go() {
         String input = "";
         Scanner in = new Scanner(System.in);
@@ -69,8 +94,8 @@ public class CommandLineClient {
      * Override-able method for defining what input string will stop the system. The default is a
      * single character 'q'.
      * 
-     * @param input
-     * @return
+     * @param input the input from standard in
+     * @return true if the input represent a quit message
      */
     protected boolean isQuitString(String input) {
         return "q".equals(input);
