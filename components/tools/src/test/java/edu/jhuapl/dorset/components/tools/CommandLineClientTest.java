@@ -70,10 +70,10 @@ public class CommandLineClientTest {
 
     /**
      * Test method for
-     * {@link edu.jhuapl.dorset.components.tools.CommandLineClient#CommandLineClient(edu.jhuapl.dorset.agents.AbstractAgent)}.
+     * {@link edu.jhuapl.dorset.components.tools.CommandLineClient#CommandLineClient(edu.jhuapl.dorset.agents.Agent)}.
      */
     @Test
-    public void testCommandLineClientAbstractAgent() {
+    public void testCommandLineClientAgent() {
         CommandLineClient c = new CommandLineClient(mockAgent);
         testGo(c);
     }

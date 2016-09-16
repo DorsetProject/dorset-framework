@@ -21,7 +21,7 @@ import java.util.Scanner;
 import edu.jhuapl.dorset.Application;
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.Response;
-import edu.jhuapl.dorset.agents.AbstractAgent;
+import edu.jhuapl.dorset.agents.Agent;
 import edu.jhuapl.dorset.routing.Router;
 import edu.jhuapl.dorset.routing.SingleAgentRouter;
 
@@ -51,7 +51,7 @@ public class CommandLineClient {
      * 
      * @param agent the agent to handle requests
      */
-    public CommandLineClient(AbstractAgent agent) {
+    public CommandLineClient(Agent agent) {
         this(new SingleAgentRouter(agent));
     }
 
