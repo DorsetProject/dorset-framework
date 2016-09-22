@@ -23,6 +23,12 @@ import java.util.regex.Pattern;
 
 import edu.jhuapl.dorset.Request;
 
+/**
+ * Replace words or phrases in a request with another string
+ *
+ * For example, when the string "jhu" is in the request, we may want to expand it
+ * to "Johns Hopkins University".
+ */
 public class AliasRequestFilter implements RequestFilter {
     private Map<String, String> aliasMap;
     private Map<Pattern, String> patternAliasMap;
@@ -30,9 +36,8 @@ public class AliasRequestFilter implements RequestFilter {
     /**
      * Alias Request Filter
      * 
-     * Each map key will be replaced by its corresponding value. This value will
-     * act as an alias in the Response text.
-     * 
+     * Each map key will be replaced by its corresponding value.
+     * This value will act as an alias in the Request text.
      */
     public AliasRequestFilter(Map<String, String> aliasMap) {
         this.aliasMap = aliasMap;
