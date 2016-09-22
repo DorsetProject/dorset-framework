@@ -51,7 +51,7 @@ public class DuckDuckGoAgent extends AbstractAgent {
 
     private static final String SUMMARY =
                     "Get information about famous people, places, organizations.";
-    private static final String EXAMPLE = "Who is Brack Obama?";
+    private static final String EXAMPLE = "Who is Barack Obama?";
 
     private HttpClient client;
     private Set<String> dictionary = new HashSet<String>(
