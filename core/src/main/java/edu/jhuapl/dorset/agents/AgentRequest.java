@@ -16,6 +16,8 @@
  */
 package edu.jhuapl.dorset.agents;
 
+import edu.jhuapl.dorset.users.User;
+
 /**
  * Request sent to an agent
  * <p>
@@ -23,6 +25,7 @@ package edu.jhuapl.dorset.agents;
  */
 public class AgentRequest {
     private String text;
+    private User user;
 
     public AgentRequest() {}
 
@@ -34,6 +37,19 @@ public class AgentRequest {
     public AgentRequest(String text) {
         this.text = text;
     }
+    
+    /**
+     * Create an agent request
+     *
+     * @param text  the text of the request
+     * @param user  the User information
+     *
+     */
+    public AgentRequest(String text, User user) {
+        this.text = text;
+        this.user = user;
+    }
+
 
     /**
      * Set the text of the request
@@ -51,5 +67,23 @@ public class AgentRequest {
      */
     public String getText() {
         return text;
+    }
+    
+    /**
+     * Get the text of the request
+     *
+     * @return the text of the request
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Get the text of the request
+     *
+     * @return the text of the request
+     */
+    public void setUser(User user) {
+        this.user = user;
     }
 }

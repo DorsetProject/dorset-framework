@@ -32,6 +32,7 @@ import edu.jhuapl.dorset.reporting.NullReporter;
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.Reporter;
 import edu.jhuapl.dorset.routing.Router;
+import edu.jhuapl.dorset.users.User;
 
 /**
  * Dorset Application
@@ -62,6 +63,7 @@ public class Application {
     protected Agent[] agents;
     protected Router router;
     protected Reporter reporter;
+    protected User user;
     protected List<RequestFilter> requestFilters;
     protected List<ResponseFilter> responseFilters;
     protected List<ShutdownListener> shutdownListeners;
@@ -122,7 +124,11 @@ public class Application {
     public void addShutdownListener(ShutdownListener listener) {
         shutdownListeners.add(listener);
     }
-
+    
+    public void addUser(User user) {
+        this.user = user;
+    }
+    
     /**
      * Process a request
      *
@@ -145,7 +151,12 @@ public class Application {
             startTime = System.nanoTime();
             for (Agent agent : agents) {
                 report.setAgent(agent);
-                AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
+                AgentResponse agentResponse = null;
+                if(this.user!=null){
+                    agentResponse = agent.process(new AgentRequest(request.getText(), this.user));
+                }else{
+                    agentResponse = agent.process(new AgentRequest(request.getText()));
+                }
                 if (agentResponse != null) {
                     // take first answer
                     response = new Response(agentResponse);
