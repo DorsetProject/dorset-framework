@@ -17,7 +17,9 @@
 package edu.jhuapl.dorset;
 
 /**
- * Listener for the shutdown event
+ * Listener for the shutdown event.
+ *
+ * Components that need to clean up resources should implement this interface.
  */
 public interface ShutdownListener {
     /**

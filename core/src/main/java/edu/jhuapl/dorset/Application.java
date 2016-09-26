@@ -121,6 +121,11 @@ public class Application {
         responseFilters.add(filter);
     }
 
+    /**
+     * Add a shutdown listener
+     *
+     * @param listener  a listener that runs when shutdown() is called
+     */
     public void addShutdownListener(ShutdownListener listener) {
         shutdownListeners.add(listener);
     }
