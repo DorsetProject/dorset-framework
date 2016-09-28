@@ -83,10 +83,8 @@ public class Application {
     /**
      * Create a Dorset application
      *
-     * @param router
-     *            a router that finds the appropriate agent for a request
-     * @param reporter
-     *            a reporter which logs request handling
+     * @param router a router that finds the appropriate agent for a request
+     * @param reporter a reporter which logs request handling
      */
     public Application(Router router, Reporter reporter) {
         this.router = router;
@@ -143,8 +141,7 @@ public class Application {
     /**
      * Process a request
      *
-     * @param request
-     *            Request object
+     * @param request Request object
      * @return Response object
      */
     public Response process(Request request) {
@@ -167,11 +164,9 @@ public class Application {
                 report.setAgent(agent);
                 AgentResponse agentResponse = null;
                 if (this.user != null) {
-                    agentResponse = agent.process(new AgentRequest(request
-                            .getText(), this.user));
+                    agentResponse = agent.process(new AgentRequest(request.getText(), this.user));
                 } else {
-                    agentResponse = agent.process(new AgentRequest(request
-                            .getText()));
+                    agentResponse = agent.process(new AgentRequest(request.getText()));
                 }
                 if (agentResponse != null) {
                     // take first answer
