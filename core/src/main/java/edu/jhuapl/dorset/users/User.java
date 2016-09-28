@@ -78,9 +78,4 @@ public class User {
         this.email = email;
     }
 
-    public String toString() {
-        return ("userName: " + this.userName + ", firstName: " + this.firstName
-                + ", lastName: " + this.lastName + ", location: "
-                + this.location + ", email: " + this.email);
-    }
 }
