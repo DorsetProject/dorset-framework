@@ -31,7 +31,7 @@ public class Request {
 
     private String text;
     private final String id;
-    private User user;
+    private final User user;
 
     /**
      * Create a request
@@ -120,15 +120,6 @@ public class Request {
      */
     public String getId() {
         return id;
-    }
-    
-    /**
-     * Set the User of the request
-     *
-     * @param user  the user of the request
-     */
-    public void setUser(User user) {
-        this.user = user;
     }
     
     /**
