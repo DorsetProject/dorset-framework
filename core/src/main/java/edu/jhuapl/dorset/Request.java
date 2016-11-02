@@ -41,9 +41,7 @@ public class Request {
      * @param text  the text of the request
      */
     public Request(String text) {
-        this.text = text;
-        this.user = null;
-        this.id = UUID.randomUUID().toString();
+        this(text, null, "");
     }
     
     /**
@@ -55,9 +53,7 @@ public class Request {
      * @param user  the user of the request
      * */
     public Request(String text, User user) {
-        this.text = text;
-        this.user =  user;
-        this.id = UUID.randomUUID().toString();
+        this(text, user, "");
     }
 
     /**
@@ -68,13 +64,7 @@ public class Request {
      *            The identifier must be unique.
      */
     public Request(String text, String id) {
-        if (id.length() > MAX_ID_LENGTH) {
-            throw new IllegalArgumentException(
-                            "Request id cannot be longer than " + String.valueOf(MAX_ID_LENGTH));
-        }
-        this.text = text;
-        this.user = null; 
-        this.id = id;
+        this(text, null, id);
     }
 
     /**
@@ -90,9 +80,15 @@ public class Request {
             throw new IllegalArgumentException(
                             "Request id cannot be longer than " + String.valueOf(MAX_ID_LENGTH));
         }
+        
+        if (id.length() == 0) {
+            this.id = UUID.randomUUID().toString();
+        } else {
+            this.id = id;
+        }
+        
         this.text = text;
         this.user = user;
-        this.id = id;
     }
     
     /**
