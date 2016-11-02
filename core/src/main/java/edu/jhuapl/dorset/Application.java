@@ -130,7 +130,7 @@ public class Application {
         shutdownListeners.add(listener);
     }
 
-    public void addUser(User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
