@@ -160,9 +160,9 @@ public class Application {
                 report.setAgent(agent);
                 AgentResponse agentResponse = null;
                 if (this.user != null) {
-                    agentResponse = agent.process(new AgentRequest(request.getText(), this.user));
+                    agentResponse = agent.process(new AgentRequest(request));
                 } else {
-                    agentResponse = agent.process(new AgentRequest(request.getText()));
+                    agentResponse = agent.process(new AgentRequest(request));
                 }
                 if (agentResponse != null) {
                     // take first answer

@@ -18,6 +18,8 @@ package edu.jhuapl.dorset;
 
 import java.util.UUID;
 
+import edu.jhuapl.dorset.users.User;
+
 /**
  * Dorset Request
  * <p>
@@ -29,6 +31,7 @@ public class Request {
 
     private String text;
     private final String id;
+    private User user;
 
     /**
      * Create a request
@@ -39,6 +42,21 @@ public class Request {
      */
     public Request(String text) {
         this.text = text;
+        this.user = null;
+        this.id = UUID.randomUUID().toString();
+    }
+    
+    /**
+     * Create a request
+     * <p>
+     * Automatically sets the identifier of the request
+     *
+     * @param text  the text of the request
+     * @param user  the user of the request
+     * */
+    public Request(String text, User user) {
+        this.text = text;
+        this.user =  user;
         this.id = UUID.randomUUID().toString();
     }
 
@@ -55,9 +73,28 @@ public class Request {
                             "Request id cannot be longer than " + String.valueOf(MAX_ID_LENGTH));
         }
         this.text = text;
+        this.user = null; 
         this.id = id;
     }
 
+    /**
+     * Create a request
+     *
+     * @param text  the text of the request
+     * @param user  the user of the request
+     * @param id  the identifier of the request (cannot be longer then MAX_ID_LENGTH)
+     *            The identifier must be unique.
+     */
+    public Request(String text, User user, String id) {
+        if (id.length() > MAX_ID_LENGTH) {
+            throw new IllegalArgumentException(
+                            "Request id cannot be longer than " + String.valueOf(MAX_ID_LENGTH));
+        }
+        this.text = text;
+        this.user = user;
+        this.id = id;
+    }
+    
     /**
      * Get the text of the request
      *
@@ -84,4 +121,23 @@ public class Request {
     public String getId() {
         return id;
     }
+    
+    /**
+     * Set the User of the request
+     *
+     * @param user  the user of the request
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    /**
+     * Get the User of the request
+     *
+     * @return user
+     */
+    public User getUser() {
+        return user;
+    }
+ 
 }
