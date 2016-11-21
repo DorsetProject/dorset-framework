@@ -160,7 +160,7 @@ public class Application {
                 report.setAgent(agent);
                 AgentResponse agentResponse = null;
                 if (this.user != null) {
-                    agentResponse = agent.process(new AgentRequest(request));
+                    agentResponse = agent.process(new AgentRequest(new Request(request.getText(), this.user, request.getId())));
                 } else {
                     agentResponse = agent.process(new AgentRequest(request));
                 }
