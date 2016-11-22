@@ -26,6 +26,6 @@ public interface UserService {
 
     public User load(String userName, String uniqueIdentifier);
 
-    public String getCurrentUser();
+    public User getCurrentUser();
 
 }

@@ -30,7 +30,7 @@ public class CsvFileUserServiceTest {
         User user = null;
         UserService userService = new CsvFileUserService("MockUserCsv.csv");
         user = userService.load("jdoe", null);
-        assertEquals(userService.getCurrentUser(), user.getUserName());
+        assertEquals(userService.getCurrentUser().getUserName(), user.getUserName());
     }
 
     @Test

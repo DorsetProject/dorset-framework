@@ -83,8 +83,8 @@ public class CsvFileUserService implements UserService {
     }
 
     @Override
-    public String getCurrentUser() {
-        return this.user.getUserName();
+    public User getCurrentUser() {
+        return this.user;
     }
 
 }
