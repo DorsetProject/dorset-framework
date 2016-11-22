@@ -130,6 +130,11 @@ public class Application {
         shutdownListeners.add(listener);
     }
 
+    /**
+     * Set a User for a single user Dorset application
+     *
+     * @param user  the User of a single user application
+     */
     public void setUser(User user) {
         this.user = user;
     }
