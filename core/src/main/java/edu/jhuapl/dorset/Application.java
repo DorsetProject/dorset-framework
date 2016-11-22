@@ -73,7 +73,7 @@ public class Application {
      * <p>
      * Uses a null reporter that ignores new reports.
      *
-     * @param router a router that finds the appropriate agent for a request
+     * @param router  a router that finds the appropriate agent for a request
      */
     public Application(Router router) {
         this(router, new NullReporter());
@@ -82,8 +82,8 @@ public class Application {
     /**
      * Create a Dorset application
      *
-     * @param router a router that finds the appropriate agent for a request
-     * @param reporter a reporter which logs request handling
+     * @param router  a router that finds the appropriate agent for a request
+     * @param reporter  a reporter which logs request handling
      */
     public Application(Router router, Reporter reporter) {
         this.router = router;
@@ -106,7 +106,7 @@ public class Application {
     /**
      * Add a request filter
      *
-     * @param filter a RequestFilter
+     * @param filter  a RequestFilter
      */
     public void addRequestFilter(RequestFilter filter) {
         requestFilters.add(filter);
@@ -115,7 +115,7 @@ public class Application {
     /**
      * Add a response filter
      *
-     * @param filter a ResponseFilter
+     * @param filter  a ResponseFilter
      */
     public void addResponseFilter(ResponseFilter filter) {
         responseFilters.add(filter);
@@ -124,7 +124,7 @@ public class Application {
     /**
      * Add a shutdown listener
      *
-     * @param listener a listener that runs when shutdown() is called
+     * @param listener  a listener that runs when shutdown() is called
      */
     public void addShutdownListener(ShutdownListener listener) {
         shutdownListeners.add(listener);
@@ -137,7 +137,7 @@ public class Application {
     /**
      * Process a request
      *
-     * @param request Request object
+     * @param request  Request object
      * @return Response object
      */
     public Response process(Request request) {
