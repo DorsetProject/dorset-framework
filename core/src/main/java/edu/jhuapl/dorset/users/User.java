@@ -17,65 +17,91 @@
 
 package edu.jhuapl.dorset.users;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Dorset User
  *
  */
 public class User {
 
-    protected String userName;
-    protected String firstName;
-    protected String lastName;
-    protected String location;
-    protected String email;
-    protected String age;
+    public static String ID = "Dorset-id";
+    public static String USERNAME = "Dorset-userName";
+    public static String FIRSTNAME = "Dorset-firstName";
+    public static String LASTNAME = "Dorset-lastName";
+    public static String LOCATION = "Dorset-location";
+    public static String EMAIL = "Dorset-email";
+    public static String DOB = "Dorset-dob";
 
-    public String getAge() {
-        return age;
+    protected Map<String, String> userInformation = new HashMap<String, String>();
+
+    public String getId() {
+        return userInformation.get(ID);
     }
 
-    public void setAge(String age) {
-        this.age = age;
+    public void setId(String id) {
+        this.setUserInformation(ID, id);
     }
 
     public String getUserName() {
-        return userName;
+        return userInformation.get(USERNAME);
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.setUserInformation(USERNAME, userName);
     }
 
     public String getFirstName() {
-        return firstName;
+        return userInformation.get(FIRSTNAME);
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        this.setUserInformation(FIRSTNAME, firstName);
     }
 
     public String getLastName() {
-        return lastName;
+        return userInformation.get(LASTNAME);
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.setUserInformation(LASTNAME, lastName);
     }
 
     public String getLocation() {
-        return location;
+        return userInformation.get(LOCATION);
     }
 
     public void setLocation(String location) {
-        this.location = location;
+        this.setUserInformation(LOCATION, location);
     }
 
     public String getEmail() {
-        return email;
+        return userInformation.get(EMAIL);
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.setUserInformation(EMAIL, email);
     }
 
+    public String getDob() {
+        return userInformation.get(DOB);
+    }
+
+    public void setDob(String dob) {
+        this.setUserInformation(DOB, dob);
+    }
+
+    public void setUserInformation(String key, String value) {
+        userInformation.put(key, value);
+    }
+
+    public String getUserInformation(String key) {
+        return userInformation.get(key);
+    }
+
+    public Set<String> getUserInformationKeys() {
+        return userInformation.keySet();
+    }
 }
