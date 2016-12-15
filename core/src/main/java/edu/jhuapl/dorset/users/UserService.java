@@ -17,6 +17,8 @@
 
 package edu.jhuapl.dorset.users;
 
+import java.util.Properties;
+
 /**
  * Services the user data for a Dorset Application.
  * <p>
@@ -24,8 +26,14 @@ package edu.jhuapl.dorset.users;
  */
 public interface UserService {
 
-    public User load(String userName, String uniqueIdentifier);
+    public String create(User user);
 
-    public User getCurrentUser();
+    public String retrieve(Properties properties);
+    
+    public void update(String id, User user);
 
+    public void delete(String id);
+    
+    public User getUser(String id);
+    
 }
