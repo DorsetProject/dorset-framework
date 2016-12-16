@@ -104,4 +104,8 @@ public class User {
     public Set<String> getUserInformationKeys() {
         return userInformation.keySet();
     }
+    
+    public void removeUserInformation(String key) {
+        userInformation.remove(key);
+    }
 }
