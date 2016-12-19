@@ -35,6 +35,16 @@ import edu.jhuapl.dorset.users.User;
 import edu.jhuapl.dorset.users.UserException;
 import edu.jhuapl.dorset.users.UserService;
 
+
+/**
+ * FileUserService userservice
+ *
+ * FileUserService is a file-based UserService that leverages property files to maintain a set of
+ * Users. All User files are stored in a single directory and each User has a single User file. The
+ * naming convention for the set of files includes a base name that is uniform across all users then
+ * a dash followed by the corresponding Username. Example:
+ * "path/to/user/files/exampleuser-jdoe.properties."
+ */
 public class FileUserService implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(FileUserService.class);
 
@@ -134,6 +144,11 @@ public class FileUserService implements UserService {
     @Override
     public User getUser(String userName) {
         return users.get(userName);
+    }
+
+    public String pathToUserFile() {
+        return fileBaseName;
+
     }
 
 }
