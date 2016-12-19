@@ -18,6 +18,8 @@ package edu.jhuapl.dorset;
 
 import java.util.UUID;
 
+import edu.jhuapl.dorset.users.User;
+
 /**
  * Dorset Request
  * <p>
@@ -29,6 +31,7 @@ public class Request {
 
     private String text;
     private final String id;
+    private final User user;
 
     /**
      * Create a request
@@ -38,8 +41,19 @@ public class Request {
      * @param text  the text of the request
      */
     public Request(String text) {
-        this.text = text;
-        this.id = UUID.randomUUID().toString();
+        this(text, null, "");
+    }
+    
+    /**
+     * Create a request
+     * <p>
+     * Automatically sets the identifier of the request
+     *
+     * @param text  the text of the request
+     * @param user  the user of the request
+     * */
+    public Request(String text, User user) {
+        this(text, user, "");
     }
 
     /**
@@ -50,14 +64,33 @@ public class Request {
      *            The identifier must be unique.
      */
     public Request(String text, String id) {
+        this(text, null, id);
+    }
+
+    /**
+     * Create a request
+     *
+     * @param text  the text of the request
+     * @param user  the user of the request
+     * @param id  the identifier of the request (cannot be longer then MAX_ID_LENGTH)
+     *            The identifier must be unique.
+     */
+    public Request(String text, User user, String id) {
         if (id.length() > MAX_ID_LENGTH) {
             throw new IllegalArgumentException(
                             "Request id cannot be longer than " + String.valueOf(MAX_ID_LENGTH));
         }
+        
+        if (id.length() == 0) {
+            this.id = UUID.randomUUID().toString();
+        } else {
+            this.id = id;
+        }
+        
         this.text = text;
-        this.id = id;
+        this.user = user;
     }
-
+    
     /**
      * Get the text of the request
      *
@@ -84,4 +117,14 @@ public class Request {
     public String getId() {
         return id;
     }
+    
+    /**
+     * Get the User of the request
+     *
+     * @return user
+     */
+    public User getUser() {
+        return user;
+    }
+ 
 }

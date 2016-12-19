@@ -32,23 +32,24 @@ import edu.jhuapl.dorset.reporting.NullReporter;
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.Reporter;
 import edu.jhuapl.dorset.routing.Router;
+import edu.jhuapl.dorset.users.User;
 
 /**
  * Dorset Application
  * <p>
- * The application manages the state of the Dorset framework.
- * An application processes requests and returns responses. 
- * The requests are handled by agents.
- * A router determines which agent handles a request. 
- * Each request-response cycle can be stored as a report for further analysis.
+ * The application manages the state of the Dorset framework. An application
+ * processes requests and returns responses. The requests are handled by agents.
+ * A router determines which agent handles a request. Each request-response
+ * cycle can be stored as a report for further analysis.
  *
- * A basic application has at least one agent, a router, and methods for 
- * getting requests and sending responses:
+ * A basic application has at least one agent, a router, and methods for getting
+ * requests and sending responses:
+ * 
  * <pre>
  * Agent agent = new CalculatorAgent();
  * Router router = new SingleAgentRouter(agent);
  * Application app = new Application(router);
- *
+ * 
  * while (true) {
  *     Request request = yourMethodToGetRequests();
  *     Response response = app.process(request);
@@ -62,6 +63,7 @@ public class Application {
     protected Agent[] agents;
     protected Router router;
     protected Reporter reporter;
+    protected User user;
     protected List<RequestFilter> requestFilters;
     protected List<ResponseFilter> responseFilters;
     protected List<ShutdownListener> shutdownListeners;
@@ -129,6 +131,15 @@ public class Application {
     }
 
     /**
+     * Set a User for a single user Dorset application
+     *
+     * @param user  the User of a single user application
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
      * Process a request
      *
      * @param request  Request object
@@ -139,18 +150,25 @@ public class Application {
         for (RequestFilter rf : requestFilters) {
             request = rf.filter(request);
         }
-        Response response = new Response(new ResponseStatus(Code.NO_AVAILABLE_AGENT));
+        Response response = new Response(new ResponseStatus(
+                Code.NO_AVAILABLE_AGENT));
         Report report = new Report(request);
 
         long startTime = System.nanoTime();
         Agent[] agents = router.route(request);
         report.setRouteTime(startTime, System.nanoTime());
         if (agents.length > 0) {
-            response = new Response(new ResponseStatus(Code.NO_RESPONSE_FROM_AGENT));
+            response = new Response(new ResponseStatus(
+                    Code.NO_RESPONSE_FROM_AGENT));
             startTime = System.nanoTime();
             for (Agent agent : agents) {
                 report.setAgent(agent);
-                AgentResponse agentResponse = agent.process(new AgentRequest(request.getText()));
+                AgentResponse agentResponse = null;
+                if (this.user != null) {
+                    agentResponse = agent.process(new AgentRequest(new Request(request.getText(), this.user, request.getId())));
+                } else {
+                    agentResponse = agent.process(new AgentRequest(request));
+                }
                 if (agentResponse != null) {
                     // take first answer
                     response = new Response(agentResponse);
