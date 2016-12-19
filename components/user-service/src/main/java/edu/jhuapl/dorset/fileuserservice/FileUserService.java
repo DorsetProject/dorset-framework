@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,16 +71,15 @@ public class FileUserService implements UserService {
     public String create(User user) throws UserException {
         Properties prop = new Properties();
         OutputStream output = null;
-        String userFilePath = this.userDirPath + this.fileBaseName + "-" + user.getUserName()
-                        + ".properties";
 
+        File userFile = pathToUserFile(user.getUserName()).toFile();
         // Check if Username already exists
-        if (new File(userFilePath).exists()) {
+        if (userFile.exists()) {
             throw new UserException("Username (" + user.getUserName() + ") already exists.");
         }
 
         try {
-            output = new FileOutputStream(userFilePath);
+            output = new FileOutputStream(userFile);
 
             Set<String> userKeys = user.getUserInformationKeys();
             for (String key : userKeys) {
@@ -87,8 +88,8 @@ public class FileUserService implements UserService {
             prop.store(output, null);
 
         } catch (IOException e) {
-            throw new UserException("IOException when creating the User file for " + user.getUserName() +"."
-                            + e.getMessage());
+            throw new UserException("IOException when creating the User file for "
+                            + user.getUserName() + ". " + e.getMessage());
         }
 
         this.users.put(user.getUserName(), user);
@@ -102,9 +103,9 @@ public class FileUserService implements UserService {
 
         FileInputStream in;
         Properties props = new Properties();
+        File userFile = pathToUserFile(userName).toFile();
         try {
-            in = new FileInputStream(this.userDirPath + "/" + this.fileBaseName + "-" + userName
-                            + ".properties");
+            in = new FileInputStream(userFile);
             props.load(in);
             in.close();
         } catch (IOException e) {
@@ -131,12 +132,10 @@ public class FileUserService implements UserService {
 
     @Override
     public void delete(String userName) {
-
-        File file = new File(this.userDirPath + "/" + this.fileBaseName + "-" + userName
-                        + ".properties");
-        if (file.delete()) {
+        File userFile = pathToUserFile(userName).toFile();
+        if (userFile.delete()) {
             users.remove(userName);
-            logger.info(file.getName() + " successfully deleted.");
+            logger.info(userFile.getName() + " successfully deleted.");
         } else {
             logger.error("Delete operation failed.");
         }
@@ -147,8 +146,8 @@ public class FileUserService implements UserService {
         return users.get(userName);
     }
 
-    public String pathToUserFile() {
-        return fileBaseName;
+    public Path pathToUserFile(String userName) {
+        return Paths.get(this.userDirPath, this.fileBaseName + "-" + userName + ".properties");
 
     }
 
