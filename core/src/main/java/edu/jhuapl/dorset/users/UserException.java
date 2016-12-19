@@ -1,12 +1,11 @@
 package edu.jhuapl.dorset.users;
 
-import java.rmi.AlreadyBoundException;
+public class UserException extends Exception {
 
-@SuppressWarnings("serial")
-public class UserException extends AlreadyBoundException {
+    private static final long serialVersionUID = 1L;
 
-    public UserException(String userId) {
-        super("User ID (" + userId + ") already exists.");
+    public UserException(String errorMessage) {
+        super(errorMessage);
     }
 
 }

@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import edu.jhuapl.dorset.users.User;
+import edu.jhuapl.dorset.users.UserException;
 import edu.jhuapl.dorset.users.UserService;
 
 public class FileUserServiceTest {
@@ -22,28 +23,28 @@ public class FileUserServiceTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    
+
     public FileUserServiceTest() {
         this.fileBaseName = "MockUserFile";
     }
-    
+
     private String getTempFilePath() {
         File tmpFolder = testFolder.getRoot();
         return tmpFolder.getAbsolutePath();
     }
-    
-    private String createTempUserFile() throws FileNotFoundException, IOException{
+
+    private String createTempUserFile() throws FileNotFoundException, IOException {
         String userName = "Mock-UserName";
         String filePath = getTempFilePath();
         File file = new File(filePath, fileBaseName + "-" + userName + ".properties");
         OutputStream output = new FileOutputStream(file);
-        
-        Properties prop = new Properties();        
+
+        Properties prop = new Properties();
         prop.setProperty("Dorset-firstName", "Mock-FirstName");
         prop.setProperty("Dorset-lastName", "Mock-LastName");
         prop.setProperty("Dorset-userName", userName);
         prop.store(output, null);
-       
+
         return userName;
     }
 
@@ -59,10 +60,10 @@ public class FileUserServiceTest {
     }
 
     @Test
-    public void testCreateUser() {
+    public void testCreateUser() throws UserException {
         String tempFilePath = getTempFilePath();
         User new_user = mockUser();
-        
+
         UserService user_service = new FileUserService(tempFilePath, fileBaseName);
 
         String userName = user_service.create(new_user);
@@ -71,37 +72,36 @@ public class FileUserServiceTest {
         assertEquals(userName, new_user.getUserName());
     }
 
-    @Test
-    public void testCreateUserFailure() {
+    @Test(expected = UserException.class)
+    public void testCreateUserFailure() throws UserException {
         String tempFilePath = getTempFilePath();
         User new_user = mockUser();
-        
+
         UserService user_service = new FileUserService(tempFilePath, fileBaseName);
 
         String userName = user_service.create(new_user);
-        String userNameDuplicate = user_service.create(new_user);
+        user_service.create(new_user);
 
         assertEquals(userName, "mock_UserName");
-        assertEquals(userNameDuplicate, null);
     }
 
     @Test
-    public void testRetrieveUser() throws FileNotFoundException, IOException {
+    public void testRetrieveUser() throws FileNotFoundException, IOException, UserException {
         String userName = createTempUserFile();
         String tempFilePath = getTempFilePath();
         UserService user_service = new FileUserService(tempFilePath, fileBaseName);
-        
+
         Properties properties = new Properties();
         properties.setProperty("userName", userName);
-        
+
         String userNameRetrieved = user_service.retrieve(properties);
         User user = user_service.getUser(userNameRetrieved);
-        
+
         assertEquals(userName, user.getUserName());
     }
 
-    @Test
-    public void testRetrieveUserFailure() {
+    @Test(expected = UserException.class)
+    public void testRetrieveUserFailure() throws UserException {
         String userName = "bad_userName";
         String tempFilePath = getTempFilePath();
 
@@ -109,7 +109,7 @@ public class FileUserServiceTest {
         properties.setProperty("userName", userName);
 
         UserService user_service = new FileUserService(tempFilePath, fileBaseName);
-        
+
         String userNameRetrieved = user_service.retrieve(properties);
 
         assertEquals(userNameRetrieved, null);
@@ -117,11 +117,11 @@ public class FileUserServiceTest {
     }
 
     @Test
-    public void testUpdateUser() throws FileNotFoundException, IOException {
+    public void testUpdateUser() throws UserException, FileNotFoundException, IOException {
         String userName = createTempUserFile();
         String tempFilePath = getTempFilePath();
         UserService user_service = new FileUserService(tempFilePath, fileBaseName);
-        
+
         Properties properties = new Properties();
         properties.setProperty("userName", userName);
 
@@ -144,11 +144,11 @@ public class FileUserServiceTest {
 
 
     @Test
-    public void testDeleteUser() throws FileNotFoundException, IOException {
+    public void testDeleteUser() throws UserException, FileNotFoundException, IOException {
         String userName = createTempUserFile();
         String tempFilePath = getTempFilePath();
         UserService user_service = new FileUserService(tempFilePath, fileBaseName);
-       
+
         Properties properties = new Properties();
         properties.setProperty("userName", userName);
 

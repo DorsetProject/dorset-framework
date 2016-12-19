@@ -26,11 +26,11 @@ import java.util.Properties;
  */
 public interface UserService {
 
-    public String create(User user);
+    public String create(User user) throws UserException;
 
-    public String retrieve(Properties properties);
+    public String retrieve(Properties properties) throws UserException;
     
-    public void update(String id, User user);
+    public void update(String id, User user) throws UserException;
 
     public void delete(String id);
     

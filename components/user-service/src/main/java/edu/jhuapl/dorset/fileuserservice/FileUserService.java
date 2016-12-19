@@ -56,7 +56,7 @@ public class FileUserService implements UserService {
     }
 
     @Override
-    public String create(User user) {
+    public String create(User user) throws UserException {
         Properties prop = new Properties();
         OutputStream output = null;
         String userFilePath = this.userDirPath + this.fileBaseName + "-" + user.getUserName()
@@ -64,12 +64,7 @@ public class FileUserService implements UserService {
 
         // Check if Username already exists
         if (new File(userFilePath).exists()) {
-            try {
-                throw new UserException(user.getUserName());
-            } catch (UserException e) {
-                logger.error(e.toString());
-                return null;
-            }
+            throw new UserException(user.getUserName());
         }
 
         try {
@@ -79,12 +74,10 @@ public class FileUserService implements UserService {
             for (String key : userKeys) {
                 prop.setProperty(key, user.getUserInformation(key));
             }
-
             prop.store(output, null);
 
         } catch (IOException e) {
-            logger.error(e.toString());
-            return null;
+            throw new UserException("Username (" + user.getUserName() + ") already exists.");
         }
 
         this.users.put(user.getUserName(), user);
@@ -92,7 +85,7 @@ public class FileUserService implements UserService {
     }
 
     @Override
-    public String retrieve(Properties properties) {
+    public String retrieve(Properties properties) throws UserException {
         User user = new User();
         String userName = properties.getProperty("userName");
 
@@ -104,8 +97,8 @@ public class FileUserService implements UserService {
             props.load(in);
             in.close();
         } catch (IOException e) {
-            logger.error(e.toString());
-            return null;
+            throw new UserException("User file (" + this.fileBaseName + "-" + userName
+                            + ".properties) does not exist.");
         }
 
         Enumeration<?> keySet = props.propertyNames();
@@ -120,7 +113,7 @@ public class FileUserService implements UserService {
     }
 
     @Override
-    public void update(String userName, User user) {
+    public void update(String userName, User user) throws UserException {
         this.delete(userName);
         this.create(user);
     }
