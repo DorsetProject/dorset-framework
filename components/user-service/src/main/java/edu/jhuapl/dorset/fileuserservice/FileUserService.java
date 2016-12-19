@@ -17,74 +17,130 @@
 
 package edu.jhuapl.dorset.fileuserservice;
 
-import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.supercsv.cellprocessor.Optional;
-import org.supercsv.cellprocessor.constraint.NotNull;
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.io.CsvBeanReader;
-import org.supercsv.io.ICsvBeanReader;
-import org.supercsv.prefs.CsvPreference;
 
 import edu.jhuapl.dorset.users.User;
+import edu.jhuapl.dorset.users.UserException;
 import edu.jhuapl.dorset.users.UserService;
 
-/**
- * 
- * CsvFileUserService
- *
- */
-public class CsvFileUserService implements UserService {
-    private static final Logger logger = LoggerFactory
-            .getLogger(CsvFileUserService.class);
-    protected User user;
+public class FileUserService implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(FileUserService.class);
 
-    protected String userFileStore;
-    private static final CellProcessor[] processors = new CellProcessor[] {
-            new NotNull(), new NotNull(), new NotNull(), new Optional(),
-            new Optional(), new Optional() };
+    private Map<String, User> users;
+    protected String userDirPath;
+    protected String fileBaseName;
 
-    public CsvFileUserService(String fileName) {
-        this.userFileStore = fileName;
+    /**
+     * 
+     * FileUserService
+     * 
+     * @param userDirectoryPath Path to directory that contains User files
+     * @param fileBaseName Base string of User file names
+     */
+    public FileUserService(String userDirectoryPath, String fileBaseName) {
+        users = new HashMap<String, User>();
+        this.userDirPath = userDirectoryPath;
+        this.fileBaseName = fileBaseName;
     }
 
     @Override
-    public User load(String userName, String uniqueIdentifier) {
-        this.user = null;
+    public String create(User user) {
+        Properties prop = new Properties();
+        OutputStream output = null;
+        String userFilePath = this.userDirPath + this.fileBaseName + "-" + user.getUserName()
+                        + ".properties";
 
-        ICsvBeanReader csvBeanReader = null;
-        InputStream url = UserService.class.getClassLoader()
-                .getResourceAsStream(this.userFileStore);
-
-        try {
-            csvBeanReader = new CsvBeanReader(new BufferedReader(
-                    new InputStreamReader(url)),
-                    CsvPreference.STANDARD_PREFERENCE);
-            final String[] header = csvBeanReader.getHeader(true);
-            User userIterating;
-            while ((userIterating = csvBeanReader.read(User.class, header,
-                    processors)) != null) {
-                if (userIterating.getUserName().equalsIgnoreCase(userName)) {
-                    user = userIterating;
-                }
+        // Check if Username already exists
+        if (new File(userFilePath).exists()) {
+            try {
+                throw new UserException(user.getUserName());
+            } catch (UserException e) {
+                logger.error(e.toString());
+                return null;
             }
-            csvBeanReader.close();
-
-        } catch (NullPointerException | IOException e) {
-            logger.error("Failed to load " + this.userFileStore + ".", e);
         }
 
-        return this.user;
+        try {
+            output = new FileOutputStream(userFilePath);
+
+            Set<String> userKeys = user.getUserInformationKeys();
+            for (String key : userKeys) {
+                prop.setProperty(key, user.getUserInformation(key));
+            }
+
+            prop.store(output, null);
+
+        } catch (IOException e) {
+            logger.error(e.toString());
+            return null;
+        }
+
+        this.users.put(user.getUserName(), user);
+        return user.getUserName();
     }
 
     @Override
-    public User getCurrentUser() {
-        return this.user;
+    public String retrieve(Properties properties) {
+        User user = new User();
+        String userName = properties.getProperty("userName");
+
+        FileInputStream in;
+        Properties props = new Properties();
+        try {
+            in = new FileInputStream(this.userDirPath + "/" + this.fileBaseName + "-" + userName
+                            + ".properties");
+            props.load(in);
+            in.close();
+        } catch (IOException e) {
+            logger.error(e.toString());
+            return null;
+        }
+
+        Enumeration<?> keySet = props.propertyNames();
+
+        while (keySet.hasMoreElements()) {
+            String key = (String) keySet.nextElement();
+            user.setUserInformation(key, props.getProperty(key));
+        }
+
+        this.users.put(userName, user);
+        return userName;
+    }
+
+    @Override
+    public void update(String userName, User user) {
+        this.delete(userName);
+        this.create(user);
+    }
+
+    @Override
+    public void delete(String userName) {
+
+        File file = new File(this.userDirPath + "/" + this.fileBaseName + "-" + userName
+                        + ".properties");
+        if (file.delete()) {
+            users.remove(userName);
+            logger.info(file.getName() + " successfully deleted.");
+        } else {
+            logger.error("Delete operation failed.");
+        }
+    }
+
+    @Override
+    public User getUser(String userName) {
+        return users.get(userName);
     }
 
 }
