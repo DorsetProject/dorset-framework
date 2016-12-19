@@ -74,7 +74,7 @@ public class FileUserService implements UserService {
 
         // Check if Username already exists
         if (new File(userFilePath).exists()) {
-            throw new UserException(user.getUserName());
+            throw new UserException("Username (" + user.getUserName() + ") already exists.");
         }
 
         try {
@@ -87,7 +87,8 @@ public class FileUserService implements UserService {
             prop.store(output, null);
 
         } catch (IOException e) {
-            throw new UserException("Username (" + user.getUserName() + ") already exists.");
+            throw new UserException("IOException when creating the User file for " + user.getUserName() +"."
+                            + e.getMessage());
         }
 
         this.users.put(user.getUserName(), user);
