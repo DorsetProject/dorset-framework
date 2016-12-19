@@ -60,11 +60,18 @@ public class FileUserService implements UserService {
      * 
      * @param userDirectoryPath Path to directory that contains User files
      * @param fileBaseName Base string of User file names
+     * 
      */
-    public FileUserService(String userDirectoryPath, String fileBaseName) {
+    public FileUserService(String userDirectoryPath, String fileBaseName) throws UserException {
         users = new HashMap<String, User>();
         this.userDirPath = userDirectoryPath;
         this.fileBaseName = fileBaseName;
+
+        // Check if directory exists
+        if (!(Paths.get(this.userDirPath).toFile().exists())) {
+            logger.error("Invalid directory. Could not instantiate FileUserService.");
+            throw new UserException("Invalid directory. Could not instantiate FileUserService.");
+        }
     }
 
     @Override

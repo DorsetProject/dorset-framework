@@ -160,4 +160,12 @@ public class FileUserServiceTest {
         assertEquals(user_service.getUser(userName), null);
     }
 
+    @Test(expected = UserException.class)
+    public void testBadDirectory() throws UserException {
+        UserService user_service = new FileUserService("bad/path/", fileBaseName);
+        User user = mockUser();
+        user_service.create(user);
+
+    }
+
 }
