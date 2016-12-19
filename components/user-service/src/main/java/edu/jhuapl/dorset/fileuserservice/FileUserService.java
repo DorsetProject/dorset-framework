@@ -120,9 +120,9 @@ public class FileUserService implements UserService {
                             + ".properties) does not exist.");
         }
 
-        Set<Object> keySet = props.keySet();
-        for (Object key : keySet) {
-            user.setUserInformation((String) key, props.getProperty((String) key));
+        Set<String> keySet = props.stringPropertyNames();
+        for (String key : keySet) {
+            user.setUserInformation(key, props.getProperty(key));
         }
 
         this.users.put(userName, user);
