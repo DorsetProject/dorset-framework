@@ -45,7 +45,7 @@ import edu.jhuapl.dorset.users.UserService;
  * Users. All User files are stored in a single directory and each User has a single User file. The
  * naming convention for the set of files includes a base name that is uniform across all users then
  * a dash followed by the corresponding Username. Example:
- * "path/to/user/files/exampleuser-jdoe.properties."
+ * "path/to/user/files/example-jdoe.properties."
  */
 public class FileUserService implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(FileUserService.class);
