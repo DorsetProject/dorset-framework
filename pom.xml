@@ -3,7 +3,7 @@
 
   <groupId>edu.jhuapl.dorset</groupId>
   <artifactId>parent</artifactId>
-  <version>0.4.0-SNAPSHOT</version>
+  <version>0.4.0</version>
   <packaging>pom</packaging>
 
   <name>Dorset Framework (Parent)</name>
@@ -119,7 +119,7 @@
     <connection>scm:git:git@github.com:DorsetProject/dorset-framework.git</connection>
     <developerConnection>scm:git:git@github.com:DorsetProject/dorset-framework.git</developerConnection>
     <url>https://github.com/DorsetProject/dorset-framework</url>
-    <tag>HEAD</tag>
+    <tag>dorset-0.4.0</tag>
   </scm>
 
   <distributionManagement>
