@@ -24,13 +24,10 @@ Deploying to Sonatype's maven central repository
     mvn clean deploy -P release
     ```
 
-4. Releases are deployed to the staging server with
+4. Update version in README
+
+5. Releases are deployed to the staging server with
     ```
     mvn release:clean release:prepare -P release
     mvn release:perform -P release
     ```
-
-5. Approve the release using the web interface at https://oss.sonatype.org/
-
-    Login, select Staging Repositories, find dorset at the bottom of the list, click the Release button at the top
-

@@ -16,7 +16,7 @@ Published releases are available on Maven Central.
 <dependency>
   <groupId>edu.jhuapl.dorset</groupId>
   <artifactId>dorset-core</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
 </dependency>
 ```
 
