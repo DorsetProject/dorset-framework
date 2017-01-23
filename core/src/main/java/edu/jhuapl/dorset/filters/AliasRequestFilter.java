@@ -38,6 +38,8 @@ public class AliasRequestFilter implements RequestFilter {
      * 
      * Each map key will be replaced by its corresponding value.
      * This value will act as an alias in the Request text.
+     * 
+     * @param aliasMap  Map of aliases  
      */
     public AliasRequestFilter(Map<String, String> aliasMap) {
         this.aliasMap = aliasMap;

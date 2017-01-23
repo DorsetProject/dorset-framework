@@ -32,6 +32,6 @@ public interface ResponseFilter {
      * @param response  current response object
      * @return filtered response object
      */
-    public Response filter(Response repsonse);
+    public Response filter(Response response);
 
 }
