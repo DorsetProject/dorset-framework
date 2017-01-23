@@ -42,7 +42,7 @@ public class WebResponseWithError extends WebResponse {
     /**
      * Create a web response
      *
-     * @param text  the text of the response
+     * @param error  the error of the response
      */
     public WebResponseWithError(Error error) {
         super(Response.Type.ERROR.getValue(), null);
