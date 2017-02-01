@@ -24,10 +24,10 @@ import edu.jhuapl.dorset.nlp.RuleBasedTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
 
 /**
- * Use a keyword to determine which child node is returned.
+ * Use one or more keywords to determine which child node is returned.
  */
 public class KeywordNode implements Node {
-    private String keyword;
+    private String[] keywords;
     private Node matchedNode;
     private Node nonMatchedNode;
     private Tokenizer tokenizer;
@@ -36,11 +36,25 @@ public class KeywordNode implements Node {
      * Create a keyword matching node
      *
      * @param keyword  keyword string to match to
-     * @param matchNode  Node to return it keyword matched
+     * @param matchNode  Node to return if keyword matched
      * @param nonMatchNode  Node to return if keyword not matched
      */
     public KeywordNode(String keyword, Node matchNode, Node nonMatchNode) {
-        this.keyword = keyword.toLowerCase();
+        this(new String[]{keyword}, matchNode, nonMatchNode);
+    }
+
+    /**
+     * Create a keyword matching node
+     *
+     * @param keywords  array of keyword strings to match to
+     * @param matchNode  Node to return if a keyword matched
+     * @param nonMatchNode  Node to return if a keyword not matched
+     */
+    public KeywordNode(String[] keywords, Node matchNode, Node nonMatchNode) {
+        this.keywords = new String[keywords.length];
+        for (int i = 0; i < keywords.length; i++) {
+            this.keywords[i] = keywords[i].toLowerCase();
+        }
         this.matchedNode = matchNode;
         this.nonMatchedNode = nonMatchNode;
         this.tokenizer = new RuleBasedTokenizer();
@@ -50,11 +64,12 @@ public class KeywordNode implements Node {
     public Node selectChild(Request request) {
         String requestText = request.getText().toLowerCase();
         String[] tokens = tokenizer.tokenize(requestText);
-        if (Arrays.asList(tokens).contains(keyword)) {
-            return matchedNode;
-        } else {
-            return nonMatchedNode;
+        for (String keyword : keywords) {
+            if (Arrays.asList(tokens).contains(keyword)) {
+                return matchedNode;
+            }
         }
+        return nonMatchedNode;
     }
 
     @Override
