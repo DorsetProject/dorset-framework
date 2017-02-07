@@ -24,9 +24,9 @@ import edu.jhuapl.dorset.nlp.RuleBasedTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
 
 /**
- * Use one or more keywords to determine which child node is returned.
+ * Use one or more keywords to determine which of two children is returned.
  */
-public class KeywordNode implements Node {
+public class BinaryKeywordNode implements Node {
     private String[] keywords;
     private Node matchedNode;
     private Node nonMatchedNode;
@@ -39,7 +39,7 @@ public class KeywordNode implements Node {
      * @param matchNode  Node to return if keyword matched
      * @param nonMatchNode  Node to return if keyword not matched
      */
-    public KeywordNode(String keyword, Node matchNode, Node nonMatchNode) {
+    public BinaryKeywordNode(String keyword, Node matchNode, Node nonMatchNode) {
         this(new String[]{keyword}, matchNode, nonMatchNode);
     }
 
@@ -50,7 +50,7 @@ public class KeywordNode implements Node {
      * @param matchNode  Node to return if a keyword matched
      * @param nonMatchNode  Node to return if a keyword not matched
      */
-    public KeywordNode(String[] keywords, Node matchNode, Node nonMatchNode) {
+    public BinaryKeywordNode(String[] keywords, Node matchNode, Node nonMatchNode) {
         this.keywords = new String[keywords.length];
         for (int i = 0; i < keywords.length; i++) {
             this.keywords[i] = keywords[i].toLowerCase();
@@ -64,6 +64,10 @@ public class KeywordNode implements Node {
     public Node selectChild(Request request) {
         String requestText = request.getText().toLowerCase();
         String[] tokens = tokenizer.tokenize(requestText);
+        if (tokens.length == 0) {
+            return null;
+        }
+
         for (String keyword : keywords) {
             if (Arrays.asList(tokens).contains(keyword)) {
                 return matchedNode;

@@ -31,6 +31,8 @@ import edu.jhuapl.dorset.routing.Router;
  * <p>
  * The tree must be constructed before passed into the constructor.
  * TreeRouter and Node supports k-ary trees though some implementations may be binary only.
+ * If the router reaches a dead end (a node that is not a leaf and does not return a child),
+ * it returns an empty array.
  */
 public class TreeRouter implements Router {
     private Node root;
@@ -47,10 +49,14 @@ public class TreeRouter implements Router {
     @Override
     public Agent[] route(Request request) {
         Node node = root;
-        while (!node.isLeaf()) {
+        while (node != null && !node.isLeaf()) {
             node = node.selectChild(request);
         }
-        return node.getValue();
+        if (node != null) {
+            return node.getValue();
+        } else {
+            return new Agent[0];
+        }
     }
 
     @Override

@@ -39,13 +39,13 @@ public class TreeRouterTest {
         when(a1.getName()).thenReturn("historical");
         Agent a2 = mock(Agent.class);
         when(a2.getName()).thenReturn("current");
-        Node weatherNode = new KeywordNode("historical", new LeafNode(a1), new LeafNode(a2));
+        Node weatherNode = new BinaryKeywordNode("historical", new LeafNode(a1), new LeafNode(a2));
         Agent a3 = mock(Agent.class);
         when(a3.getName()).thenReturn("baseball");
         Agent a4 = mock(Agent.class);
         when(a4.getName()).thenReturn("football");
-        Node scoreNode = new KeywordNode("baseball", new LeafNode(a3), new LeafNode(a4));
-        Node root = new KeywordNode("weather", weatherNode, scoreNode);
+        Node scoreNode = new BinaryKeywordNode("baseball", new LeafNode(a3), new LeafNode(a4));
+        Node root = new BinaryKeywordNode("weather", weatherNode, scoreNode);
         return new TreeRouter(root);        
     }
 
@@ -78,5 +78,11 @@ public class TreeRouterTest {
         assertTrue(names.contains("current"));
         assertTrue(names.contains("baseball"));
         assertTrue(names.contains("football"));
+    }
+
+    @Test
+    public void testNoText() {
+        Router router = createBinaryTreeRouter();
+        assertEquals(0, router.route(new Request("")).length);
     }
 }

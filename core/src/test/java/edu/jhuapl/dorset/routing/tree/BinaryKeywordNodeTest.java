@@ -24,18 +24,26 @@ import org.junit.Test;
 import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.agents.Agent;
 
-public class KeywordNodeTest {
+public class BinaryKeywordNodeTest {
 
     @Test
-    public void test() {
+    public void testBothSides() {
         Request request1 = new Request("What is the weather like?");
         Request request2 = new Request("Where is the door?");
         Agent a1 = mock(Agent.class);
         Agent a2 = mock(Agent.class);
-        Node node = new KeywordNode("weather", new LeafNode(a1), new LeafNode(a2));
+        Node node = new BinaryKeywordNode("weather", new LeafNode(a1), new LeafNode(a2));
 
         assertEquals(a1, node.selectChild(request1).getValue()[0]);
         assertEquals(a2, node.selectChild(request2).getValue()[0]);
     }
 
+    @Test
+    public void testNoText() {
+        Agent a1 = mock(Agent.class);
+        Agent a2 = mock(Agent.class);
+        Node node = new BinaryKeywordNode("weather", new LeafNode(a1), new LeafNode(a2));
+
+        assertNull(node.selectChild(new Request("")));
+    }
 }
