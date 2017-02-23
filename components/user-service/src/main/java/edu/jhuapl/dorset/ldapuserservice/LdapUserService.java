@@ -50,7 +50,7 @@ public class LdapUserService implements UserService {
 
         this.ldapServer = conf.getString("ldap-context.ldapServer");
         this.ldapSearchBase = conf.getString("ldap-context.ldapSearchBase");
-        //this.ldapUsername = conf.getString("ldap-context.ldapUserName");
+        // this.ldapUsername = conf.getString("ldap-context.ldapUserName");
         this.ldapPassword = conf.getString("ldap-context.ldapPassword");
         this.ldapSecurityPrinciple = conf.getString("ldap-context.ldapSecurityPrinciple");
 
@@ -138,15 +138,14 @@ public class LdapUserService implements UserService {
                 }
             } else {
                 logger.info("user not found: " + userName);
-                return null; 
+                throw new UserException("User not found: " + userName + ". ");
             }
 
-        } catch (AuthenticationNotSupportedException ex) {
-            logger.debug("The authentication is not supported by the server");
-        } catch (AuthenticationException ex) {
-            logger.debug("Incorrect Username or Password");
         } catch (NamingException ex) {
-            logger.debug("Error when trying to establish the context");
+            logger.info("Error when trying to establish the context. User not found: " + userName
+                            + ". ");
+            throw new UserException("Error when trying to establish the context. User not found: "
+                            + userName + ". ");
         }
 
         this.users.put(userName, user);
