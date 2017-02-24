@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 The Johns Hopkins University Applied Physics Laboratory LLC
+ * Copyright 2017 The Johns Hopkins University Applied Physics Laboratory LLC
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,25 +16,24 @@
  */
 package edu.jhuapl.dorset.agents;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
-import edu.jhuapl.dorset.ResponseStatus;
 import edu.jhuapl.dorset.ResponseStatus.Code;
 
-/**
- * Gson deserializer for the ResponseStatus.Code enumeration
- */
-public class ResponseCodeDeserializer implements JsonDeserializer<ResponseStatus.Code> {
+public class ResponseCodeJsonAdapter extends TypeAdapter<Code> {
 
     @Override
-    public Code deserialize(JsonElement element, Type type, JsonDeserializationContext ctx)
-                    throws JsonParseException {
-        return Code.fromValue(element.getAsInt());
+    public Code read(JsonReader reader) throws IOException {
+        return Code.fromValue(reader.nextInt());
+    }
+
+    @Override
+    public void write(JsonWriter writer, Code code) throws IOException {
+        writer.value(code.getValue());
     }
 
 }

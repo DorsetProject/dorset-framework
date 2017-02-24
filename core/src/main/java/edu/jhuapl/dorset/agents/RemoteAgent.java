@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 The Johns Hopkins University Applied Physics Laboratory LLC
+ * Copyright 2016-2017 The Johns Hopkins University Applied Physics Laboratory LLC
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,10 +58,10 @@ public class RemoteAgent extends AbstractAgent {
         this.urlBase = urlBase.replaceAll("/$", "") + "/";
         this.client = client;
         setUrls();
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(ResponseStatus.Code.class, new ResponseCodeDeserializer());
-        gsonBuilder.registerTypeAdapter(Response.Type.class, new ResponseTypeDeserializer());
-        gson = gsonBuilder.create();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Response.Type.class, new ResponseTypeJsonAdapter().nullSafe());
+        builder.registerTypeAdapter(ResponseStatus.Code.class, new ResponseCodeJsonAdapter().nullSafe());
+        gson = builder.create();
     }
 
     @Override
