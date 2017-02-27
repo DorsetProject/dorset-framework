@@ -1,3 +1,20 @@
+
+/*
+ * Copyright 2016 The Johns Hopkins University Applied Physics Laboratory LLC
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package edu.jhuapl.dorset.ldapuserservice;
 
 import java.util.HashMap;
@@ -5,8 +22,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.naming.AuthenticationException;
-import javax.naming.AuthenticationNotSupportedException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -39,7 +54,8 @@ public class LdapUserService implements UserService {
     private String ldapSecurityPrinciple;
 
     private String[] userAttributes;
-
+    private DirContext ctx;
+    
     /**
      * 
      * LdapUserService
@@ -61,14 +77,9 @@ public class LdapUserService implements UserService {
         }
 
         this.users = new HashMap<String, User>();
-
-    }
-
-    private SearchControls getSearchControls(String[] attributes) {
-        SearchControls searchControls = new SearchControls();
-        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        searchControls.setReturningAttributes(attributes);
-        return searchControls;
+  
+        this.setContext();
+            
     }
 
     @Override
@@ -106,7 +117,7 @@ public class LdapUserService implements UserService {
 
         return user;
     }
-
+    
     @Override
     public String retrieve(Properties properties) throws UserException {
         User user = new User();
@@ -114,18 +125,11 @@ public class LdapUserService implements UserService {
 
         String key;
         Attribute value;
+        
         SearchControls searchControls = getSearchControls(this.userAttributes);
-
-        Hashtable<String, String> env = new Hashtable<String, String>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-
-        env.put(Context.PROVIDER_URL, this.ldapServer);
-        env.put(Context.SECURITY_PRINCIPAL, this.ldapSecurityPrinciple);
-        env.put(Context.SECURITY_CREDENTIALS, this.ldapPassword);
+        ctx = getContext();
 
         try {
-            DirContext ctx = new InitialDirContext(env);
             NamingEnumeration<SearchResult> answer = ctx.search(this.ldapSearchBase,
                             "sAMAccountName=" + userName, searchControls);
             if (answer.hasMore()) {
@@ -141,10 +145,10 @@ public class LdapUserService implements UserService {
                 throw new UserException("User not found: " + userName + ". ");
             }
 
-        } catch (NamingException ex) {
-            logger.info("Error when trying to establish the context. User not found: " + userName
+        } catch (NamingException | NullPointerException ex) {
+            logger.info("Error when trying to establish the connection. User not found: " + userName
                             + ". ");
-            throw new UserException("Error when trying to establish the context. User not found: "
+            throw new UserException("Error when trying to establish the connection. User not found: "
                             + userName + ". ");
         }
 
@@ -158,4 +162,35 @@ public class LdapUserService implements UserService {
         throw new UnsupportedOperationException("Invalid operation for LdapUserService. "
                         + "This interface currently only allows read only methods.");
     }
+
+    private SearchControls getSearchControls(String[] attributes) {
+        SearchControls searchControls = new SearchControls();
+        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        searchControls.setReturningAttributes(attributes);
+        return searchControls;
+    }
+    
+    private void setContext() {
+
+        Hashtable<String, String> env = new Hashtable<String, String>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+
+        env.put(Context.PROVIDER_URL, this.ldapServer);
+        env.put(Context.SECURITY_PRINCIPAL, this.ldapSecurityPrinciple);
+        env.put(Context.SECURITY_CREDENTIALS, this.ldapPassword);
+
+        try {
+            this.ctx = new InitialDirContext(env);
+        } catch (NamingException ex) {
+            logger.info("Error when trying to establish the context.");
+        }        
+        
+    }
+    
+    private DirContext getContext(){
+        return this.ctx;
+        
+    }
+    
 }
