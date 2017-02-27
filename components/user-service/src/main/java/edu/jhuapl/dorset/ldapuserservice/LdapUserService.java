@@ -78,7 +78,21 @@ public class LdapUserService implements UserService {
 
         this.users = new HashMap<String, User>();
   
-        this.setContext();
+        Hashtable<String, String> env = new Hashtable<String, String>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+
+        env.put(Context.PROVIDER_URL, this.ldapServer);
+        env.put(Context.SECURITY_PRINCIPAL, this.ldapSecurityPrinciple);
+        env.put(Context.SECURITY_CREDENTIALS, this.ldapPassword);
+
+        try {
+            this.ctx = new InitialDirContext(env);
+        } catch (NamingException ex) {
+            logger.info("Error when trying to establish the context.");
+        }    
+        
+        this.setContext(this.ctx);
             
     }
 
@@ -140,16 +154,14 @@ public class LdapUserService implements UserService {
                     value = attrs.get(key);
                     user.setUserInformation(key, value.toString());
                 }
-            } else {
+            } else { 
                 logger.info("user not found: " + userName);
                 throw new UserException("User not found: " + userName + ". ");
             }
-
         } catch (NamingException | NullPointerException ex) {
-            logger.info("Error when trying to establish the connection. User not found: " + userName
-                            + ". ");
-            throw new UserException("Error when trying to establish the connection. User not found: "
-                            + userName + ". ");
+            logger.info("Could not make connection to LDAP Server. User not found: " + userName + ". ");
+            throw new UserException("Could not make connection to LDAP Server. User not found: " + userName + ". ");
+
         }
 
         this.users.put(userName, user);
@@ -170,25 +182,12 @@ public class LdapUserService implements UserService {
         return searchControls;
     }
     
-    private void setContext() {
-
-        Hashtable<String, String> env = new Hashtable<String, String>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-
-        env.put(Context.PROVIDER_URL, this.ldapServer);
-        env.put(Context.SECURITY_PRINCIPAL, this.ldapSecurityPrinciple);
-        env.put(Context.SECURITY_CREDENTIALS, this.ldapPassword);
-
-        try {
-            this.ctx = new InitialDirContext(env);
-        } catch (NamingException ex) {
-            logger.info("Error when trying to establish the context.");
-        }        
+    protected void setContext(DirContext ctx) {
+        this.ctx = ctx;        
         
     }
     
-    private DirContext getContext(){
+    protected DirContext getContext() {
         return this.ctx;
         
     }
