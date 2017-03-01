@@ -49,7 +49,6 @@ public class LdapUserService implements UserService {
 
     private String ldapServer;
     private String ldapSearchBase;
-    // private String ldapUsername;
     private String ldapPassword;
     private String ldapSecurityPrinciple;
 
@@ -62,21 +61,21 @@ public class LdapUserService implements UserService {
      * 
      */
     public LdapUserService() {
+        this.users = new HashMap<String, User>();
+        
         Config conf = ConfigFactory.load();
 
         this.ldapServer = conf.getString("ldap-context.ldapServer");
         this.ldapSearchBase = conf.getString("ldap-context.ldapSearchBase");
-        // this.ldapUsername = conf.getString("ldap-context.ldapUserName");
         this.ldapPassword = conf.getString("ldap-context.ldapPassword");
         this.ldapSecurityPrinciple = conf.getString("ldap-context.ldapSecurityPrinciple");
 
         String userAttributesStr = conf.getString("ldap-search-controls.userAttributes");
-        this.userAttributes = userAttributesStr.replaceAll("\"", "").split(",");
-        for (int i = 0; i < this.userAttributes.length; i++) {
-            this.userAttributes[i] = this.userAttributes[i].trim();
+        userAttributes = userAttributesStr.replaceAll("\"", "").split(",");
+        for (int i = 0; i < userAttributes.length; i++) {
+            userAttributes[i] = userAttributes[i].trim();
         }
-
-        this.users = new HashMap<String, User>();
+        this.setUserAttributes(userAttributes);
   
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
@@ -184,12 +183,18 @@ public class LdapUserService implements UserService {
     
     protected void setContext(DirContext ctx) {
         this.ctx = ctx;        
-        
     }
     
     protected DirContext getContext() {
         return this.ctx;
-        
+    }
+    
+    protected String[] getUserAttributes() {
+        return this.userAttributes;
+    }
+
+    protected void setUserAttributes(String[] userAttributes) {
+        this.userAttributes = userAttributes;
     }
     
 }
