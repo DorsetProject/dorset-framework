@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 
 import edu.jhuapl.dorset.users.User;
 import edu.jhuapl.dorset.users.UserException;
@@ -51,6 +50,7 @@ public class LdapUserService implements UserService {
     private String ldapSearchBase;
     private String ldapPassword;
     private String ldapSecurityPrinciple;
+    private String ldapFilterAttribute;
 
     private String[] userAttributes;
     private DirContext ctx;
@@ -69,6 +69,7 @@ public class LdapUserService implements UserService {
         this.ldapSearchBase = conf.getString("ldap-context.ldapSearchBase");
         this.ldapPassword = conf.getString("ldap-context.ldapPassword");
         this.ldapSecurityPrinciple = conf.getString("ldap-context.ldapSecurityPrinciple");
+        this.ldapFilterAttribute = conf.getString("ldap-context.ldapFilterAttribute");
 
         String userAttributesStr = conf.getString("ldap-search-controls.userAttributes");
         userAttributes = userAttributesStr.replaceAll("\"", "").split(",");
@@ -142,7 +143,7 @@ public class LdapUserService implements UserService {
 
         try {
             NamingEnumeration<SearchResult> answer = ctx.search(this.ldapSearchBase,
-                            "sAMAccountName=" + userName, searchControls);
+                            this.ldapFilterAttribute + "=" + userName, searchControls);
             if (answer.hasMore()) {
                 Attributes attrs = answer.next().getAttributes();
                 NamingEnumeration<String> attrsKeys = attrs.getIDs();
