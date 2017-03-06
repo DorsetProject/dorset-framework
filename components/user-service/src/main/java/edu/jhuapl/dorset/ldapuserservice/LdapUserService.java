@@ -97,14 +97,12 @@ public class LdapUserService implements UserService {
 
     @Override
     public String create(User user) throws UserException {
-        throw new UnsupportedOperationException("Invalid operation for LdapUserService. "
-                        + "This interface currently only allows read only methods.");
+        throw new UnsupportedOperationException("LdapUserService does not implement Create.");
     }
 
     @Override
     public void delete(String userName) {
-        throw new UnsupportedOperationException("Invalid operation for LdapUserService. "
-                        + "This interface currently only allows read only methods.");
+        throw new UnsupportedOperationException("LdapUserService does not implement Delete.");
     }
 
     @Override
@@ -170,8 +168,7 @@ public class LdapUserService implements UserService {
 
     @Override
     public void update(String userName, User user) throws UserException {
-        throw new UnsupportedOperationException("Invalid operation for LdapUserService. "
-                        + "This interface currently only allows read only methods.");
+        throw new UnsupportedOperationException("LdapUserService does not implement Update.");
     }
 
     private SearchControls getSearchControls(String[] attributes) {
