@@ -60,10 +60,10 @@ public class LdapUserService implements UserService {
      * LdapUserService
      * 
      */
-    public LdapUserService() {
+    public LdapUserService(Config config) {
         this.users = new HashMap<String, User>();
         
-        Config conf = ConfigFactory.load();
+        Config conf = config;
 
         this.ldapServer = conf.getString("ldap-context.ldapServer");
         this.ldapSearchBase = conf.getString("ldap-context.ldapSearchBase");

@@ -34,6 +34,9 @@ import javax.naming.directory.SearchResult;
 
 import org.junit.Test;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 import edu.jhuapl.dorset.users.User;
 import edu.jhuapl.dorset.users.UserException;
 
@@ -56,7 +59,8 @@ public class LdapUserServiceTest {
         Properties props = new Properties();
         props.setProperty("userName", user.getUserName());
 
-        LdapUserService lus = new LdapUserService();
+        Config config = ConfigFactory.load();
+        LdapUserService lus = new LdapUserService(config);
 
         DirContext ctx = mock(InitialDirContext.class);
         lus.setContext(ctx);
@@ -85,20 +89,23 @@ public class LdapUserServiceTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testCreateMethod() throws UserException {
-        LdapUserService lus = new LdapUserService();
+        Config config = ConfigFactory.load();
+        LdapUserService lus = new LdapUserService(config);
         lus.create(mockUser());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testUpdateMethod() throws UserException {
-        LdapUserService lus = new LdapUserService();
+        Config config = ConfigFactory.load();
+        LdapUserService lus = new LdapUserService(config);
         User user = mockUser();
         lus.update(user.getUserName(), user);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testDeleteMethod() {
-        LdapUserService lus = new LdapUserService();
+        Config config = ConfigFactory.load();
+        LdapUserService lus = new LdapUserService(config);
         lus.delete(mockUser().getUserName());
     }
 
@@ -108,8 +115,9 @@ public class LdapUserServiceTest {
         Properties props = new Properties();
         props.setProperty("userName", user.getUserName());
 
-        LdapUserService lus = new LdapUserService();
-
+        Config config = ConfigFactory.load();
+        LdapUserService lus = new LdapUserService(config);
+        
         DirContext ctx = mock(InitialDirContext.class);
         lus.setContext(ctx);
 
@@ -142,7 +150,8 @@ public class LdapUserServiceTest {
         Properties props = new Properties();
         props.setProperty("userName", userName);
 
-        LdapUserService lus = new LdapUserService();
+        Config config = ConfigFactory.load();
+        LdapUserService lus = new LdapUserService(config);
 
         DirContext ctx = mock(InitialDirContext.class);
         lus.setContext(ctx);
@@ -157,7 +166,9 @@ public class LdapUserServiceTest {
 
     @Test
     public void testBadConfig() {
-        LdapUserService lus = new LdapUserService();
+        Config config = ConfigFactory.load();
+        LdapUserService lus = new LdapUserService(config);
+
         assertEquals(lus.getContext(), null);
 
     }
@@ -168,7 +179,9 @@ public class LdapUserServiceTest {
         Properties props = new Properties();
         props.setProperty("userName", userName);
 
-        LdapUserService lus = new LdapUserService();
+        Config config = ConfigFactory.load();
+        LdapUserService lus = new LdapUserService(config);
+
         lus.retrieve(props);
 
     }
