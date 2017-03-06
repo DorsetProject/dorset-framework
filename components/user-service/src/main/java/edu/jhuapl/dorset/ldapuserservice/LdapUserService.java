@@ -1,6 +1,5 @@
-
 /*
- * Copyright 2016 The Johns Hopkins University Applied Physics Laboratory LLC
+ * Copyright 2017 The Johns Hopkins University Applied Physics Laboratory LLC
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.jhuapl.dorset.ldapuserservice;
 
 import java.util.HashMap;
