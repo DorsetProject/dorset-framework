@@ -42,7 +42,7 @@ import edu.jhuapl.dorset.users.User;
 import edu.jhuapl.dorset.users.UserException;
 
 public class LdapUserServiceTest {
-
+    
     public User mockUser() {
         User user = new User();
         user.setFirstName("mock_FirstName");
@@ -60,8 +60,7 @@ public class LdapUserServiceTest {
         Properties props = new Properties();
         props.setProperty("userName", user.getUserName());
         
-        Config config = mock(Config.class);
-        when(config.getString(any(String.class))).thenReturn("");
+        Config config = ConfigFactory.load();
         LdapUserService lus = new LdapUserService(config);
 
         DirContext ctx = mock(InitialDirContext.class);
@@ -90,29 +89,23 @@ public class LdapUserServiceTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testCreateMethod() throws UserException {
-        Config config = mock(Config.class);
-        when(config.getString(any(String.class))).thenReturn("");
-
+    public void testCreateMethod() throws UserException, NamingException {
+        Config config = ConfigFactory.load();
         LdapUserService lus = new LdapUserService(config);
         lus.create(mockUser());
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testUpdateMethod() throws UserException {
-        Config config = mock(Config.class);
-        when(config.getString(any(String.class))).thenReturn("");
-
+    public void testUpdateMethod() throws UserException, NamingException {
+        Config config = ConfigFactory.load();
         LdapUserService lus = new LdapUserService(config);
         User user = mockUser();
         lus.update(user.getUserName(), user);
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testDeleteMethod() {
-        Config config = mock(Config.class);
-        when(config.getString(any(String.class))).thenReturn("");
-
+    public void testDeleteMethod() throws NamingException {
+        Config config = ConfigFactory.load();
         LdapUserService lus = new LdapUserService(config);
         lus.delete(mockUser().getUserName());
     }
@@ -123,8 +116,7 @@ public class LdapUserServiceTest {
         Properties props = new Properties();
         props.setProperty("userName", user.getUserName());
 
-        Config config = mock(Config.class);
-        when(config.getString(any(String.class))).thenReturn("");
+        Config config = ConfigFactory.load();
         LdapUserService lus = new LdapUserService(config);
         
         DirContext ctx = mock(InitialDirContext.class);
@@ -159,8 +151,7 @@ public class LdapUserServiceTest {
         Properties props = new Properties();
         props.setProperty("userName", userName);
 
-        Config config = mock(Config.class);
-        when(config.getString(any(String.class))).thenReturn("");
+        Config config = ConfigFactory.load();
         LdapUserService lus = new LdapUserService(config);
 
         DirContext ctx = mock(InitialDirContext.class);
@@ -175,7 +166,7 @@ public class LdapUserServiceTest {
     }
 
     @Test
-    public void testBadConfig() {
+    public void testBadConfig() throws NamingException {
         Config config = mock(Config.class);
         when(config.getString(any(String.class))).thenReturn("");
         LdapUserService lus = new LdapUserService(config);
@@ -188,8 +179,7 @@ public class LdapUserServiceTest {
         Properties props = new Properties();
         props.setProperty("userName", userName);
 
-        Config config = mock(Config.class);
-        when(config.getString(any(String.class))).thenReturn("");
+        Config config = ConfigFactory.load();
         LdapUserService lus = new LdapUserService(config);
 
         lus.retrieve(props);
