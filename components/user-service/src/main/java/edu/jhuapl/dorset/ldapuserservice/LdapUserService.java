@@ -46,11 +46,18 @@ public class LdapUserService implements UserService {
 
     private Map<String, User> users;
 
-    private String ldapServer;
-    private String ldapSearchBase;
-    private String ldapPassword;
-    private String ldapBindDn;
-    private String ldapFilterAttribute;
+    private static final String LDAP_SERVER_KEY = "ldapServer";
+    private static final String LDAP_SEARCH_BASE_KEY = "ldapSearchBase";
+    private static final String LDAP_PASSWORD_KEY = "ldapPassword";
+    private static final String LDAP_BIND_DN_KEY = "ldapBindDn";
+    private static final String LDAP_FILTER_ATTRIBUTE_KEY = "ldapFilterAttribute";
+    private static final String LDAP_SEARCH_CONTROLS_KEY = "userAttributes";
+
+    private final String ldapServer;
+    private final String ldapSearchBase;
+    private final String ldapPassword;
+    private final String ldapBindDn;
+    private final String ldapFilterAttribute;
 
     private String[] userAttributes;
     private DirContext ctx;
@@ -59,19 +66,20 @@ public class LdapUserService implements UserService {
      * 
      * LdapUserService
      * 
+     * @param  Config config
      */
     public LdapUserService(Config config) {
         this.users = new HashMap<String, User>();
         
         Config conf = config;
 
-        this.ldapServer = conf.getString("ldap-context.ldapServer");
-        this.ldapSearchBase = conf.getString("ldap-context.ldapSearchBase");
-        this.ldapPassword = conf.getString("ldap-context.ldapPassword");
-        this.ldapBindDn = conf.getString("ldap-context.ldapBindDn");
-        this.ldapFilterAttribute = conf.getString("ldap-context.ldapFilterAttribute");
+        this.ldapServer = conf.getString(LDAP_SERVER_KEY);
+        this.ldapSearchBase = conf.getString(LDAP_SEARCH_BASE_KEY);
+        this.ldapPassword = conf.getString(LDAP_PASSWORD_KEY);
+        this.ldapBindDn = conf.getString(LDAP_BIND_DN_KEY);
+        this.ldapFilterAttribute = conf.getString(LDAP_FILTER_ATTRIBUTE_KEY);
 
-        String userAttributesStr = conf.getString("ldap-search-controls.userAttributes");
+        String userAttributesStr = conf.getString(LDAP_SEARCH_CONTROLS_KEY);
         userAttributes = userAttributesStr.replaceAll("\"", "").split(",");
         for (int i = 0; i < userAttributes.length; i++) {
             userAttributes[i] = userAttributes[i].trim();
