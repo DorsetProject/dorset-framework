@@ -18,6 +18,7 @@
 package edu.jhuapl.dorset.ldapuserservice;
 
 import java.util.HashMap;
+
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
@@ -41,6 +42,30 @@ import edu.jhuapl.dorset.users.User;
 import edu.jhuapl.dorset.users.UserException;
 import edu.jhuapl.dorset.users.UserService;
 
+/**
+ * LdapUserService userservice
+ * 
+ * LdapUserService is a UserService that pulls users' information from a LDAP server. The
+ * configuration information for the LDAP server, as well as the LDAP search controls, are stored in
+ * a configuration object.
+ * <p>
+ * The LDAP server configuration is used and should be passed in through the constructor:
+ * 
+ * <pre>
+ * ldapServer = "ldaps://..."
+ * ldapSearchBase = "..."
+ * ldapPassword = "..."
+ * ldapBindDn = "..."
+ * ldapFilterAttribute = "..."
+ * </pre>
+ * 
+ * <p>
+ * User attributes (e.g. name, email, etc.) pulled from LDAP needs to be specified in the
+ * configuration object to match the LDAP search controls:
+ * <pre>
+ * userAttributes = "..., ..., ..."
+ * </pre>
+ */
 public class LdapUserService implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(LdapUserService.class);
 
@@ -66,7 +91,7 @@ public class LdapUserService implements UserService {
      * 
      * LdapUserService
      * 
-     * @param  Config config
+     * @param  config Configuration object that stores the LDAP server information and user attributes
      */
     public LdapUserService(Config config) {
         this.users = new HashMap<String, User>();
