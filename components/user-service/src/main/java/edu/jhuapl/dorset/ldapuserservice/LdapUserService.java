@@ -161,13 +161,10 @@ public class LdapUserService implements UserService {
                     user.setUserInformation(key, value.toString());
                 }
             } else { 
-                logger.info("user not found: " + userName);
                 throw new UserException("User not found: " + userName + ". ");
             }
         } catch (NamingException | NullPointerException ex) {
-            logger.info("Could not make connection to LDAP Server. User not found: " + userName + ". ");
             throw new UserException("Could not make connection to LDAP Server. User not found: " + userName + ". ");
-
         }
 
         this.users.put(userName, user);
