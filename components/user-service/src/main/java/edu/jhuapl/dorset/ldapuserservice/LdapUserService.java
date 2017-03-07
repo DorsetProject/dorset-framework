@@ -49,7 +49,7 @@ public class LdapUserService implements UserService {
     private String ldapServer;
     private String ldapSearchBase;
     private String ldapPassword;
-    private String ldapSecurityPrinciple;
+    private String ldapBindDn;
     private String ldapFilterAttribute;
 
     private String[] userAttributes;
@@ -68,7 +68,7 @@ public class LdapUserService implements UserService {
         this.ldapServer = conf.getString("ldap-context.ldapServer");
         this.ldapSearchBase = conf.getString("ldap-context.ldapSearchBase");
         this.ldapPassword = conf.getString("ldap-context.ldapPassword");
-        this.ldapSecurityPrinciple = conf.getString("ldap-context.ldapSecurityPrinciple");
+        this.ldapBindDn = conf.getString("ldap-context.ldapBindDn");
         this.ldapFilterAttribute = conf.getString("ldap-context.ldapFilterAttribute");
 
         String userAttributesStr = conf.getString("ldap-search-controls.userAttributes");
@@ -83,7 +83,7 @@ public class LdapUserService implements UserService {
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
 
         env.put(Context.PROVIDER_URL, this.ldapServer);
-        env.put(Context.SECURITY_PRINCIPAL, this.ldapSecurityPrinciple);
+        env.put(Context.SECURITY_PRINCIPAL, this.ldapBindDn);
         env.put(Context.SECURITY_CREDENTIALS, this.ldapPassword);
 
         try {
