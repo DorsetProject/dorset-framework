@@ -63,7 +63,7 @@ import edu.jhuapl.dorset.users.UserService;
  * User attributes (e.g. name, email, etc.) pulled from LDAP needs to be specified in the
  * configuration object to match the LDAP search controls:
  * <pre>
- * userAttributes = "..., ..., ..."
+ * userAttributes = "firstName, lastName, email, phoneNumber, ..."
  * </pre>
  */
 public class LdapUserService implements UserService {
@@ -163,10 +163,8 @@ public class LdapUserService implements UserService {
 
     @Override
     public User getUser(String userName) {
-        User user = null;
-
         // check if user exists in the hash map
-        user = this.users.get(userName);
+        User user = this.users.get(userName);
 
         if (user == null) {
 
