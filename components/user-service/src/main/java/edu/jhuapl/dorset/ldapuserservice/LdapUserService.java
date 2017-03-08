@@ -47,7 +47,7 @@ import edu.jhuapl.dorset.users.UserService;
  *
  * LdapUserService is a UserService that pulls users' information from a LDAP server. The
  * configuration information for the LDAP server, as well as the LDAP search controls, are stored in
- * a configuration object.
+ * a configuration object. The LdapUserService uses the Typesafe configuration library.
  * 
  * <p>
  * The LDAP server configuration is used and should be passed in through the constructor:
