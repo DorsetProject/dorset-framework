@@ -123,7 +123,7 @@ public class LdapUserService implements UserService {
         try {
             this.ctx = new InitialDirContext(env);
         } catch (NamingException ex) {
-            throw new NamingException("Context could not be created. " + ex.getMessage());
+            throw new NamingException("Context could not be created. " + ex);
         }    
         
         this.setContext(this.ctx);
