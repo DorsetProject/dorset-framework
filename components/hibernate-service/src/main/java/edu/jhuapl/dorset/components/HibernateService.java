@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 The Johns Hopkins University Applied Physics Laboratory LLC
+ * Copyright 2016-2017 The Johns Hopkins University Applied Physics Laboratory LLC
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +32,7 @@ import edu.jhuapl.dorset.ShutdownListener;
 /**
  * Service to configure the Hibernate session factory
  * <p>
+ * This uses the Typesafe configuration library.
  * The standard hibernate configuration is used and should be placed in the
  * application's application.conf file:
  * <pre>
@@ -49,7 +50,7 @@ import edu.jhuapl.dorset.ShutdownListener;
  * It is recommended to store the default mapping for components in a
  * reference.conf file.
  * <p>
- * see SqlReporter for an example of a mapping configuration.
+ * See SqlReporter for an example of a mapping configuration.
  */
 public class HibernateService implements ShutdownListener {
     private static final String HIBERNATE_KEY = "hibernate";
