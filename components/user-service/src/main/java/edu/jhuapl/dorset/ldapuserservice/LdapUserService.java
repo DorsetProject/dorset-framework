@@ -51,6 +51,7 @@ import edu.jhuapl.dorset.users.UserService;
  * 
  * <p>
  * The LDAP server configuration is used and should be passed in through the constructor:
+ * 
  * <pre>
  * ldapServer = "ldaps://..."
  * ldapSearchBase = "..."
@@ -62,6 +63,7 @@ import edu.jhuapl.dorset.users.UserService;
  * <p>
  * User attributes (e.g. name, email, etc.) pulled from LDAP needs to be specified in the
  * configuration object to match the LDAP search controls:
+ * 
  * <pre>
  * userAttributes = "firstName, lastName, email, phoneNumber, ..."
  * </pre>
@@ -78,6 +80,9 @@ public class LdapUserService implements UserService {
     private static final String LDAP_FILTER_ATTRIBUTE_KEY = "ldapFilterAttribute";
     private static final String LDAP_SEARCH_CONTROLS_KEY = "userAttributes";
 
+    // keyMap contains a mapping from LDAP keys to User object keys
+    private Map<String, String> keyMap = new HashMap<String, String>();
+
     private final String ldapServer;
     private final String ldapSearchBase;
     private final String ldapPassword;
@@ -86,17 +91,18 @@ public class LdapUserService implements UserService {
 
     private String[] userAttributes;
     private DirContext ctx;
-    
+
     /**
      * 
      * LdapUserService
      * 
-     * @param  config Configuration object that stores the LDAP server information and user attributes
+     * @param  config Configuration object that stores the LDAP server information and user
+     *        attributes
      * @throws NamingException when Context cannot be instantiated
      */
     public LdapUserService(Config config) throws NamingException {
         this.users = new HashMap<String, User>();
-        
+
         Config conf = config;
 
         this.ldapServer = conf.getString(LDAP_SERVER_KEY);
@@ -111,7 +117,7 @@ public class LdapUserService implements UserService {
             userAttributes[i] = userAttributes[i].trim();
         }
         this.setUserAttributes(userAttributes);
-  
+
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
@@ -124,8 +130,8 @@ public class LdapUserService implements UserService {
             this.ctx = new InitialDirContext(env);
         } catch (NamingException ex) {
             throw new NamingException("Context could not be created. " + ex);
-        }    
-        
+        }
+
         this.setContext(this.ctx);
     }
 
@@ -133,8 +139,8 @@ public class LdapUserService implements UserService {
      * 
      * LdapUserService
      * 
-     * @param context Context object that is instantiated with LDAP server information
-     * @param userAttributes String array containing User attributes that is used to generate LDAP
+     * @param  context Context object that is instantiated with LDAP server information
+     * @param  userAttributes String array containing User attributes that is used to generate LDAP
      *        search controls
      */
     public LdapUserService(DirContext context, String[] userAttributes) {
@@ -182,7 +188,7 @@ public class LdapUserService implements UserService {
 
         return user;
     }
-    
+
     @Override
     public String retrieve(Properties properties) throws UserException {
         User user = new User();
@@ -190,7 +196,7 @@ public class LdapUserService implements UserService {
 
         String key;
         Attribute value;
-        
+
         SearchControls searchControls = getSearchControls(this.userAttributes);
         ctx = getContext();
 
@@ -203,15 +209,22 @@ public class LdapUserService implements UserService {
                 while (attrsKeys.hasMoreElements()) {
                     key = attrsKeys.next();
                     value = attrs.get(key);
-                    user.setUserInformation(key, value.toString());
+
+                    // Check if LDAP key is in the keyMap
+                    if (this.keyMap.containsKey(key)) {
+                        user.setUserInformation(this.keyMap.get(key), value.toString());
+                    } else {
+                        user.setUserInformation(key, value.toString());
+                    }
                 }
-            } else { 
+            } else {
                 throw new UserException("User not found: " + userName + ". ");
             }
         } catch (NamingException | NullPointerException ex) {
-            throw new UserException("Could not make connection to LDAP Server. User not found: " + userName + ". ");
+            throw new UserException("Could not make connection to LDAP Server. User not found: "
+                            + userName + ". ");
         }
-        
+
         this.users.put(userName, user);
 
         return userName;
@@ -228,15 +241,15 @@ public class LdapUserService implements UserService {
         searchControls.setReturningAttributes(attributes);
         return searchControls;
     }
-    
+
     protected void setContext(DirContext ctx) {
-        this.ctx = ctx;        
+        this.ctx = ctx;
     }
-    
+
     protected DirContext getContext() {
         return this.ctx;
     }
-    
+
     protected String[] getUserAttributes() {
         return this.userAttributes;
     }
@@ -244,5 +257,12 @@ public class LdapUserService implements UserService {
     protected void setUserAttributes(String[] userAttributes) {
         this.userAttributes = userAttributes;
     }
-    
+
+    protected Map<String, String> getLdapKeyToUserKeyMap() {
+        return this.keyMap;
+    }
+
+    protected void setLdapKeyToUserKeyMap(Map<String, String> keyMap) {
+        this.keyMap = keyMap;
+    }
 }

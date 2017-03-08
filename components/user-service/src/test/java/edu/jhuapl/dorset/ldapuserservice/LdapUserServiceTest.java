@@ -22,6 +22,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.NamingEnumeration;
@@ -86,7 +88,6 @@ public class LdapUserServiceTest {
 
         String userNameRetrieved = lus.retrieve(props);
         User userRetrieved = lus.getUser(userNameRetrieved);
-
 
         assertEquals(userRetrieved.getUserInformation("Key"), mockAttributeValue.toString());
     }
@@ -190,5 +191,42 @@ public class LdapUserServiceTest {
 
     }
 
+    @Test
+    public void testLdapKeyToUserKeyMapping() throws UserException, NamingException {
+        Map<String, String> keyMap = new HashMap<String, String>();
+        keyMap.put("Key", "userObjectKey");
+        
+        User user = mockUser();
+        Properties props = new Properties();
+        props.setProperty("userName", user.getUserName());
+
+        DirContext ctx = mock(InitialDirContext.class);
+        String[] userAttributes = mockUserAttributes();
+        LdapUserService lus = new LdapUserService(ctx, userAttributes);
+        lus.setLdapKeyToUserKeyMap(keyMap);
+        
+        NamingEnumeration<SearchResult> mockSearchResults = mock(NamingEnumeration.class);
+        SearchResult mockSearchResult = mock(SearchResult.class);
+        Attributes mockAttrs = mock(Attributes.class);
+
+        NamingEnumeration<String> mockAttrsKeys = mock(NamingEnumeration.class);
+        Attribute mockAttributeValue = mock(Attribute.class);
+        when(ctx.search(any(String.class), any(String.class), any(SearchControls.class)))
+                        .thenReturn(mockSearchResults);
+        when(mockSearchResults.hasMore()).thenReturn(true);
+        when(mockSearchResults.next()).thenReturn(mockSearchResult);
+        when(mockSearchResult.getAttributes()).thenReturn(mockAttrs);
+        when(mockAttrs.getIDs()).thenReturn(mockAttrsKeys);
+        when(mockAttrsKeys.hasMoreElements()).thenReturn(true, false);
+        when(mockAttrsKeys.next()).thenReturn("Key");
+        when(mockAttrs.get(any(String.class))).thenReturn(mockAttributeValue);
+
+        String userNameRetrieved = lus.retrieve(props);
+        User userRetrieved = lus.getUser(user.getUserName());
+
+        assertEquals(userRetrieved.getUserInformation("Key"), null);
+        assertEquals(userRetrieved.getUserInformation("userObjectKey"), mockAttributeValue.toString());
+
+    }
 }
 
