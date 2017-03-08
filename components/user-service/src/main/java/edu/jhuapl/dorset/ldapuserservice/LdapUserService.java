@@ -96,7 +96,7 @@ public class LdapUserService implements UserService {
      * 
      * LdapUserService
      * 
-     * @param  config Configuration object that stores the LDAP server information and user
+     * @param config  Configuration object that stores the LDAP server information and user
      *        attributes
      * @throws NamingException when Context cannot be instantiated
      */
@@ -139,8 +139,8 @@ public class LdapUserService implements UserService {
      * 
      * LdapUserService
      * 
-     * @param  context Context object that is instantiated with LDAP server information
-     * @param  userAttributes String array containing User attributes that is used to generate LDAP
+     * @param context  Context object that is instantiated with LDAP server information
+     * @param userAttributes  String array containing User attributes that is used to generate LDAP
      *        search controls
      */
     public LdapUserService(DirContext context, String[] userAttributes) {
