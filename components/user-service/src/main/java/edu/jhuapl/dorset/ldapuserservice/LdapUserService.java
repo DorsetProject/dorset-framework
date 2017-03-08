@@ -44,13 +44,13 @@ import edu.jhuapl.dorset.users.UserService;
 
 /**
  * LdapUserService userservice
- * 
+ *
  * LdapUserService is a UserService that pulls users' information from a LDAP server. The
  * configuration information for the LDAP server, as well as the LDAP search controls, are stored in
  * a configuration object.
+ * 
  * <p>
  * The LDAP server configuration is used and should be passed in through the constructor:
- * 
  * <pre>
  * ldapServer = "ldaps://..."
  * ldapSearchBase = "..."
@@ -58,7 +58,7 @@ import edu.jhuapl.dorset.users.UserService;
  * ldapBindDn = "..."
  * ldapFilterAttribute = "..."
  * </pre>
- * 
+ *
  * <p>
  * User attributes (e.g. name, email, etc.) pulled from LDAP needs to be specified in the
  * configuration object to match the LDAP search controls:
@@ -92,8 +92,9 @@ public class LdapUserService implements UserService {
      * LdapUserService
      * 
      * @param  config Configuration object that stores the LDAP server information and user attributes
+     * @throws NamingException when Context cannot be instantiated
      */
-    public LdapUserService(Config config) {
+    public LdapUserService(Config config) throws NamingException {
         this.users = new HashMap<String, User>();
         
         Config conf = config;
@@ -122,11 +123,32 @@ public class LdapUserService implements UserService {
         try {
             this.ctx = new InitialDirContext(env);
         } catch (NamingException ex) {
-            logger.info("Error when trying to establish the context.");
+            throw new NamingException("Context could not be created. " + ex.getMessage());
         }    
         
         this.setContext(this.ctx);
-            
+    }
+
+    /**
+     * 
+     * LdapUserService
+     * 
+     * @param context Context object that is instantiated with LDAP server information
+     * @param userAttributes String array containing User attributes that is used to generate LDAP
+     *        search controls
+     */
+    public LdapUserService(DirContext context, String[] userAttributes) {
+        this.ctx = context;
+
+        this.ldapServer = null;
+        this.ldapSearchBase = null;
+        this.ldapPassword = null;
+        this.ldapBindDn = null;
+        this.ldapFilterAttribute = null;
+
+        this.userAttributes = userAttributes;
+
+        this.users = new HashMap<String, User>();
     }
 
     @Override
@@ -191,7 +213,7 @@ public class LdapUserService implements UserService {
         } catch (NamingException | NullPointerException ex) {
             throw new UserException("Could not make connection to LDAP Server. User not found: " + userName + ". ");
         }
-
+        
         this.users.put(userName, user);
 
         return userName;
