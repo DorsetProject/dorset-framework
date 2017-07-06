@@ -37,15 +37,20 @@ import edu.jhuapl.dorset.nlp.WhiteSpaceTokenizer;
 public class TwitterAgent extends AbstractAgent{
     private final Logger logger = LoggerFactory.getLogger(TwitterAgent.class);
 
-    private static final String PROTECTED_RESOURCE_URL = "https://api.twitter.com/1.1/account/verify_credentials.json";
-    private static final String NEW_TWEET_URL = "https://api.twitter.com/1.1/statuses/update.json";
-    private static final String CHECK_TIMELINE_URL = "https://api.twitter.com/1.1/statuses/home_timeline/count:1.json";
+    private static final String PROTECTED_RESOURCE = "https://api.twitter.com/1.1/account/verify_credentials.json";
+    private static final String POST_TWEET = "https://api.twitter.com/1.1/statuses/update.json";
+    private static final String GET_HOME_TIMELINE = "https://api.twitter.com/1.1/statuses/home_timeline/.json";
+    private static final String GET_MY_TIMELINE = "https://api.twitter.com/1.1/statuses/user_timeline.json";
+    private static final String GET_FAVORITES = "https://api.twitter.com/1.1/favorites/list.json";
+    
     private static final String API_KEY = "apiKey";
     private static final String API_SECRET = "apiSecret";
     private static final String ACCESS_TOKEN = "accessToken";
     private static final String ACCESS_TOKEN_SECRET = "accessTokenSecret";
     private static final String RAW_RESPONSE = "rawResponse";
 
+    private static final int WITHOUT_POST = 5;
+    
     private String apiKey;
     private String apiSecret;
     private String accessToken;
@@ -77,14 +82,14 @@ public class TwitterAgent extends AbstractAgent{
      * Processes request
      *
      * @param agentRequest   the tweet request
-     * @return   Success or failure
+     * @return   Success or failure message
      * @throws InterruptedException   if...
      * @throws ExecutionException   if...
      * @throws IOException   if...
      */
     public AgentResponse process(AgentRequest agentRequest) {
         this.agentRequest = agentRequest;
-        if (!createOAuthRequest()) {
+        if (!verfiyAccountCredentials()) {
             return new AgentResponse("Could not create OAuth request. Check your connection.");
         }
 
@@ -92,7 +97,7 @@ public class TwitterAgent extends AbstractAgent{
         if (userRequest.contains("POST")) {
             return post();
         } else if (userRequest.contains("GET")) {
-            return checkTimeline();
+            return get();
         } else {
             return new AgentResponse("Your request could not be understood");
         }
@@ -105,8 +110,8 @@ public class TwitterAgent extends AbstractAgent{
      * @throws ExecutionException   if the result of creating the request cannot be found
      * @throws IOException   if the request cannot be created
      */
-    private boolean createOAuthRequest() {
-        twitterRequest = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
+    private boolean verfiyAccountCredentials() {
+        twitterRequest = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE);
         service.signRequest(oauth, twitterRequest);
         
         try {
@@ -124,33 +129,40 @@ public class TwitterAgent extends AbstractAgent{
         return true;
     }
     
+    /**
+     * Creates, validates, and posts a tweet
+     *
+     * @return success or failure message
+     */
     private AgentResponse post() {
         String text = createTweetText();
         if (!checkCharLength(text)) {
-                return new AgentResponse("Too many characters");
+            return new AgentResponse("Too many characters");
         }
         
         try {
             sendTweet(text);
         } catch (InterruptedException e) {
             logger.error("Could not send tweet" + e);
-            return new AgentResponse("Could not post Tweet. Check your connection."
-                            + "This tweet may have been a duplicate.");
+            return new AgentResponse("Could not post Tweet. Check your connection.");
         } catch (ExecutionException e) {
             logger.error("Could not send tweet" + e);
-            return new AgentResponse("Could not post Tweet. Check your connection."
-                            + "This tweet may have been a duplicate.");
+            return new AgentResponse("Could not post Tweet. This tweet may have been a duplicate.");
         } catch (IOException e) {
             logger.error("Could not send tweet" + e);
-            return new AgentResponse("Could not post Tweet. Check your connection."
-                            + "This tweet may have been a duplicate.");
+            return new AgentResponse("Could not post Tweet. Check your connection.");
         }
         return new AgentResponse("Tweet successful");
     }
-    
+
+    /**
+     * Creates the text to be tweeted
+     *
+     * @return the text to be tweeted
+     */
     private String createTweetText() {
         String text = agentRequest.getText();
-        return text.substring(5);
+        return text.substring(WITHOUT_POST); 
     }
 
     /**
@@ -175,7 +187,7 @@ public class TwitterAgent extends AbstractAgent{
      * @throws IOException   if the tweet cannot be sent or is a duplicate
      */
     private void sendTweet(String text) throws InterruptedException, ExecutionException, IOException {
-        twitterRequest = new OAuthRequest(Verb.POST, NEW_TWEET_URL);
+        twitterRequest = new OAuthRequest(Verb.POST, POST_TWEET);
         twitterRequest.addBodyParameter("status", text);
         service.signRequest(oauth, twitterRequest);
 
@@ -183,13 +195,14 @@ public class TwitterAgent extends AbstractAgent{
         try {
             response = service.execute(twitterRequest);
         } catch (InterruptedException e) {
-            throw new InterruptedException("Could not post tweet.Check your network connection.");
+            throw new InterruptedException("Could not post tweet. Check your network connection.");
         } catch (ExecutionException e) {
-            throw new ExecutionException("Could not post tweet.Check your network connection.", e);
+            throw new ExecutionException("Could not post tweet. Check your network connection.", e);
         } catch (IOException e) {
-            throw new IOException("Could not post tweet.Check your network connection.", e);
+            throw new IOException("Could not post tweet. Check your network connection.", e);
         }
         
+        //TODO dont throw this
         if (!isDuplicateTweet(response)) {
             throw new IOException("Duplicate tweet"); 
         }
@@ -210,78 +223,158 @@ public class TwitterAgent extends AbstractAgent{
         }
     }
     
-    private AgentResponse checkTimeline() {
-        int numTweets = getNumberOfTweets();
+    private AgentResponse get() {
+        String url = getURL();
+        twitterRequest = new OAuthRequest(Verb.GET, url);
         
-        twitterRequest = new OAuthRequest(Verb.GET, CHECK_TIMELINE_URL + "?count=" + numTweets);
+        String numTweets = getNumberOfTweets();
+        twitterRequest.addParameter("count", numTweets);
         service.signRequest(oauth, twitterRequest);
         
         Response response;
         try {
             response = service.execute(twitterRequest);
         } catch (InterruptedException e) {
-            return new AgentResponse("Could not access timeline. Check your connection. "
+            return new AgentResponse("Could not process request. " + agentRequest + " Check your connection. "
                             + "Rate limit may have been exceeded.");
         } catch (ExecutionException e) {
-            return new AgentResponse("Could not access timeline. Check your connection. "
+            return new AgentResponse("Could not process request. " + agentRequest + " Check your connection. "
                             + "Rate limit may have been exceeded.");
         } catch (IOException e) {
-            return new AgentResponse("Could not access timeline. Check your connection. "
+            return new AgentResponse("Could not process request. " + agentRequest + " Check your connection. "
                             + "Rate limit may have been exceeded.");
         }
-        return getTweets(response);
 
-        
+        return getTweets(response);
     }
-    
-    private int getNumberOfTweets() {
+
+    /**
+     * Gets the number of tweets specified by the user
+     *
+     * @return the number of tweets
+     */
+    private String getNumberOfTweets() {
         Tokenizer tokenizer = new WhiteSpaceTokenizer();
         String[] requestTokenized = tokenizer.tokenize(agentRequest.getText());
         if (requestTokenized.length < 2) {
-            return 1;
+            return "1";
         }
         try {
-            return Integer.parseInt(requestTokenized[1]);
+            Integer.parseInt(requestTokenized[1]); 
         } catch (NumberFormatException e) {
-            return 1;
+            return "1";
         }
-
-        
+        return requestTokenized[1];
     }
     
+    /**
+     * Get URL
+     *
+     * @return the url
+     */
+    private String getURL() {
+        String url = GET_HOME_TIMELINE;
+        if (agentRequest.getText().toUpperCase().contains(" ME")) {
+            url = GET_MY_TIMELINE;
+        } else if (agentRequest.getText().toUpperCase().contains("FAVORITES")) {
+            url = GET_FAVORITES;
+        }
+        return url;
+    }
+    
+    /**
+     * Get URL name
+     *
+     * @return the url name
+     */
+    private String getURLName() {
+       String url = getURL();
+       if (url.equals(GET_HOME_TIMELINE)) {
+           return "home timeline";
+       } else if (url.equals(GET_MY_TIMELINE)) {
+           return "my timeline";
+       } else if (url.equals(GET_FAVORITES)){
+           return "favorites";
+       } else {
+           return "unknown";
+       }
+    }
+    
+    /**
+     * Get the tweets on a timeline
+     *
+     * @param response   the response from attempting to access a timeline
+     * @return success or failure message
+     */
     private AgentResponse getTweets(Response response) {
         String tweet = "";
         try {
             tweet = response.getBody();
         } catch (IOException e) {
-            return new AgentResponse("Coule not access timeline. Check your connection.");
+            return new AgentResponse("Could not access timeline. Check your connection.");
         }
         
         if (tweet.contains("Rate limit")) {
             return new AgentResponse("Rate limit exceeded. Please wait a few minutes and try again.");
         } else {
-            String agentResponse = "Showing " +  getNumberOfTweets() + " tweet";
-            if (getNumberOfTweets() != 1) {
-                agentResponse += "s";
+            if (getNumberOfTweets().equals("1")) {
+                return new AgentResponse("Showing " +  getNumberOfTweets() + " tweet from " + getURLName() 
+                                + "\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet));
+            } else {
+                return new AgentResponse("Showing " +  getNumberOfTweets() + " tweets from " + getURLName() 
+                                + "\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet));
             }
-            agentResponse += "\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet);
-            return new AgentResponse(agentResponse);
         }
     }
 
+    /**
+     * Get the date of a tweet
+     *
+     * @param tweet   a tweet
+     * @return the date of a tweet
+     */
     private String getDate(String tweet) {
-        String date = tweet.substring((tweet.indexOf("\"created_at\":") + 14), (tweet.indexOf("\"id\":") - 2));
-        return "Posted on: " + date;
+        String date;
+        try {
+            date = tweet.substring((tweet.indexOf("\"created_at\":") + 14), (tweet.indexOf("\"id\":") - 2));
+        } catch (IndexOutOfBoundsException e) {
+            date = "A date could not be retrievd";
+            logger.error("Date of tweet could not be received");
+        }
+            return "Posted on: " + date;
     }
     
+    /**
+     * Get the author of a tweet
+     *
+     * @param tweet   a tweet
+     * @return the author of a tweet
+     */
     private String getUser(String tweet) {
-        String name = tweet.substring((tweet.indexOf("\"name\":") + 8), (tweet.indexOf("\"screen_name\":") - 2));
+        String name;
+        try {
+            name = tweet.substring((tweet.indexOf("\"name\":") + 8), (tweet.indexOf("\"screen_name\":") - 2));
+        } catch (IndexOutOfBoundsException e) {
+            name = "A user could not be found";
+            logger.error("Author of tweet could not be received");
+        }
         return "User: " + name;
     }
     
+    /**
+     * Get the text of a tweet
+     *
+     * @param tweet   a tweet
+     * @return the text of a tweet
+     */
     private String getText(String tweet) {
-        String text = tweet.substring((tweet.indexOf("\"text\":") + 8), (tweet.indexOf("\"truncated\":") - 2));
-        text.replaceAll("\\n", " \n ");
+        String text;
+        try {
+            text = tweet.substring((tweet.indexOf("\"text\":") + 8), (tweet.indexOf("\"truncated\":") - 2));
+        } catch (IndexOutOfBoundsException e) {
+            text = "Text could not be retrieved";
+            logger.error("Text of tweet could not be received");
+        }
         return "\t" + text;
     }
 }

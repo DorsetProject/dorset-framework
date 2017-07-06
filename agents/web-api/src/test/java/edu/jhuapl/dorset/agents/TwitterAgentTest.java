@@ -67,24 +67,29 @@ public class TwitterAgentTest {
         
         Request request = new Request("POST First Tweet");
         Response response = app.process(request);
+        
+        request = new Request("POST First Tweet");
+        response = app.process(request);
         assertTrue(response.getText().equals("Could not post Tweet. Check your connection."
                         + "This tweet may have been a duplicate."));
     }
     
     @Test
-    public void testGet1Good() {
+    public void testGet1HomeGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
         
-        Request request = new Request("GET 1 tweet");
+        Request request = new Request("GET 1 HOME");
         Response response = app.process(request);
+        System.out.println(response.getText());
         assertTrue(response.getText().contains("Showing 1 tweet"));
-    }
+        assertTrue(response.getText().contains("home timeline"));
+        }
     
     @Test
-    public void testGetNoNumGood() {
+    public void testGetNoNumHomeGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
@@ -93,7 +98,60 @@ public class TwitterAgentTest {
         Request request = new Request("GET tweet");
         Response response = app.process(request);
         assertTrue(response.getText().contains("Showing 1 tweet"));
-    } 
+        assertTrue(response.getText().contains("home timeline"));
+    }
+    
+    @Test
+    public void testGet1UserGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET 1 ME");
+        Response response = app.process(request);
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("my timeline"));
+    }
+    
+    @Test
+    public void testGetNoNumUserGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET ME");
+        Response response = app.process(request);
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("my timeline"));
+    }
+    
+    @Test
+    public void testGet1FavoritesGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET 1 FAVORITES");
+        Response response = app.process(request);
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("favorites"));
+    }
+    
+    @Test
+    public void testGetNoNumFavoritesGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET FAVORITES");
+        Response response = app.process(request);
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("favorites"));
+    }
     
     @Test
     public void testBad() {
