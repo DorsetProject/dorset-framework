@@ -31,11 +31,15 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import com.typesafe.config.Config;
 
+import edu.jhuapl.dorset.nlp.Tokenizer;
+import edu.jhuapl.dorset.nlp.WhiteSpaceTokenizer;
+
 public class TwitterAgent extends AbstractAgent{
     private final Logger logger = LoggerFactory.getLogger(TwitterAgent.class);
 
     private static final String PROTECTED_RESOURCE_URL = "https://api.twitter.com/1.1/account/verify_credentials.json";
-    private static final String NEW_TWEET_URL = "https://api.twitter.com/1.1/statuses/update.json";    
+    private static final String NEW_TWEET_URL = "https://api.twitter.com/1.1/statuses/update.json";
+    private static final String CHECK_TIMELINE_URL = "https://api.twitter.com/1.1/statuses/home_timeline/count:1.json";
     private static final String API_KEY = "apiKey";
     private static final String API_SECRET = "apiSecret";
     private static final String ACCESS_TOKEN = "accessToken";
@@ -50,6 +54,7 @@ public class TwitterAgent extends AbstractAgent{
     private OAuth10aService service;
     private OAuth1AccessToken oauth;
     private OAuthRequest twitterRequest;
+    private AgentRequest agentRequest;
 
     /**
      * Create a Twitter Agent
@@ -69,36 +74,83 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Process Agent Request and send tweet
+     * Processes request
      *
-     * @param request   the tweet request
+     * @param agentRequest   the tweet request
      * @return   Success or failure
      * @throws InterruptedException   if...
      * @throws ExecutionException   if...
      * @throws IOException   if...
      */
-    public AgentResponse process(AgentRequest request) {
-        if (!checkCharLength(request.getText())) {
-            return new AgentResponse("Too many characters");
+    public AgentResponse process(AgentRequest agentRequest) {
+        this.agentRequest = agentRequest;
+        if (!createOAuthRequest()) {
+            return new AgentResponse("Could not create OAuth request. Check your connection.");
         }
 
+        String userRequest = this.agentRequest.getText().toUpperCase();
+        if (userRequest.contains("POST")) {
+            return post();
+        } else if (userRequest.contains("GET")) {
+            return checkTimeline();
+        } else {
+            return new AgentResponse("Your request could not be understood");
+        }
+    }
+    
+    /**
+     * Create an OAuth Request
+     *
+     * @throws InterruptedException   if thread is waiting/sleeping and gets interrupted
+     * @throws ExecutionException   if the result of creating the request cannot be found
+     * @throws IOException   if the request cannot be created
+     */
+    private boolean createOAuthRequest() {
+        twitterRequest = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
+        service.signRequest(oauth, twitterRequest);
+        
         try {
-            createOAuthRequest();
-            sendTweet(request.getText());
+            service.execute(twitterRequest);
         } catch (InterruptedException e) {
-            logger.error("Could not create OAuth request and send tweet" + e);
+            logger.error("Could not create OAuth request" + e);
+            return false;
+        } catch (ExecutionException e) {
+            logger.error("Could not create OAuth request" + e);
+            return false;
+        } catch (IOException e) {
+            logger.error("Could not create OAuth request" + e);
+            return false;
+        }
+        return true;
+    }
+    
+    private AgentResponse post() {
+        String text = createTweetText();
+        if (!checkCharLength(text)) {
+                return new AgentResponse("Too many characters");
+        }
+        
+        try {
+            sendTweet(text);
+        } catch (InterruptedException e) {
+            logger.error("Could not send tweet" + e);
             return new AgentResponse("Could not post Tweet. Check your connection."
                             + "This tweet may have been a duplicate.");
         } catch (ExecutionException e) {
-            logger.error("Could not create OAuth request and send tweet" + e);
+            logger.error("Could not send tweet" + e);
             return new AgentResponse("Could not post Tweet. Check your connection."
                             + "This tweet may have been a duplicate.");
         } catch (IOException e) {
-            logger.error("Could not create OAuth request and send tweet" + e);
+            logger.error("Could not send tweet" + e);
             return new AgentResponse("Could not post Tweet. Check your connection."
                             + "This tweet may have been a duplicate.");
         }
         return new AgentResponse("Tweet successful");
+    }
+    
+    private String createTweetText() {
+        String text = agentRequest.getText();
+        return text.substring(5);
     }
 
     /**
@@ -112,28 +164,6 @@ public class TwitterAgent extends AbstractAgent{
             return false;
         }
         return true;
-    }
-
-    /**
-     * Create a OAuth Request
-     *
-     * @throws InterruptedException   if thread is waiting/sleeping and gets interrupted
-     * @throws ExecutionException   if the result of creating the request cannot be found
-     * @throws IOException   if the request cannot be created
-     */
-    private void createOAuthRequest() throws InterruptedException, ExecutionException, IOException {
-        twitterRequest = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
-        service.signRequest(oauth, twitterRequest);
-        
-        try {
-            service.execute(twitterRequest);
-        } catch (InterruptedException e) {
-            throw new InterruptedException("Could not create OAuth request.Check your network connection.");
-        } catch (ExecutionException e) {
-            throw new ExecutionException("Could not create OAuth request.Check your network connection.", e);
-        } catch (IOException e) {
-            throw new IOException("Could not create OAuth request.Check your network connection.", e);
-        }
     }
 
     /**
@@ -178,5 +208,80 @@ public class TwitterAgent extends AbstractAgent{
         } else {
             return true;
         }
+    }
+    
+    private AgentResponse checkTimeline() {
+        int numTweets = getNumberOfTweets();
+        
+        twitterRequest = new OAuthRequest(Verb.GET, CHECK_TIMELINE_URL + "?count=" + numTweets);
+        service.signRequest(oauth, twitterRequest);
+        
+        Response response;
+        try {
+            response = service.execute(twitterRequest);
+        } catch (InterruptedException e) {
+            return new AgentResponse("Could not access timeline. Check your connection. "
+                            + "Rate limit may have been exceeded.");
+        } catch (ExecutionException e) {
+            return new AgentResponse("Could not access timeline. Check your connection. "
+                            + "Rate limit may have been exceeded.");
+        } catch (IOException e) {
+            return new AgentResponse("Could not access timeline. Check your connection. "
+                            + "Rate limit may have been exceeded.");
+        }
+        return getTweets(response);
+
+        
+    }
+    
+    private int getNumberOfTweets() {
+        Tokenizer tokenizer = new WhiteSpaceTokenizer();
+        String[] requestTokenized = tokenizer.tokenize(agentRequest.getText());
+        if (requestTokenized.length < 2) {
+            return 1;
+        }
+        try {
+            return Integer.parseInt(requestTokenized[1]);
+        } catch (NumberFormatException e) {
+            return 1;
+        }
+
+        
+    }
+    
+    private AgentResponse getTweets(Response response) {
+        String tweet = "";
+        try {
+            tweet = response.getBody();
+        } catch (IOException e) {
+            return new AgentResponse("Coule not access timeline. Check your connection.");
+        }
+        
+        if (tweet.contains("Rate limit")) {
+            return new AgentResponse("Rate limit exceeded. Please wait a few minutes and try again.");
+        } else {
+            String agentResponse = "Showing " +  getNumberOfTweets() + " tweet";
+            if (getNumberOfTweets() != 1) {
+                agentResponse += "s";
+            }
+            agentResponse += "\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet);
+            return new AgentResponse(agentResponse);
+        }
+    }
+
+    private String getDate(String tweet) {
+        String date = tweet.substring((tweet.indexOf("\"created_at\":") + 14), (tweet.indexOf("\"id\":") - 2));
+        return "Posted on: " + date;
+    }
+    
+    private String getUser(String tweet) {
+        String name = tweet.substring((tweet.indexOf("\"name\":") + 8), (tweet.indexOf("\"screen_name\":") - 2));
+        return "User: " + name;
+    }
+    
+    private String getText(String tweet) {
+        String text = tweet.substring((tweet.indexOf("\"text\":") + 8), (tweet.indexOf("\"truncated\":") - 2));
+        text.replaceAll("\\n", " \n ");
+        return "\t" + text;
     }
 }

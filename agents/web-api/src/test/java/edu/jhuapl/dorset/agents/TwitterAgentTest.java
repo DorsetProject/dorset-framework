@@ -32,26 +32,26 @@ import edu.jhuapl.dorset.routing.SingleAgentRouter;
 public class TwitterAgentTest {
 
     @Test
-    public void testValidTweet() {
+    public void testPostGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
 
-        Request request = new Request("This is a valid tweet");
+        Request request = new Request("POST This is a valid tweet");
         Response response = app.process(request);
 
         assertTrue(response.getText().equals("Tweet successful"));
     }
 
     @Test
-    public void testIncorrectLength() {
+    public void testPostLengthBad() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
 
-        Request request = new Request("This is an invalid tweet. This tweet is going to be too long,"
+        Request request = new Request("POST This is an invalid tweet. This tweet is going to be too long,"
                         + " which means that this text needs to be longer than one hundred and"
                         + " forty characters...");
         Response response = app.process(request);
@@ -59,7 +59,57 @@ public class TwitterAgentTest {
     }
 
     @Test
-    public void testDuplicateTweet() {
+    public void testPostDuplicateBad() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("POST First Tweet");
+        Response response = app.process(request);
+        assertTrue(response.getText().equals("Could not post Tweet. Check your connection."
+                        + "This tweet may have been a duplicate."));
+    }
+    
+    @Test
+    public void testGet1Good() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET 1 tweet");
+        Response response = app.process(request);
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+    }
+    
+    @Test
+    public void testGetNoNumGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET tweet");
+        Response response = app.process(request);
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+    } 
+    
+    @Test
+    public void testBad() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("this will not go through");
+        Response response = app.process(request);
+        assertTrue(response.getText().contains("Your request could not be understood"));
+    } 
+    
+    /*@Test
+    public void testInvalidConfig() {
+        //TODO create invald config and pass it into Agent constructor
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
@@ -67,7 +117,6 @@ public class TwitterAgentTest {
         
         Request request = new Request("First Tweet");
         Response response = app.process(request);
-        assertTrue(response.getText().equals("Could not post Tweet. Check your connection."
-                        + "This tweet may have been a duplicate."));
-    }
+        assertTrue(response.getText().equals(""));
+    }*/
 }
