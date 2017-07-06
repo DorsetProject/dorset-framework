@@ -40,6 +40,7 @@ public class TwitterAgentTest {
 
         Request request = new Request("POST This is a valid tweet");
         Response response = app.process(request);
+        System.out.println(response.getText());
 
         assertTrue(response.getText().equals("Tweet successful"));
     }
@@ -55,7 +56,9 @@ public class TwitterAgentTest {
                         + " which means that this text needs to be longer than one hundred and"
                         + " forty characters...");
         Response response = app.process(request);
-        assertTrue(response.getText().equals("Too many characters"));
+        System.out.println(response.getText());
+
+        assertTrue(response.getText().contains("Too many characters"));
     }
 
     @Test
@@ -67,11 +70,12 @@ public class TwitterAgentTest {
         
         Request request = new Request("POST First Tweet");
         Response response = app.process(request);
-        
+        System.out.println(response.getText());
+
         request = new Request("POST First Tweet");
         response = app.process(request);
-        assertTrue(response.getText().equals("Could not post Tweet. Check your connection."
-                        + "This tweet may have been a duplicate."));
+        
+        assertTrue(response.getText().contains("duplicate"));
     }
     
     @Test
@@ -84,6 +88,7 @@ public class TwitterAgentTest {
         Request request = new Request("GET 1 HOME");
         Response response = app.process(request);
         System.out.println(response.getText());
+
         assertTrue(response.getText().contains("Showing 1 tweet"));
         assertTrue(response.getText().contains("home timeline"));
         }
@@ -95,34 +100,40 @@ public class TwitterAgentTest {
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
         
-        Request request = new Request("GET tweet");
+        Request request = new Request("GET");
         Response response = app.process(request);
+        System.out.println(response.getText());
+
         assertTrue(response.getText().contains("Showing 1 tweet"));
         assertTrue(response.getText().contains("home timeline"));
     }
     
     @Test
-    public void testGet1UserGood() {
+    public void testGet1MINEGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
         
-        Request request = new Request("GET 1 ME");
+        Request request = new Request("GET 1 MINE");
         Response response = app.process(request);
+        System.out.println(response.getText());
+
         assertTrue(response.getText().contains("Showing 1 tweet"));
         assertTrue(response.getText().contains("my timeline"));
     }
     
     @Test
-    public void testGetNoNumUserGood() {
+    public void testGetNoNumMINEGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
         
-        Request request = new Request("GET ME");
+        Request request = new Request("GET MINE");
         Response response = app.process(request);
+        System.out.println(response.getText());
+
         assertTrue(response.getText().contains("Showing 1 tweet"));
         assertTrue(response.getText().contains("my timeline"));
     }
@@ -136,6 +147,8 @@ public class TwitterAgentTest {
         
         Request request = new Request("GET 1 FAVORITES");
         Response response = app.process(request);
+        System.out.println(response.getText());
+
         assertTrue(response.getText().contains("Showing 1 tweet"));
         assertTrue(response.getText().contains("favorites"));
     }
@@ -149,6 +162,8 @@ public class TwitterAgentTest {
         
         Request request = new Request("GET FAVORITES");
         Response response = app.process(request);
+        System.out.println(response.getText());
+
         assertTrue(response.getText().contains("Showing 1 tweet"));
         assertTrue(response.getText().contains("favorites"));
     }
@@ -162,7 +177,9 @@ public class TwitterAgentTest {
         
         Request request = new Request("this will not go through");
         Response response = app.process(request);
-        assertTrue(response.getText().contains("Your request could not be understood"));
+        System.out.println(response.getText());
+        
+        assertTrue(response.getText().contains("not understand"));
     } 
     
     /*@Test
@@ -175,6 +192,7 @@ public class TwitterAgentTest {
         
         Request request = new Request("First Tweet");
         Response response = app.process(request);
+        
         assertTrue(response.getText().equals(""));
     }*/
 }
