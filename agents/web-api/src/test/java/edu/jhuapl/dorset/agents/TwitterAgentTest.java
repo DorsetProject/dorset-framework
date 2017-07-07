@@ -56,9 +56,9 @@ public class TwitterAgentTest {
                         + " which means that this text needs to be longer than one hundred and"
                         + " forty characters...");
         Response response = app.process(request);
-        System.out.println(response.getText());
+        System.out.println(response.getStatus().getMessage());
 
-        assertTrue(response.getText().contains("Too many characters"));
+        assertTrue(response.getStatus().getMessage().contains("too many characters"));
     }
 
     @Test
@@ -70,37 +70,37 @@ public class TwitterAgentTest {
         
         Request request = new Request("POST First Tweet");
         Response response = app.process(request);
-        System.out.println(response.getText());
+        System.out.println(response.getStatus().getMessage());
 
         request = new Request("POST First Tweet");
         response = app.process(request);
         
-        assertTrue(response.getText().contains("duplicate"));
+        assertTrue(response.getStatus().getMessage().contains("duplicate"));
     }
     
     @Test
-    public void testGet1HomeGood() {
+    public void testGet2HomeGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
         
-        Request request = new Request("GET 1 HOME");
+        Request request = new Request("GET 2 HOME");
         Response response = app.process(request);
         System.out.println(response.getText());
 
-        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("Showing 2 tweets"));
         assertTrue(response.getText().contains("home timeline"));
         }
     
     @Test
-    public void testGetNoNumHomeGood() {
+    public void testGetHomeGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
         
-        Request request = new Request("GET");
+        Request request = new Request("GET HOME");
         Response response = app.process(request);
         System.out.println(response.getText());
 
@@ -109,22 +109,22 @@ public class TwitterAgentTest {
     }
     
     @Test
-    public void testGet1MINEGood() {
+    public void testGet2MINEGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
         
-        Request request = new Request("GET 1 MINE");
+        Request request = new Request("GET 2 MINE");
         Response response = app.process(request);
         System.out.println(response.getText());
 
-        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("Showing 2 tweets"));
         assertTrue(response.getText().contains("my timeline"));
     }
     
     @Test
-    public void testGetNoNumMINEGood() {
+    public void testGetMINEGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
@@ -154,7 +154,7 @@ public class TwitterAgentTest {
     }
     
     @Test
-    public void testGetNoNumFavoritesGood() {
+    public void testGetFavoritesGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
         Router router = new SingleAgentRouter(agent);
@@ -177,9 +177,9 @@ public class TwitterAgentTest {
         
         Request request = new Request("this will not go through");
         Response response = app.process(request);
-        System.out.println(response.getText());
+        System.out.println(response.getStatus().getMessage());
         
-        assertTrue(response.getText().contains("not understand"));
+        assertTrue(response.getStatus().getMessage().contains("Your request could not be understood."));
     } 
     
     /*@Test

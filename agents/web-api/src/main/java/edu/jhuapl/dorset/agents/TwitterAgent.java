@@ -54,7 +54,13 @@ public class TwitterAgent extends AbstractAgent{
     private static final String EMPTY = "[]";
     private static final String MINE = "MINE";
     private static final String FAVORITES = "FAVORITES";
-
+    private static final String END_OF_SINGULAR_TWEET = "\"default_profile_image\":";
+    private static final String CREATED_AT = "\"created_at\":";
+    private static final String END_OF_CREATED_AT = "\"id\":";
+    private static final String NAME = "\"name\":";
+    private static final String END_OF_NAME = "\"screen_name\":";
+    private static final String TEXT = "\"text\":";
+    private static final String END_OF_TEXT = "\"truncated\":";
     
     private String apiKey;
     private String apiSecret;
@@ -87,10 +93,7 @@ public class TwitterAgent extends AbstractAgent{
      * Processes request
      *
      * @param agentRequest   the tweet request
-     * @return   Success or failure message
-     * @throws InterruptedException   if...
-     * @throws ExecutionException   if...
-     * @throws IOException   if...
+     * @return AgentResponse
      */
     public AgentResponse process(AgentRequest agentRequest) {
         this.agentRequest = agentRequest;
@@ -106,16 +109,14 @@ public class TwitterAgent extends AbstractAgent{
             return get();
         } else {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST, 
-                            "The agent did not understand the request."));
+                            "Your request could not be understood."));
         }
     }
     
     /**
      * Create an OAuth Request
      *
-     * @throws InterruptedException   if thread is waiting/sleeping and gets interrupted
-     * @throws ExecutionException   if the result of creating the request cannot be found
-     * @throws IOException   if the request cannot be created
+     * @return whether the account credentials worked correctly
      */
     private boolean verfiyAccountCredentials() {
         twitterRequest = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE);
@@ -139,13 +140,13 @@ public class TwitterAgent extends AbstractAgent{
     /**
      * Creates, validates, and posts a tweet
      *
-     * @return success or failure message
+     * @return AgentResponse
      */
     private AgentResponse post() {
         String text = createTweetText();
         if (!checkCharLength(text)) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_CANNOT_COMPLETE_ACTION,
-                            "Too many characteres"));
+                            "This text was too many characters. A tweet cannot be longer than 140 characters."));
         }
         return sendTweet(text);
     }
@@ -177,9 +178,7 @@ public class TwitterAgent extends AbstractAgent{
      * Creates and post tweet
      *
      * @param text   the text to be tweeted
-     * @throws InterruptedException   if thread is waiting/sleeping and gets interrupted
-     * @throws ExecutionException   if the result of posting the tweet cannot be found
-     * @throws IOException   if the tweet cannot be sent or is a duplicate
+     * @return AgentResponse
      */
     private AgentResponse sendTweet(String text) {
         twitterRequest = new OAuthRequest(Verb.POST, POST_TWEET);
@@ -219,7 +218,7 @@ public class TwitterAgent extends AbstractAgent{
     /**
      * Checks whether the response reflects that the tweet was a duplicate and therefore wasn't posted
      *
-     * @param response   the response from attempting to post a tweet
+     * @param response   the execution response
      * @return   whether the tweet was a duplicate or not
      * @throws IOException   if response cannot be read
      */
@@ -234,14 +233,11 @@ public class TwitterAgent extends AbstractAgent{
     /**
      * Get tweets
      *
-     * @return
+     * @return AgentResponse
      */
     private AgentResponse get() {
-        String url = getURL();
-        twitterRequest = new OAuthRequest(Verb.GET, url);
-        
-        String numTweets = getNumberOfTweets();
-        twitterRequest.addParameter("count", numTweets);
+        twitterRequest = new OAuthRequest(Verb.GET, getURL());
+        twitterRequest.addParameter("count", getNumberOfTweets());
         service.signRequest(oauth, twitterRequest);
         
         Response response;
@@ -317,6 +313,12 @@ public class TwitterAgent extends AbstractAgent{
        }
     }
     
+    /**
+     * Check is the execution response is empty
+     *
+     * @param response   the execution response
+     * @return whether the response is empty or not
+     */
     private boolean checkEmptyResponse(Response response) {
         try {
             if (response.getBody().equals(EMPTY)) {
@@ -334,7 +336,7 @@ public class TwitterAgent extends AbstractAgent{
      * Get the tweets on a timeline
      *
      * @param response   the response from attempting to access a timeline
-     * @return success or failure message
+     * @return AgentResponse
      */
     private AgentResponse getTweets(Response response) {
         String tweet = "";
@@ -346,14 +348,19 @@ public class TwitterAgent extends AbstractAgent{
         }
         
         if (tweet.contains("Rate limit")) {
-            return new AgentResponse("Rate limit exceeded. Please wait a few minutes and try again.");
+            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_CANNOT_COMPLETE_ACTION, 
+                            "Rate limit exceeded. Please wait a few minutes and try again."));
         } else {
             if (getNumberOfTweets().equals("1")) {
                 return new AgentResponse("Showing " +  getNumberOfTweets() + " tweet from " + getURLName() 
                                 + "\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet));
             } else {
-                return new AgentResponse("Showing " +  getNumberOfTweets() + " tweets from " + getURLName() 
-                                + "\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet));
+                String info = "";
+                for (int n = 0; n < Integer.parseInt(getNumberOfTweets()); n ++) {
+                    info += "\n\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet);
+                    tweet = tweet.substring(tweet.indexOf(END_OF_SINGULAR_TWEET));
+                }
+                return new AgentResponse("Showing " +  getNumberOfTweets() + " tweets from " + getURLName() + info);
             }
         }
     }
@@ -367,10 +374,10 @@ public class TwitterAgent extends AbstractAgent{
     private String getDate(String tweet) {
         String date;
         try {
-            date = tweet.substring((tweet.indexOf("\"created_at\":") + 14), (tweet.indexOf("\"id\":") - 2));
+            date = tweet.substring((tweet.indexOf(CREATED_AT) + 14), (tweet.indexOf(END_OF_CREATED_AT) - 2));
         } catch (IndexOutOfBoundsException e) {
             date = "A date could not be retrievd";
-            logger.error("Date of tweet could not be received");
+            logger.error("Date of tweet could not be retreived");
         }
             return "Posted on: " + date;
     }
@@ -384,10 +391,10 @@ public class TwitterAgent extends AbstractAgent{
     private String getUser(String tweet) {
         String name;
         try {
-            name = tweet.substring((tweet.indexOf("\"name\":") + 8), (tweet.indexOf("\"screen_name\":") - 2));
+            name = tweet.substring((tweet.indexOf(NAME) + 8), (tweet.indexOf(END_OF_NAME) - 2));
         } catch (IndexOutOfBoundsException e) {
-            name = "A user could not be found";
-            logger.error("Author of tweet could not be received");
+            name = "A user could not be retreived";
+            logger.error("Author of tweet could not be retreived");
         }
         return "User: " + name;
     }
@@ -401,10 +408,10 @@ public class TwitterAgent extends AbstractAgent{
     private String getText(String tweet) {
         String text;
         try {
-            text = tweet.substring((tweet.indexOf("\"text\":") + 8), (tweet.indexOf("\"truncated\":") - 2));
+            text = tweet.substring((tweet.indexOf(TEXT) + 8), (tweet.indexOf(END_OF_TEXT) - 2));
         } catch (IndexOutOfBoundsException e) {
             text = "Text could not be retrieved";
-            logger.error("Text of tweet could not be received");
+            logger.error("Text of tweet could not be retreived");
         }
         return "\t" + text;
     }
