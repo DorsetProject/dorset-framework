@@ -94,21 +94,6 @@ public class TwitterAgentTest {
         }
     
     @Test
-    public void testGetHomeGood() {
-        Config config = ConfigFactory.load();
-        Agent agent = new TwitterAgent(config);
-        Router router = new SingleAgentRouter(agent);
-        Application app = new Application(router);
-        
-        Request request = new Request("GET HOME");
-        Response response = app.process(request);
-        System.out.println(response.getText());
-
-        assertTrue(response.getText().contains("Showing 1 tweet"));
-        assertTrue(response.getText().contains("home timeline"));
-    }
-    
-    @Test
     public void testGet2MINEGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
@@ -121,6 +106,79 @@ public class TwitterAgentTest {
 
         assertTrue(response.getText().contains("Showing 2 tweets"));
         assertTrue(response.getText().contains("my timeline"));
+    }
+
+    @Test
+    public void testGet1FavoritesGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET 1 FAVORITES");
+        Response response = app.process(request);
+        System.out.println(response.getText());
+
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("favorites"));
+    }
+    
+    @Test
+    public void testGet1SearchGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET 1 puppies");
+        Response response = app.process(request);
+        System.out.println(response.getText());
+
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("search for"));
+    }
+    
+    @Test
+    public void testGet2Bad() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET 2");
+        Response response = app.process(request);
+        System.out.println(response.getStatus().getMessage());
+
+        assertTrue(response.getStatus().getMessage().contains("No tweets could be found in"));
+    }
+    
+    @Test
+    public void testGetBad() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET");
+        Response response = app.process(request);
+        System.out.println(response.getStatus().getMessage());
+
+        assertTrue(response.getStatus().getMessage().contains("No tweets could be found in"));
+    }
+    
+    @Test
+    public void testGetHomeGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET HOME");
+        Response response = app.process(request);
+        System.out.println(response.getText());
+
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("home timeline"));
     }
     
     @Test
@@ -139,21 +197,6 @@ public class TwitterAgentTest {
     }
     
     @Test
-    public void testGet1FavoritesGood() {
-        Config config = ConfigFactory.load();
-        Agent agent = new TwitterAgent(config);
-        Router router = new SingleAgentRouter(agent);
-        Application app = new Application(router);
-        
-        Request request = new Request("GET 1 FAVORITES");
-        Response response = app.process(request);
-        System.out.println(response.getText());
-
-        assertTrue(response.getText().contains("Showing 1 tweet"));
-        assertTrue(response.getText().contains("favorites"));
-    }
-    
-    @Test
     public void testGetFavoritesGood() {
         Config config = ConfigFactory.load();
         Agent agent = new TwitterAgent(config);
@@ -166,6 +209,21 @@ public class TwitterAgentTest {
 
         assertTrue(response.getText().contains("Showing 1 tweet"));
         assertTrue(response.getText().contains("favorites"));
+    }
+    
+    @Test
+    public void testGetSearchGood() {
+        Config config = ConfigFactory.load();
+        Agent agent = new TwitterAgent(config);
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        
+        Request request = new Request("GET puppies");
+        Response response = app.process(request);
+        System.out.println(response.getText());
+
+        assertTrue(response.getText().contains("Showing 1 tweet"));
+        assertTrue(response.getText().contains("search for"));
     }
     
     @Test
@@ -182,7 +240,7 @@ public class TwitterAgentTest {
         assertTrue(response.getStatus().getMessage().contains("Your request could not be understood."));
     } 
     
-    /*@Test
+    @Test
     public void testInvalidConfig() {
         //TODO create invald config and pass it into Agent constructor
         Config config = ConfigFactory.load();
@@ -190,9 +248,10 @@ public class TwitterAgentTest {
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
         
-        Request request = new Request("First Tweet");
+        Request request = new Request("POST credntials are wrong");
         Response response = app.process(request);
+        System.out.println(response.getStatus().getMessage());
         
-        assertTrue(response.getText().equals(""));
-    }*/
+        assertTrue(response.getStatus().getMessage().contains("Could not process your request due to an invalid configuration"));
+    }
 }
