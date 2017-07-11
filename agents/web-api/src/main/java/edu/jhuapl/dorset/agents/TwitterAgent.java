@@ -57,12 +57,13 @@ public class TwitterAgent extends AbstractAgent{
     private static final String END_OF_NAME = "\"screen_name\":";
     private static final String TEXT = "\"text\":";
     private static final String END_OF_TEXT = "\"truncated\":";
-    
+
     private static final String API_KEY = "apiKey";
     private static final String API_SECRET = "apiSecret";
     private static final String ACCESS_TOKEN = "accessToken";
     private static final String ACCESS_TOKEN_SECRET = "accessTokenSecret";
     private static final String RAW_RESPONSE = "rawResponse";
+
     private String apiKey;
     private String apiSecret;
     private String accessToken;
@@ -74,7 +75,10 @@ public class TwitterAgent extends AbstractAgent{
     private AgentRequest agentRequest;
 
     /**
-     * Create a Twitter Agent
+     * Twitter Agent
+     *
+     * The Twitter Agent posts and gathers tweets. It can read in tweets from
+     * the user's home or individual timeline and list of favorites.
      *
      * @param config   the configuration values
      */
@@ -84,6 +88,7 @@ public class TwitterAgent extends AbstractAgent{
         accessToken = config.getString(ACCESS_TOKEN);
         accessTokenSecret = config.getString(ACCESS_TOKEN_SECRET);
         rawResponse = config.getString(RAW_RESPONSE);
+        //TODO what if no values in config?
     }
 
     /**
@@ -105,7 +110,7 @@ public class TwitterAgent extends AbstractAgent{
         this.agentRequest = agentRequest;
         if (!verfiyAccountCredentials()) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
-                            "Could not verify account credentials. Check your connection."));
+                            "Could not verify account credentials. Check your connection and configuration values."));
         }
 
         String userRequest = this.agentRequest.getText().toUpperCase();
@@ -118,7 +123,7 @@ public class TwitterAgent extends AbstractAgent{
                             "Your request could not be understood."));
         }
     }
-    
+
     /**
      * Create an OAuth Request
      *
@@ -128,21 +133,26 @@ public class TwitterAgent extends AbstractAgent{
         twitterRequest = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE);
         service.signRequest(oauth, twitterRequest);
         
+        Response response;
         try {
-            service.execute(twitterRequest);
+            response = service.execute(twitterRequest);
         } catch (InterruptedException e) {
-            logger.error("Could not verify account credentials." + e);
+            logger.error("Could not verify account credentials. " + e);
             return false;
         } catch (ExecutionException e) {
-            logger.error("Could not verify account credentials." + e);
+            logger.error("Could not verify account credentials. " + e);
             return false;
         } catch (IOException e) {
-            logger.error("Could not verify account credentials." + e);
+            logger.error("Could not verify account credentials. " + e);
+            return false;
+        }
+        if (!response.getMessage().toLowerCase().equals("ok")) {
+            logger.error("Could not process request due to an invalid configuration.");
             return false;
         }
         return true;
     }
-    
+
     /**
      * Creates, validates, and posts a tweet
      *
@@ -197,17 +207,17 @@ public class TwitterAgent extends AbstractAgent{
         } catch (InterruptedException e) {
             logger.error("Failed to post tweet");
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request" + agentRequest));
+                            "Could not execute request " + agentRequest));
         } catch (ExecutionException e) {
             logger.error("Failed to post tweet");
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request" + agentRequest));
+                            "Could not execute request " + agentRequest));
         } catch (IOException e) {
             logger.error("Failed to post tweet");
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request" + agentRequest));
+                            "Could not execute request " + agentRequest));
         }
-        
+
         try {
             if (!isDuplicateTweet(response)) {
                 return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
@@ -216,11 +226,11 @@ public class TwitterAgent extends AbstractAgent{
         } catch (IOException e) {
             logger.error("Failed to access execution response");
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not access execution request" + agentRequest));
+                            "Could not access twitter content" + agentRequest));
         }
         return new AgentResponse("Tweet successful");
     }
-    
+
     /**
      * Checks whether the response reflects that the tweet was a duplicate and therefore wasn't posted
      *
@@ -235,7 +245,7 @@ public class TwitterAgent extends AbstractAgent{
             return true;
         }
     }
-    
+
     /**
      * Get tweets
      *
@@ -254,13 +264,13 @@ public class TwitterAgent extends AbstractAgent{
             response = service.execute(twitterRequest);
         } catch (InterruptedException e) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request" + agentRequest));
+                            "Could not execute request " + agentRequest));
         } catch (ExecutionException e) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request" + agentRequest));
+                            "Could not execute request " + agentRequest));
         } catch (IOException e) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request" + agentRequest));
+                            "Could not execute request " + agentRequest));
         }
 
         if (checkEmptyResponse(response)) {
@@ -271,7 +281,7 @@ public class TwitterAgent extends AbstractAgent{
         }
         return getTweets(response);
     }
-    
+
     /**
      * Gets the number of tweets specified by the user
      *
@@ -290,7 +300,7 @@ public class TwitterAgent extends AbstractAgent{
         }
         return requestTokenized[1];
     }
-    
+
     /**
      * Get URL
      *
@@ -321,14 +331,14 @@ public class TwitterAgent extends AbstractAgent{
                 return null;
             } else {
                 String search = "";
-                int n = 2;
+                int counter = 2;
                 try {
                     Integer.parseInt(requestTokenized[1]);
                 } catch (NumberFormatException e) {
-                    n = 1;
+                    counter = 1;
                 }
-                for ( ; n < requestTokenized.length; n++) {
-                    search += requestTokenized[n];
+                for ( ; counter < requestTokenized.length; counter++) {
+                    search += requestTokenized[counter];
                 }
                 return search;
             }
@@ -336,7 +346,7 @@ public class TwitterAgent extends AbstractAgent{
             return null;
         }
     }
-    
+
     /**
      * Get URL name
      *
@@ -356,7 +366,7 @@ public class TwitterAgent extends AbstractAgent{
             return "unknown";
         }
     }
-    
+
     /**
      * Check is the execution response is empty
      *
@@ -372,13 +382,12 @@ public class TwitterAgent extends AbstractAgent{
                 return true;
             }
         } catch (IOException e) {
-            logger.error("Failed to get tweets from twitter");
+            logger.error("Failed to get twitter content");
             return true;
         }
         return false;
     }
 
-    
     /**
      * Get the tweets on a timeline
      *
@@ -391,9 +400,9 @@ public class TwitterAgent extends AbstractAgent{
             tweet = response.getBody();
         } catch (IOException e) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not access execution response"));
+                            "Could not access twitter content"));
         }
-        
+
         if (tweet.contains("Rate limit")) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_CANNOT_COMPLETE_ACTION, 
                             "Rate limit exceeded. Please wait a few minutes and try again."));
@@ -428,7 +437,7 @@ public class TwitterAgent extends AbstractAgent{
         }
         return "Posted on: " + date;
     }
-    
+
     /**
      * Get the author of a tweet
      *
@@ -445,7 +454,7 @@ public class TwitterAgent extends AbstractAgent{
         }
         return "Posted by: " + name;
     }
-    
+
     /**
      * Get the text of a tweet
      *
