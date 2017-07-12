@@ -58,11 +58,11 @@ public class TwitterAgent extends AbstractAgent{
     private static final String TEXT = "\"text\":";
     private static final String END_OF_TEXT = "\"truncated\":";
 
-    private static final String API_KEY = "apiKey";
-    private static final String API_SECRET = "apiSecret";
-    private static final String ACCESS_TOKEN = "accessToken";
-    private static final String ACCESS_TOKEN_SECRET = "accessTokenSecret";
-    private static final String RAW_RESPONSE = "rawResponse";
+    private static final String API_KEY_KEY = "apiKey";
+    private static final String API_SECRET_KEY = "apiSecret";
+    private static final String ACCESS_TOKEN_KEY = "accessToken";
+    private static final String ACCESS_TOKEN_SECRET_KEY = "accessTokenSecret";
+    private static final String RAW_RESPONSE_KEY = "rawResponse";
 
     private String apiKey;
     private String apiSecret;
@@ -83,12 +83,18 @@ public class TwitterAgent extends AbstractAgent{
      * @param config   the configuration values
      */
     public TwitterAgent(Config config) {
-        apiKey = config.getString(API_KEY);
-        apiSecret = config.getString(API_SECRET);
-        accessToken = config.getString(ACCESS_TOKEN);
-        accessTokenSecret = config.getString(ACCESS_TOKEN_SECRET);
-        rawResponse = config.getString(RAW_RESPONSE);
-        //TODO what if no values in config?
+        apiKey = config.getString(API_KEY_KEY);
+        apiSecret = config.getString(API_SECRET_KEY);
+        accessToken = config.getString(ACCESS_TOKEN_KEY);
+        accessTokenSecret = config.getString(ACCESS_TOKEN_SECRET_KEY);
+        rawResponse = config.getString(RAW_RESPONSE_KEY);
+        try {
+            service = new ServiceBuilder().apiKey(apiKey).apiSecret(apiSecret)
+                                .build(TwitterApi.instance());
+            oauth = new OAuth1AccessToken(accessToken, accessTokenSecret, rawResponse);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid account credentials or failed to connect to network: " + e);
+        }
     }
 
     /**
@@ -98,14 +104,7 @@ public class TwitterAgent extends AbstractAgent{
      * @return AgentResponse
      */
     public AgentResponse process(AgentRequest agentRequest) {
-        try {
-            service = new ServiceBuilder().apiKey(apiKey).apiSecret(apiSecret)
-                                .build(TwitterApi.instance());
-            oauth = new OAuth1AccessToken(accessToken, accessTokenSecret, rawResponse);
-        } catch (IllegalArgumentException e) {
-            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not process your request due to an invalid configuration: \n" + e.getMessage()));
-        }
+        
 
         this.agentRequest = agentRequest;
         if (!verfiyAccountCredentials()) {
@@ -136,13 +135,7 @@ public class TwitterAgent extends AbstractAgent{
         Response response;
         try {
             response = service.execute(twitterRequest);
-        } catch (InterruptedException e) {
-            logger.error("Could not verify account credentials. " + e);
-            return false;
-        } catch (ExecutionException e) {
-            logger.error("Could not verify account credentials. " + e);
-            return false;
-        } catch (IOException e) {
+        } catch (InterruptedException | ExecutionException | IOException e) {
             logger.error("Could not verify account credentials. " + e);
             return false;
         }
@@ -204,20 +197,12 @@ public class TwitterAgent extends AbstractAgent{
         Response response;
         try {
             response = service.execute(twitterRequest);
-        } catch (InterruptedException e) {
-            logger.error("Failed to post tweet");
-            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request " + agentRequest));
-        } catch (ExecutionException e) {
-            logger.error("Failed to post tweet");
-            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request " + agentRequest));
-        } catch (IOException e) {
+        } catch (InterruptedException | ExecutionException | IOException e) {
             logger.error("Failed to post tweet");
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
                             "Could not execute request " + agentRequest));
         }
-
+        
         try {
             if (!isDuplicateTweet(response)) {
                 return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
@@ -262,13 +247,7 @@ public class TwitterAgent extends AbstractAgent{
         Response response;
         try {
             response = service.execute(twitterRequest);
-        } catch (InterruptedException e) {
-            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request " + agentRequest));
-        } catch (ExecutionException e) {
-            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
-                            "Could not execute request " + agentRequest));
-        } catch (IOException e) {
+        } catch (InterruptedException | ExecutionException | IOException e) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
                             "Could not execute request " + agentRequest));
         }
