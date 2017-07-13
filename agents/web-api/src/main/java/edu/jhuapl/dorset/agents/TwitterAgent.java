@@ -18,6 +18,7 @@ package edu.jhuapl.dorset.agents;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +46,11 @@ public class TwitterAgent extends AbstractAgent{
     private static final String GET_FAVORITES = "https://api.twitter.com/1.1/favorites/list.json";
     private static final String GET_SEARCH = "https://api.twitter.com/1.1/search/tweets.json";
 
-    private static final int WITHOUT_POST = 5;
-    private static final String EMPTY = "[]";
-    private static final String MINE = "MINE";
-    private static final String FAVORITES = "FAVORITES";
-    private static final String HOME = "HOME";
+    private static final String POST_REGEX = ".*(POST).*";
+    private static final String GET_REGEX = ".*(GET).*";
+    private static final String MINE_REGEX = ".*(MINE).*";
+    private static final String FAVORITES_REGEX = ".*(FAVORITES).*";
+    private static final String HOME_REGEX = ".*(HOME).*";
     private static final String END_OF_SINGULAR_TWEET = "\"default_profile_image\":";
     private static final String CREATED_AT = "\"created_at\":";
     private static final String END_OF_CREATED_AT = "\"id\":";
@@ -104,8 +105,6 @@ public class TwitterAgent extends AbstractAgent{
      * @return AgentResponse
      */
     public AgentResponse process(AgentRequest agentRequest) {
-        
-
         this.agentRequest = agentRequest;
         if (!verfiyAccountCredentials()) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
@@ -113,9 +112,9 @@ public class TwitterAgent extends AbstractAgent{
         }
 
         String userRequest = this.agentRequest.getText().toUpperCase();
-        if (userRequest.contains("POST")) {
+        if (userRequest.matches(POST_REGEX)) {
             return post();
-        } else if (userRequest.contains("GET")) {
+        } else if (userRequest.matches(GET_REGEX)) {
             return get();
         } else {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_DID_NOT_UNDERSTAND_REQUEST, 
@@ -124,7 +123,7 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Create an OAuth Request
+     * Create an OAuth Request to verify account credentials
      *
      * @return whether the account credentials worked correctly
      */
@@ -155,7 +154,8 @@ public class TwitterAgent extends AbstractAgent{
         String text = createTweetText();
         if (!checkCharLength(text)) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_CANNOT_COMPLETE_ACTION,
-                            "This text was too many characters. A tweet cannot be longer than 140 characters."));
+                            "This text was either too many characters or empty. "
+                            + "A tweet cannot be longer than 140 characters."));
         }
         return sendTweet(text);
     }
@@ -167,7 +167,7 @@ public class TwitterAgent extends AbstractAgent{
      */
     private String createTweetText() {
         String text = agentRequest.getText();
-        return text.substring(WITHOUT_POST); 
+        return text.substring(0, text.indexOf("POST")) + text.substring(text.indexOf("POST") + 5);
     }
 
     /**
@@ -190,9 +190,7 @@ public class TwitterAgent extends AbstractAgent{
      * @return AgentResponse
      */
     private AgentResponse sendTweet(String text) {
-        twitterRequest = new OAuthRequest(Verb.POST, POST_TWEET);
-        twitterRequest.addBodyParameter("status", text);
-        service.signRequest(oauth, twitterRequest);
+        OAuthRequestPost(text);
 
         Response response;
         try {
@@ -202,7 +200,7 @@ public class TwitterAgent extends AbstractAgent{
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
                             "Could not execute request " + agentRequest));
         }
-        
+
         try {
             if (!isDuplicateTweet(response)) {
                 return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
@@ -214,6 +212,17 @@ public class TwitterAgent extends AbstractAgent{
                             "Could not access twitter content" + agentRequest));
         }
         return new AgentResponse("Tweet successful");
+    }
+
+    /**
+     * Create and send OAuth Requets to post a tweet
+     *
+     * @param text   the text to be tweeted
+     */
+    private void OAuthRequestPost(String text) {
+        twitterRequest = new OAuthRequest(Verb.POST, POST_TWEET);
+        twitterRequest.addBodyParameter("status", text);
+        service.signRequest(oauth, twitterRequest);
     }
 
     /**
@@ -237,13 +246,8 @@ public class TwitterAgent extends AbstractAgent{
      * @return AgentResponse
      */
     private AgentResponse get() {
-        twitterRequest = new OAuthRequest(Verb.GET, getUrl());
-        if (getSearch() != null) {
-            twitterRequest.addParameter("q", getSearch());
-        }
-        twitterRequest.addParameter("count", getNumberOfTweets());
-        service.signRequest(oauth, twitterRequest);
-        
+        OAuthRequestGet();
+
         Response response;
         try {
             response = service.execute(twitterRequest);
@@ -262,35 +266,29 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Gets the number of tweets specified by the user
-     *
-     * @return the number of tweets
+     * Creating and sending OAuth Request to get tweets
      */
-    private String getNumberOfTweets() {
-        Tokenizer tokenizer = new WhiteSpaceTokenizer();
-        String[] requestTokenized = tokenizer.tokenize(agentRequest.getText());
-        if (requestTokenized.length < 2) {
-            return "1";
+    private void OAuthRequestGet() {
+        twitterRequest = new OAuthRequest(Verb.GET, getUrl());
+        if (getSearch() != null) {
+            twitterRequest.addParameter("q", getSearch());
         }
-        try {
-            Integer.parseInt(requestTokenized[1]); 
-        } catch (NumberFormatException e) {
-            return "1";
-        }
-        return requestTokenized[1];
+        twitterRequest.addParameter("count", getNumberOfTweets());
+        service.signRequest(oauth, twitterRequest);
     }
 
     /**
-     * Get URL
+     * Get correct URL
      *
      * @return the url
      */
     private String getUrl() {
-        if (agentRequest.getText().toUpperCase().contains(MINE)) {
+        String text = agentRequest.getText().toUpperCase();
+        if (text.matches(MINE_REGEX)) {
             return GET_MY_TIMELINE;
-        } else if (agentRequest.getText().toUpperCase().contains(FAVORITES)) {
+        } else if (text.matches(FAVORITES_REGEX)) {
             return GET_FAVORITES;
-        } else if (agentRequest.getText().toUpperCase().contains(HOME)) {
+        } else if (text.matches(HOME_REGEX)) {
             return GET_HOME_TIMELINE;
         } else {
             return GET_SEARCH;
@@ -304,57 +302,44 @@ public class TwitterAgent extends AbstractAgent{
      */
     private String getSearch() {
         if (getUrl().equals(GET_SEARCH)) {
-            Tokenizer tokenizer = new WhiteSpaceTokenizer();
-            String[] requestTokenized = tokenizer.tokenize(agentRequest.getText());
-            if (requestTokenized.length < 2) {
-                return null;
-            } else {
-                String search = "";
-                int counter = 2;
-                try {
-                    Integer.parseInt(requestTokenized[1]);
-                } catch (NumberFormatException e) {
-                    counter = 1;
+            String[] requestTokenized = new WhiteSpaceTokenizer().tokenize(agentRequest.getText());
+            String search = "";
+            for (int n = 0; n < requestTokenized.length; n++) {
+                if (!requestTokenized[n].equals("GET") && !Pattern.matches("[0-9]", requestTokenized[n])) {
+                    search += requestTokenized[n];
                 }
-                for ( ; counter < requestTokenized.length; counter++) {
-                    search += requestTokenized[counter];
-                }
-                return search;
             }
+            return search;
         } else {
             return null;
         }
     }
-
+    
     /**
-     * Get URL name
+     * Gets the number of tweets specified by the user
      *
-     * @return the url name
+     * @return the number of tweets
      */
-    private String getUrlName() {
-        String url = getUrl();
-        if (url.equals(GET_HOME_TIMELINE)) {
-            return "home timeline";
-        } else if (url.equals(GET_MY_TIMELINE)) {
-            return "my timeline";
-        } else if (url.equals(GET_FAVORITES)) {
-            return "favorites";
-        } else if (url.equals(GET_SEARCH)) {
-            return "search for " + getSearch();
-        } else {
-            return "unknown";
+    private String getNumberOfTweets() {
+        String[] requestTokenized = new WhiteSpaceTokenizer().tokenize(agentRequest.getText());
+        for (int n = 0; n < requestTokenized.length; n++) {
+            if (Pattern.matches("[0-9]", requestTokenized[n])) {
+                Integer.parseInt(requestTokenized[n]);
+                return requestTokenized[n];
+            }
         }
+        return "1";
     }
 
     /**
-     * Check is the execution response is empty
+     * Check if the execution response is empty
      *
      * @param response   the execution response
      * @return whether the response is empty or not
      */
     private boolean checkEmptyResponse(Response response) {
         try {
-            if (response.getBody().equals(EMPTY)) {
+            if (response.getBody().equals("[]")) {
                 return true;
             }
             if (response.getBody().contains("parameters are missing")) {
@@ -386,18 +371,29 @@ public class TwitterAgent extends AbstractAgent{
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_CANNOT_COMPLETE_ACTION, 
                             "Rate limit exceeded. Please wait a few minutes and try again."));
         } else {
-            if (getNumberOfTweets().equals("1")) {
-                return new AgentResponse("Showing " +  getNumberOfTweets() + " tweet from " + getUrlName()
-                                + "\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet));
-            } else {
-                String info = "";
-                for (int n = 0; n < Integer.parseInt(getNumberOfTweets()); n ++) {
-                    info += "\n\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet);
-                    tweet = tweet.substring(tweet.indexOf(END_OF_SINGULAR_TWEET));
-                }
-                return new AgentResponse("Showing " +  getNumberOfTweets() + " tweets from " + getUrlName() + info);
-            }
+            return createAgentResponse(tweet);
         }
+    }
+    
+    /**
+     * Creates an AgentResponse to display tweets
+     *
+     * @param tweet   the text response from geting the tweets
+     * @return AgentResponse
+     */
+    private AgentResponse createAgentResponse(String tweet) {
+        String wordTweet = "tweet";
+        String numTweets = getNumberOfTweets();
+        if (!numTweets.equals("1")) {
+            wordTweet += "s";
+        }
+        
+        String info = "";
+        for (int n = 0; n < Integer.parseInt(numTweets); n ++) {
+            info += "\n\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet);
+            tweet = tweet.substring(tweet.indexOf(END_OF_SINGULAR_TWEET));
+        }
+        return new AgentResponse("Showing " +  numTweets + " " + wordTweet + " from " + getUrlName() + info);
     }
 
     /**
@@ -449,5 +445,25 @@ public class TwitterAgent extends AbstractAgent{
             logger.error("Text of tweet could not be retreived");
         }
         return "\t" + text;
+    }
+    
+    /**
+     * Get URL name
+     *
+     * @return the url name
+     */
+    private String getUrlName() {
+        String url = getUrl();
+        if (url.equals(GET_HOME_TIMELINE)) {
+            return "home timeline";
+        } else if (url.equals(GET_MY_TIMELINE)) {
+            return "my timeline";
+        } else if (url.equals(GET_FAVORITES)) {
+            return "favorites";
+        } else if (url.equals(GET_SEARCH)) {
+            return "search for " + getSearch();
+        } else {
+            return "unknown";
+        }
     }
 }

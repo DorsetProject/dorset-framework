@@ -51,9 +51,9 @@ public class TwitterAgentTest {
         Router router = new SingleAgentRouter(agent);
         Application app = new Application(router);
 
-        Request request = new Request("POST This is an invalid tweet. This tweet is going to be too long,"
-                        + " which means that this text needs to be longer than one hundred and"
-                        + " forty characters...");
+        Request request = new Request("POST This is an invalid tweet. This tweet is going to "
+                        + "be too long, which means that this text needs to be longer than "
+                        + "one hundred and forty characters...");
         Response response = app.process(request);
 
         assertTrue(response.getStatus().getMessage().contains("too many characters"));
