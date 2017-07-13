@@ -39,18 +39,19 @@ import edu.jhuapl.dorset.nlp.WhiteSpaceTokenizer;
 public class TwitterAgent extends AbstractAgent{
     private final Logger logger = LoggerFactory.getLogger(TwitterAgent.class);
 
-    private static final String PROTECTED_RESOURCE = "https://api.twitter.com/1.1/account/verify_credentials.json";
-    private static final String POST_TWEET = "https://api.twitter.com/1.1/statuses/update.json";
-    private static final String GET_HOME_TIMELINE = "https://api.twitter.com/1.1/statuses/home_timeline/.json";
-    private static final String GET_MY_TIMELINE = "https://api.twitter.com/1.1/statuses/user_timeline.json";
-    private static final String GET_FAVORITES = "https://api.twitter.com/1.1/favorites/list.json";
-    private static final String GET_SEARCH = "https://api.twitter.com/1.1/search/tweets.json";
+    private static final String VERIFY_CREDENTIALS_URL = "https://api.twitter.com/1.1/account/verify_credentials.json";
+    private static final String POST_TWEET_URL = "https://api.twitter.com/1.1/statuses/update.json";
+    private static final String GET_HOME_TIMELINE_URL = "https://api.twitter.com/1.1/statuses/home_timeline/.json";
+    private static final String GET_MY_TIMELINE_URL = "https://api.twitter.com/1.1/statuses/user_timeline.json";
+    private static final String GET_FAVORITES_URL = "https://api.twitter.com/1.1/favorites/list.json";
+    private static final String GET_SEARCH_URL = "https://api.twitter.com/1.1/search/tweets.json";
 
     private static final String POST_REGEX = ".*(POST).*";
     private static final String GET_REGEX = ".*(GET).*";
     private static final String MINE_REGEX = ".*(MINE).*";
     private static final String FAVORITES_REGEX = ".*(FAVORITES).*";
     private static final String HOME_REGEX = ".*(HOME).*";
+    
     private static final String END_OF_SINGULAR_TWEET = "\"default_profile_image\":";
     private static final String CREATED_AT = "\"created_at\":";
     private static final String END_OF_CREATED_AT = "\"id\":";
@@ -128,8 +129,8 @@ public class TwitterAgent extends AbstractAgent{
      * @return whether the account credentials worked correctly
      */
     private boolean verfiyAccountCredentials() {
-        twitterRequest = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE);
-        service.signRequest(oauth, twitterRequest);
+        createOAuthRequest(Verb.GET, VERIFY_CREDENTIALS_URL);
+        signRequest();
         
         Response response;
         try {
@@ -138,11 +139,32 @@ public class TwitterAgent extends AbstractAgent{
             logger.error("Could not verify account credentials. " + e);
             return false;
         }
-        if (!response.getMessage().toLowerCase().equals("ok")) {
+        if (response.getMessage().toLowerCase().equals("Too Many Requests")) {
+            logger.error("Could not process request at this time due to too many requests. "
+                            + "Please wait a few minutes and try again.");
+            return false;
+        } else if (!response.getMessage().toLowerCase().equals("ok")) {
             logger.error("Could not process request due to an invalid configuration.");
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Create an OAuth Request
+     *
+     * @param action   Verb.GET or Verb.POST
+     * @param url   the url OAuth Request is sent to
+     */
+    private void createOAuthRequest(Verb action, String url) {
+        twitterRequest = new OAuthRequest(action, url);
+    }
+
+    /**
+     * Sign an OAuth Request
+     */
+    private void signRequest() {
+        service.signRequest(oauth, twitterRequest);
     }
 
     /**
@@ -190,7 +212,7 @@ public class TwitterAgent extends AbstractAgent{
      * @return AgentResponse
      */
     private AgentResponse sendTweet(String text) {
-        OAuthRequestPost(text);
+        createPostOAuthRequest(text);
 
         Response response;
         try {
@@ -219,10 +241,20 @@ public class TwitterAgent extends AbstractAgent{
      *
      * @param text   the text to be tweeted
      */
-    private void OAuthRequestPost(String text) {
-        twitterRequest = new OAuthRequest(Verb.POST, POST_TWEET);
-        twitterRequest.addBodyParameter("status", text);
-        service.signRequest(oauth, twitterRequest);
+    private void createPostOAuthRequest(String text) {
+        createOAuthRequest(Verb.POST, POST_TWEET_URL);
+        addBodyParameter("status", text);
+        signRequest();
+    }
+    
+    /**
+     * Add a body parameter to twitter request
+     *
+     * @param param   body parameter
+     * @param value   body parameter value
+     */
+    private void addBodyParameter(String param, String value) {
+        twitterRequest.addBodyParameter(param, value);
     }
 
     /**
@@ -246,7 +278,7 @@ public class TwitterAgent extends AbstractAgent{
      * @return AgentResponse
      */
     private AgentResponse get() {
-        OAuthRequestGet();
+        createGetOAuthRequest();
 
         Response response;
         try {
@@ -254,27 +286,30 @@ public class TwitterAgent extends AbstractAgent{
         } catch (InterruptedException | ExecutionException | IOException e) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR,
                             "Could not execute request " + agentRequest));
-        }
-
+        }        
         if (checkEmptyResponse(response)) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
                         "No tweets could be found in " + getUrlName() + "\nPlease be sure to "
                         + "phrase your request as such: action number location. \nactions: GET   POST"
                         + "\t\tlocations: HOME   MINE   search term or phrase"));
+        } else if (!response.getMessage().toLowerCase().equals("ok")) {
+            return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
+                            "Could not authenticate you. Check your configurations."));
+        } else {
+            return getTweets(response);
         }
-        return getTweets(response);
     }
 
     /**
      * Creating and sending OAuth Request to get tweets
      */
-    private void OAuthRequestGet() {
-        twitterRequest = new OAuthRequest(Verb.GET, getUrl());
+    private void createGetOAuthRequest() {
+        createOAuthRequest(Verb.GET, getUrl());
         if (getSearch() != null) {
-            twitterRequest.addParameter("q", getSearch());
+            addParameter("q", getSearch());
         }
-        twitterRequest.addParameter("count", getNumberOfTweets());
-        service.signRequest(oauth, twitterRequest);
+        addParameter("count", getNumberOfTweets());
+        signRequest();
     }
 
     /**
@@ -285,13 +320,13 @@ public class TwitterAgent extends AbstractAgent{
     private String getUrl() {
         String text = agentRequest.getText().toUpperCase();
         if (text.matches(MINE_REGEX)) {
-            return GET_MY_TIMELINE;
+            return GET_MY_TIMELINE_URL;
         } else if (text.matches(FAVORITES_REGEX)) {
-            return GET_FAVORITES;
+            return GET_FAVORITES_URL;
         } else if (text.matches(HOME_REGEX)) {
-            return GET_HOME_TIMELINE;
+            return GET_HOME_TIMELINE_URL;
         } else {
-            return GET_SEARCH;
+            return GET_SEARCH_URL;
         }
     }
 
@@ -301,7 +336,7 @@ public class TwitterAgent extends AbstractAgent{
      * @return the search word/phrase
      */
     private String getSearch() {
-        if (getUrl().equals(GET_SEARCH)) {
+        if (getUrl().equals(GET_SEARCH_URL)) {
             String[] requestTokenized = new WhiteSpaceTokenizer().tokenize(agentRequest.getText());
             String search = "";
             for (int n = 0; n < requestTokenized.length; n++) {
@@ -315,6 +350,16 @@ public class TwitterAgent extends AbstractAgent{
         }
     }
     
+    /**
+     * Add a parameter to twitter request
+     *
+     * @param param   parameter
+     * @param value   parameter value
+     */
+    private void addParameter(String param, String value) {
+        twitterRequest.addParameter(param, value);
+    }
+
     /**
      * Gets the number of tweets specified by the user
      *
@@ -374,7 +419,7 @@ public class TwitterAgent extends AbstractAgent{
             return createAgentResponse(tweet);
         }
     }
-    
+
     /**
      * Creates an AgentResponse to display tweets
      *
@@ -387,7 +432,7 @@ public class TwitterAgent extends AbstractAgent{
         if (!numTweets.equals("1")) {
             wordTweet += "s";
         }
-        
+
         String info = "";
         for (int n = 0; n < Integer.parseInt(numTweets); n ++) {
             info += "\n\n" + getDate(tweet) + "\n" + getUser(tweet) + "\n\t" + getText(tweet);
@@ -446,7 +491,7 @@ public class TwitterAgent extends AbstractAgent{
         }
         return "\t" + text;
     }
-    
+
     /**
      * Get URL name
      *
@@ -454,13 +499,13 @@ public class TwitterAgent extends AbstractAgent{
      */
     private String getUrlName() {
         String url = getUrl();
-        if (url.equals(GET_HOME_TIMELINE)) {
+        if (url.equals(GET_HOME_TIMELINE_URL)) {
             return "home timeline";
-        } else if (url.equals(GET_MY_TIMELINE)) {
+        } else if (url.equals(GET_MY_TIMELINE_URL)) {
             return "my timeline";
-        } else if (url.equals(GET_FAVORITES)) {
+        } else if (url.equals(GET_FAVORITES_URL)) {
             return "favorites";
-        } else if (url.equals(GET_SEARCH)) {
+        } else if (url.equals(GET_SEARCH_URL)) {
             return "search for " + getSearch();
         } else {
             return "unknown";
