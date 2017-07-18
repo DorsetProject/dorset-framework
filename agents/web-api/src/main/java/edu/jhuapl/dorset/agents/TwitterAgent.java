@@ -305,8 +305,9 @@ public class TwitterAgent extends AbstractAgent{
      */
     private void createGetOAuthRequest() {
         createOAuthRequest(Verb.GET, getUrl());
-        if (getSearch() != null) {
-            addParameter("q", getSearch());
+        String search = getSearch();
+        if (search != null) {
+            addParameter("q", search);
         }
         addParameter("count", getNumberOfTweets());
         signRequest();
@@ -349,7 +350,7 @@ public class TwitterAgent extends AbstractAgent{
             return null;
         }
     }
-    
+
     /**
      * Add a parameter to twitter request
      *
@@ -384,10 +385,8 @@ public class TwitterAgent extends AbstractAgent{
      */
     private boolean checkEmptyResponse(Response response) {
         try {
-            if (response.getBody().equals("[]")) {
-                return true;
-            }
-            if (response.getBody().contains("parameters are missing")) {
+            if (response.getBody().equals("[]") || response.getBody()
+                            .contains("parameters are missing")) {
                 return true;
             }
         } catch (IOException e) {
