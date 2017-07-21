@@ -80,7 +80,12 @@ public class TwitterAgent extends AbstractAgent{
      * Twitter Agent
      *
      * The Twitter Agent posts and gathers tweets. It can read in tweets from
-     * the user's home or individual timeline and list of favorites.
+     * the user's home or individual timeline, favorites, and search queries.
+     * 
+     * A request to the Twitter Agent should include the following:
+     * action numberOfTweets location
+     * actions: GET   POST
+     * locations: HOME   MINE   FAVORITES   search term/phrase
      *
      * @param config   the configuration values
      */
@@ -100,7 +105,7 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Processes request
+     * Process request
      *
      * @param agentRequest   the tweet request
      * @return AgentResponse
@@ -109,7 +114,8 @@ public class TwitterAgent extends AbstractAgent{
         this.agentRequest = agentRequest;
         if (!verfiyAccountCredentials()) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
-                            "Could not verify account credentials. Check your connection and configuration values."));
+                            "Could not verify account credentials. Check your connection and "
+                            + "configuration values."));
         }
 
         String userRequest = this.agentRequest.getText().toUpperCase();
@@ -154,7 +160,7 @@ public class TwitterAgent extends AbstractAgent{
      * Create an OAuth Request
      *
      * @param action   Verb.GET or Verb.POST
-     * @param url   the url OAuth Request is sent to
+     * @param url   the URL the OAuth Request is sent to
      */
     private void createOAuthRequest(Verb action, String url) {
         twitterRequest = new OAuthRequest(action, url);
@@ -168,7 +174,7 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Creates, validates, and posts a tweet
+     * Create, validate, and post a tweet
      *
      * @return AgentResponse
      */
@@ -183,7 +189,7 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Creates the text to be tweeted
+     * Create the text to be tweeted
      *
      * @return the text to be tweeted
      */
@@ -193,7 +199,7 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Checks if request text is a valid length
+     * Check if request text is a valid length
      *
      * @param text   the text to be validated
      * @return   whether the length is valid
@@ -206,7 +212,7 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Creates and post tweet
+     * Create and post tweet
      *
      * @param text   the text to be tweeted
      * @return AgentResponse
@@ -258,10 +264,10 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Checks whether the response reflects that the tweet was a duplicate and therefore wasn't posted
+     * Check whether the response reflects that the tweet was a duplicate and therefore wasn't posted
      *
      * @param response   the execution response
-     * @return   whether the tweet was a duplicate or not
+     * @return whether the tweet was a duplicate or not
      * @throws IOException   if response cannot be read
      */
     private boolean isDuplicateTweet(Response response) throws IOException {
@@ -290,8 +296,8 @@ public class TwitterAgent extends AbstractAgent{
         if (checkEmptyResponse(response)) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
                         "No tweets could be found in " + getUrlName() + "\nPlease be sure to "
-                        + "phrase your request as such: action number location. \nactions: GET   POST"
-                        + "\t\tlocations: HOME   MINE   search term or phrase"));
+                        + "phrase your request as such: action number location. \nactions: GET   "
+                        + "POST\t\tlocations: HOME   MINE   FAVORITES search term or phrase"));
         } else if (!response.getMessage().toLowerCase().equals("ok")) {
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_INTERNAL_ERROR, 
                             "Could not authenticate you. Check your configurations."));
@@ -301,7 +307,7 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Creating and sending OAuth Request to get tweets
+     * Create and send OAuth Request to get tweets
      */
     private void createGetOAuthRequest() {
         createOAuthRequest(Verb.GET, getUrl());
@@ -316,7 +322,7 @@ public class TwitterAgent extends AbstractAgent{
     /**
      * Get correct URL
      *
-     * @return the url
+     * @return the URL
      */
     private String getUrl() {
         String text = agentRequest.getText().toUpperCase();
@@ -352,17 +358,17 @@ public class TwitterAgent extends AbstractAgent{
     }
 
     /**
-     * Add a parameter to twitter request
+     * Add a parameter to the twitter request
      *
-     * @param param   parameter
-     * @param value   parameter value
+     * @param param   parameter, such as count or q
+     * @param value   parameter value, such a number or search phrase
      */
     private void addParameter(String param, String value) {
         twitterRequest.addParameter(param, value);
     }
 
     /**
-     * Gets the number of tweets specified by the user
+     * Get the number of tweets specified by the user
      *
      * @return the number of tweets
      */
@@ -415,17 +421,17 @@ public class TwitterAgent extends AbstractAgent{
             return new AgentResponse(new ResponseStatus(ResponseStatus.Code.AGENT_CANNOT_COMPLETE_ACTION, 
                             "Rate limit exceeded. Please wait a few minutes and try again."));
         } else {
-            return createAgentResponse(tweet);
+            return displayTweet(tweet);
         }
     }
 
     /**
-     * Creates an AgentResponse to display tweets
+     * Create an AgentResponse to display tweets
      *
      * @param tweet   the text response from geting the tweets
      * @return AgentResponse
      */
-    private AgentResponse createAgentResponse(String tweet) {
+    private AgentResponse displayTweet(String tweet) {
         String wordTweet = "tweet";
         String numTweets = getNumberOfTweets();
         if (!numTweets.equals("1")) {
@@ -494,7 +500,7 @@ public class TwitterAgent extends AbstractAgent{
     /**
      * Get URL name
      *
-     * @return the url name
+     * @return the URL name
      */
     private String getUrlName() {
         String url = getUrl();
