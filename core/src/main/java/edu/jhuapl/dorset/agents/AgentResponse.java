@@ -18,6 +18,8 @@ package edu.jhuapl.dorset.agents;
 
 import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.ResponseStatus;
+import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.Session.SessionStatus;
 
 /**
  * Response from an agent to a request
@@ -29,6 +31,8 @@ public class AgentResponse {
     private final String text;
     private final String payload;
     private final ResponseStatus status;
+    private Session session;
+    private SessionStatus sessionStatus;
 
     /**
      * Create an agent response
@@ -140,5 +144,41 @@ public class AgentResponse {
             return false;
         }
         return !(isSuccess() && text == null);
+    }
+    
+    /**
+     * Get the session
+     *
+     * @return the session of the request
+     */
+    public Session getSession() {
+        return session;
+    }
+
+    /**
+     * Set the session
+     *
+     * @param session  the session
+     */
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    /**
+     * Get the session status
+     *
+     * @return sessionStatus  the session status
+     */
+    public SessionStatus getSessionStatus() {
+        return this.sessionStatus;
+    }
+
+    /**
+     * Set the session status
+     *
+     * @param sessionStatus  the session status
+     */
+    public void setSessionStatus(SessionStatus sessionStatus) {
+        this.sessionStatus = sessionStatus;
     }
 }

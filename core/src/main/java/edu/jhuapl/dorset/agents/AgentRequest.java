@@ -17,6 +17,7 @@
 package edu.jhuapl.dorset.agents;
 
 import edu.jhuapl.dorset.Request;
+import edu.jhuapl.dorset.sessions.Session;
 import edu.jhuapl.dorset.users.User;
 
 /**
@@ -27,6 +28,7 @@ import edu.jhuapl.dorset.users.User;
 public class AgentRequest {
     private String text;
     private User user;
+    private Session session;
 
     public AgentRequest() {}
     
@@ -97,5 +99,23 @@ public class AgentRequest {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    /**
+     * Get the session
+     *
+     * @return the session of the request
+     */
+    public Session getSession() {
+        return session;
+    }
+
+    /**
+     * Set the session
+     *
+     * @param session  the session
+     */
+    public void setSession(Session session) {
+        this.session = session;
     }
 }
