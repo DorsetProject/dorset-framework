@@ -18,6 +18,7 @@ package edu.jhuapl.dorset;
 
 import java.util.UUID;
 
+import edu.jhuapl.dorset.sessions.Session;
 import edu.jhuapl.dorset.users.User;
 
 /**
@@ -32,6 +33,7 @@ public class Request {
     private String text;
     private final String id;
     private final User user;
+    private Session session;
 
     /**
      * Create a request
@@ -126,5 +128,23 @@ public class Request {
     public User getUser() {
         return user;
     }
- 
+
+    /**
+     * Get the session
+     *
+     * @return the user of the request
+     */
+    public Session getSession() {
+        return session;
+    }
+
+    /**
+     * Set the session
+     *
+     * @param session  the session
+     */
+    public void setSession(Session session) {
+        this.session = session;
+    }
+    
 }

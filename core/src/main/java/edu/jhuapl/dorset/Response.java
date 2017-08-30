@@ -17,6 +17,8 @@
 package edu.jhuapl.dorset;
 
 import edu.jhuapl.dorset.agents.AgentResponse;
+import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.Session.SessionStatus;
 
 /**
  * Dorset Response
@@ -30,6 +32,8 @@ public class Response {
     private final String text;
     private final String payload;
     private final ResponseStatus status;
+    private Session session;
+    private SessionStatus sessionStatus;
 
     /**
      * Create a response
@@ -223,5 +227,41 @@ public class Response {
             }
             return true;
         }
+    }
+    
+    /**
+     * Get the session
+     *
+     * @return the session of the request
+     */
+    public Session getSession() {
+        return session;
+    }
+
+    /**
+     * Set the session
+     *
+     * @param session  the session
+     */
+    public void setSession(Session session) {
+        this.session = session;
+    }
+    
+    /**
+     * Get the session status
+     *
+     * @param sessionStatus  the session status
+     */
+    public SessionStatus getSessionStatus() {
+        return sessionStatus;
+    }
+
+    /**
+     * Set the session
+     *
+     * @param sessionStatus  the session status
+     */
+    public void setSessionStatus(SessionStatus sessionStatus) {
+        this.sessionStatus = sessionStatus;
     }
 }
