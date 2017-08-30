@@ -24,44 +24,61 @@ import com.google.gson.JsonArray;
 public class Session {
 
     public String id;
-    public Date timestamp; // should have start date, end date, date last updated
-    public String primaryAgent; 
-    public String status;
-    public JsonArray sessionHistory;
+    public Date timestamp; // should have start date, end date, date last updated?
+    public String primaryAgent;
+    public SessionStatus sessionStatus;
+    public SessionObject[] sessionHistory;
 
     public String getId() {
         return this.id;
     }
+
     public void setId(String id) {
         this.id = id;
     }
+
     public Date getTimestamp() {
         return this.timestamp;
     }
+
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
+
     public String getPrimaryAgent() {
         return this.primaryAgent;
     }
+
     public void setPrimaryAgent(String primaryAgent) {
         this.primaryAgent = primaryAgent;
     }
-    public String getStatus() {
-        return this.status;
+
+    public SessionStatus getStatus() {
+        return this.sessionStatus;
     }
-    public void setStatus(String status) {
-        this.status = status;
+
+    public void setStatus(SessionStatus status) {
+        this.sessionStatus = status;
     }
-    public JsonArray getSessionHistory() {
+
+    public SessionObject[] getSessionHistory() {
         return this.sessionHistory;
     }
-    public void setSessionHistory(JsonArray sessionHistory) {
+
+    public void setSessionHistory(SessionObject[] sessionHistory) {
         this.sessionHistory = sessionHistory;
     }
+
     public String sessionToString() {
-        return "ID: " + this.id +"\nTimestamp: " + this.timestamp.toString() + 
-               "\nPrimaryAgent: " + this.primaryAgent +"\nStatus: " + this.status;         
+        return "ID: " + this.id + "\nTimestamp: " + this.timestamp.toString() + "\nPrimaryAgent: "
+                        + this.primaryAgent + "\nStatus: " + this.sessionStatus;
     }
-    
+
+    public enum SessionStatus {
+
+        OPEN, CLOSED, TIMED_OUT, ERROR;
+
+    }
+
 }
+

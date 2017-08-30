@@ -17,8 +17,6 @@
 
 package edu.jhuapl.dorset.sessions;
 
-import edu.jhuapl.dorset.Request;
-
 /**
  * Services the session information for a Dorset Application.
  * <p>
@@ -26,11 +24,11 @@ import edu.jhuapl.dorset.Request;
  */
 public interface SessionService {
 
-    public String create(Request request); // to create session pass in a request? agent request?
+    public String create(); 
 
-    //public String retrieve(Properties properties);
+    //public String retrieve(Properties properties); 
     
-    public void update(String id, Session session); // what to pass in to update?
+    public void update(String sessionId, SessionObject sesionObject); 
    
     public void delete(String id);
     
