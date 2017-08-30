@@ -34,7 +34,7 @@ public class SimpleSessionService implements SessionService {
     private Map<String, Session> sessions; // key is the SessionID and value is a Session
 
     // default constructor
-    public SimpleSessionService(){
+    public SimpleSessionService() {
         this.sessions = new HashMap<String, Session>();
       
     }
@@ -42,7 +42,7 @@ public class SimpleSessionService implements SessionService {
     @Override
     public String create() {
         Session session = new Session();
-        String uniqueSessionID = UUID.randomUUID().toString(); // should i validate that it is unique? 
+        String uniqueSessionId = UUID.randomUUID().toString(); // should i validate that it is unique? 
         
         Date timestamp = new Date();
         session.setTimestamp(timestamp);
@@ -50,15 +50,15 @@ public class SimpleSessionService implements SessionService {
         SessionObject[] sessionHistory = new SessionObject[0];
         session.setSessionHistory(sessionHistory);
         
-        this.sessions.put(uniqueSessionID, session);
+        this.sessions.put(uniqueSessionId, session);
         
-        return uniqueSessionID;
+        return uniqueSessionId;
     }
 
     // thinking that this is for storage? 
-    //@Override
-    //public String retrieve(Properties properties) {
-        // TODO Auto-generated method stub
+    // @Override
+    // public String retrieve(Properties properties) {
+    // TODO Auto-generated method stub
     //    return null;
     //}
 

@@ -162,8 +162,8 @@ public class Application {
     public Response process(Request request) {
         
         // Check if session exists? -- check from the request !  
-            // If no Session create new Session
-            // If Session exists, pull session information to pass
+        // If no Session create new Session
+        // If Session exists, pull session information to pass
         
         Session currentSession = null; // initialize currentSession 
         SessionObject sessionObject = new SessionObject();
