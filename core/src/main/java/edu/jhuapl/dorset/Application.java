@@ -32,6 +32,9 @@ import edu.jhuapl.dorset.reporting.NullReporter;
 import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.Reporter;
 import edu.jhuapl.dorset.routing.Router;
+import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.SessionObject;
+import edu.jhuapl.dorset.sessions.SessionService;
 import edu.jhuapl.dorset.users.User;
 
 /**
@@ -64,6 +67,7 @@ public class Application {
     protected Router router;
     protected Reporter reporter;
     protected User user;
+    protected SessionService sessionService;
     protected List<RequestFilter> requestFilters;
     protected List<ResponseFilter> responseFilters;
     protected List<ShutdownListener> shutdownListeners;
@@ -138,6 +142,16 @@ public class Application {
     public void setUser(User user) {
         this.user = user;
     }
+    
+    /**
+     * Set a SessionService to handle sessions for a Dorset application
+     *
+     * @param sessionService  a SessionService
+     * 
+     */
+    public void setSessionService(SessionService sessionService) {
+        this.sessionService = sessionService;
+    }
 
     /**
      * Process a request
@@ -146,16 +160,39 @@ public class Application {
      * @return Response object
      */
     public Response process(Request request) {
+        
+        // Check if session exists? -- check from the request !  
+            // If no Session create new Session
+            // If Session exists, pull session information to pass
+        
+        Session currentSession = null; // initialize currentSession 
+        SessionObject sessionObject = new SessionObject();
+        String sessionId = "";
+        if (request.getSession() != null) { // check if it is an ongoing session in the Request
+            currentSession = request.getSession(); 
+            sessionId = currentSession.getId();
+        } else {
+            sessionId = this.sessionService.create();
+            currentSession = this.sessionService.getSession(sessionId);
+        }
+                 
+  
         logger.info("Processing request: " + request.getText());
+        
+        sessionObject.setRequestId(request.getId());
+        sessionObject.setRequest(request);
+        
         for (RequestFilter rf : requestFilters) {
-            request = rf.filter(request);
+            request = rf.filter(request);  
+            sessionObject.setRequest(request); // replace request with filtered request
         }
         Response response = new Response(new ResponseStatus(
                 Code.NO_AVAILABLE_AGENT));
         Report report = new Report(request);
 
         long startTime = System.nanoTime();
-        Agent[] agents = router.route(request);
+        Agent[] agents = router.route(request); // do we want to include this information in the session as well? 
+                
         report.setRouteTime(startTime, System.nanoTime());
         if (agents.length > 0) {
             response = new Response(new ResponseStatus(
@@ -164,21 +201,28 @@ public class Application {
             for (Agent agent : agents) {
                 report.setAgent(agent);
                 AgentResponse agentResponse = null;
-                if (this.user != null) {
-                    agentResponse = agent.process(new AgentRequest(new Request(request.getText(), this.user, request.getId())));
-                } else {
-                    agentResponse = agent.process(new AgentRequest(request));
-                }
+                
+                AgentRequest agentRequest = new AgentRequest(request.getText(), this.user); // Create AgentRequest
+                agentRequest.setSession(currentSession); // Set the session in the AgentRequest
+                agentResponse = agent.process(agentRequest); // Process AgentRequest
+                
                 if (agentResponse != null) {
-                    // take first answer
+                    
+                    // Get agentResponse and check for dialog and remove from session service 
+                    // Set Response in the session object
+                    // Check the state of the Status and handle accordingly --> move this to the SessionService 
                     response = new Response(agentResponse);
+                    sessionObject.setResponse(response); 
+                    
+                    this.sessionService.update(sessionId, sessionObject);
+                    
                     break;
                 }
             }
             report.setAgentTime(startTime, System.nanoTime());
         }
         report.setResponse(response);
-        reporter.store(report);
+        reporter.store(report); // should we also have an additional store session service? or embed session in report?
 
         return response;
     }
