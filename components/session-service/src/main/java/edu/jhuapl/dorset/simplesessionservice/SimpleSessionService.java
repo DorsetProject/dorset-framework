@@ -16,18 +16,16 @@
  */
 
 package edu.jhuapl.dorset.simplesessionservice;
-
+ 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
-import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.SessionObject;
 import edu.jhuapl.dorset.sessions.SessionService;
 
 
@@ -38,28 +36,26 @@ public class SimpleSessionService implements SessionService {
     // default constructor
     public SimpleSessionService(){
         this.sessions = new HashMap<String, Session>();
-        
+      
     }
     
     @Override
-    public String create(Request request) {
-        
-        String uniqueSessionID = UUID.randomUUID().toString();
-        Date timestamp = new Date();
+    public String create() {
         Session session = new Session();
+        String uniqueSessionID = UUID.randomUUID().toString(); // should i validate that it is unique? 
+        
+        Date timestamp = new Date();
         session.setTimestamp(timestamp);
         
-        JsonArray sessionHistory = new JsonArray();
-        JsonObject odsfkjasdf = new JsonObject();
-        odsfkjasdf.addProperty("request", "temp"); // maybe JsonObject is the wrong data type to use
-        
-        sessionHistory.add(odsfkjasdf);
+        SessionObject[] sessionHistory = new SessionObject[0];
         session.setSessionHistory(sessionHistory);
         
         this.sessions.put(uniqueSessionID, session);
+        
         return uniqueSessionID;
     }
 
+    // thinking that this is for storage? 
     //@Override
     //public String retrieve(Properties properties) {
         // TODO Auto-generated method stub
@@ -67,21 +63,29 @@ public class SimpleSessionService implements SessionService {
     //}
 
     @Override
-    public void update(String id, Session session) {
-        // TODO Auto-generated method stub
+    public void update(String sessionId, SessionObject sessionObject) {
         
+        // get session by session id from the hash map 
+        // get the session history from the session
+        // update the session history with the new session object
+        
+        Session currentSession = this.sessions.get(sessionId);
+        SessionObject[] sessionHistory = currentSession.getSessionHistory();
+        sessionHistory[sessionHistory.length] = sessionObject;
+        currentSession.setSessionHistory(sessionHistory);         
+        this.sessions.put(sessionId, currentSession);
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(String sessionId) {
         // TODO Auto-generated method stub
-        
+        this.sessions.remove(sessionId);
     }
 
     @Override
-    public Session getSession(String id) {
+    public Session getSession(String sessionId) {
         // TODO Auto-generated method stub
-        return null;
+        return this.sessions.get(sessionId);
     }
 
     

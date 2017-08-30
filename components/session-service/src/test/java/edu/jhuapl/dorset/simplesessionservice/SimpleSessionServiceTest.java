@@ -1,5 +1,16 @@
 package edu.jhuapl.dorset.simplesessionservice;
 
-public class SimpleSessionServiceTest {
+import static org.junit.Assert.*;
 
+import org.junit.Test;
+
+public class SimpleSessionServiceTest {
+    
+    @Test
+    public void testSimpleSessionService() {
+        
+        SimpleSessionService sessionService = new SimpleSessionService();
+
+    }
+    
 }
