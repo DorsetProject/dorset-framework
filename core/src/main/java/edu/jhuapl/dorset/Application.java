@@ -161,9 +161,56 @@ public class Application {
      */
     public Response process(Request request) {
         
-        // Check if session exists? -- check from the request !  
-        // If no Session create new Session
-        // If Session exists, pull session information to pass
+        if (this.sessionService != null) {
+            Response response = this.process(request, this.sessionService);
+            return response;
+        }
+        
+        logger.info("Processing request: " + request.getText());
+        for (RequestFilter rf : requestFilters) {
+            request = rf.filter(request);
+        }
+        Response response = new Response(new ResponseStatus(
+                Code.NO_AVAILABLE_AGENT));
+        Report report = new Report(request);
+
+        long startTime = System.nanoTime();
+        Agent[] agents = router.route(request);
+        report.setRouteTime(startTime, System.nanoTime());
+        if (agents.length > 0) {
+            response = new Response(new ResponseStatus(
+                    Code.NO_RESPONSE_FROM_AGENT));
+            startTime = System.nanoTime();
+            for (Agent agent : agents) {
+                report.setAgent(agent);
+                AgentResponse agentResponse = null;
+                if (this.user != null) {
+                    agentResponse = agent.process(new AgentRequest(new Request(request.getText(), this.user, request.getId())));
+                } else {
+                    agentResponse = agent.process(new AgentRequest(request));
+                }
+                if (agentResponse != null) {
+                    // take first answer
+                    response = new Response(agentResponse);
+                    break;
+                }
+            }
+            report.setAgentTime(startTime, System.nanoTime());
+        }
+        report.setResponse(response);
+        reporter.store(report);
+
+        return response;
+    }
+    
+    /**
+     * Process a request
+     *
+     * @param request  Request object
+     * @param sessionService  SessionService
+     * @return Response object
+     */
+    public Response process(Request request, SessionService sessionService) {
         
         Session currentSession = null; // initialize currentSession 
         SessionObject sessionObject = new SessionObject();
@@ -172,10 +219,9 @@ public class Application {
             currentSession = request.getSession(); 
             sessionId = currentSession.getId();
         } else {
-            sessionId = this.sessionService.create();
-            currentSession = this.sessionService.getSession(sessionId);
-        }
-                 
+            sessionId = sessionService.create();
+            currentSession = sessionService.getSession(sessionId);
+        }                 
   
         logger.info("Processing request: " + request.getText());
         
@@ -207,14 +253,10 @@ public class Application {
                 agentResponse = agent.process(agentRequest); // Process AgentRequest
                 
                 if (agentResponse != null) {
-                    
-                    // Get agentResponse and check for dialog and remove from session service 
-                    // Set Response in the session object
-                    // Check the state of the Status and handle accordingly --> move this to the SessionService 
+                     
                     response = new Response(agentResponse);
                     sessionObject.setResponse(response); 
-                    
-                    this.sessionService.update(sessionId, sessionObject);
+                    sessionService.update(sessionId, sessionObject);
                     
                     break;
                 }
