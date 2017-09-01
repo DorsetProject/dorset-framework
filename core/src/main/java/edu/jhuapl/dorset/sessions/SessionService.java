@@ -20,7 +20,7 @@ package edu.jhuapl.dorset.sessions;
 /**
  * Services the session information for a Dorset Application.
  * <p>
- * The sessions support dialog for the Dorset Application and for Agents.
+ * The session service supports dialog for the Dorset Application and for Agents.
  */
 public interface SessionService {
 

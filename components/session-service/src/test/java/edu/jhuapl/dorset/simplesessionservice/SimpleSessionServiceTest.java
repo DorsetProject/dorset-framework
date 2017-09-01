@@ -9,8 +9,8 @@ public class SimpleSessionServiceTest {
     @Test
     public void testSimpleSessionService() {
         
-        SimpleSessionService sessionService = new SimpleSessionService();
-
+        // placeholder for SimpleSessionServiceTest
+        
     }
     
 }
