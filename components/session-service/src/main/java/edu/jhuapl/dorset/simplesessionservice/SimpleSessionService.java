@@ -39,7 +39,9 @@ public class SimpleSessionService implements SessionService {
     @Override
     public String create() {
         Session session = new Session();
+        
         String uniqueSessionId = UUID.randomUUID().toString();
+        session.setId(uniqueSessionId);
         
         Date timestamp = new Date();
         session.setTimestamp(timestamp);
