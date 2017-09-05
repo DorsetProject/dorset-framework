@@ -30,6 +30,9 @@ import edu.jhuapl.dorset.filters.RequestFilter;
 import edu.jhuapl.dorset.filters.WakeupRequestFilter;
 import edu.jhuapl.dorset.routing.Router;
 import edu.jhuapl.dorset.routing.SingleAgentRouter;
+import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.SessionService;
+import edu.jhuapl.dorset.sessions.Session.SessionStatus;
 
 public class ApplicationTest {
     @Test
@@ -100,7 +103,62 @@ public class ApplicationTest {
 
         assertEquals("test", response.getText());
     }
+    
+    @Test
+    public void testAddingSessionsNewSession() {
+        Agent agent = mock(Agent.class);
+        when(agent.process((AgentRequest) anyObject())).thenAnswer(new Answer<AgentResponse>() {
+            @Override
+            public AgentResponse answer(InvocationOnMock invocation) {
+                Object[] args = invocation.getArguments();
+                AgentResponse agentResponse = new AgentResponse(((AgentRequest) args[0]).getText());
+                agentResponse.setSessionStatus(SessionStatus.CLOSED);
+                return agentResponse;
+            }
+        });
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+        SessionService sessionService = mock(SessionService.class);
 
+        app.setSessionService(sessionService);
+
+        Request request = new Request("test");
+        Response response = app.process(request);
+
+        assertEquals("test", response.getText());
+        assertEquals(SessionStatus.CLOSED, response.getSessionStatus());
+
+    }
+
+    @Test
+    public void testAddingSessionsExistingSession() {
+        Agent agent = mock(Agent.class);
+        when(agent.process((AgentRequest) anyObject())).thenAnswer(new Answer<AgentResponse>() {
+            @Override
+            public AgentResponse answer(InvocationOnMock invocation) {
+                Object[] args = invocation.getArguments();
+                AgentResponse agentResponse = new AgentResponse(((AgentRequest) args[0]).getText());
+                agentResponse.setSessionStatus(SessionStatus.OPEN);
+                return agentResponse;
+            }
+        });
+
+        Router router = new SingleAgentRouter(agent);
+        Application app = new Application(router);
+
+        SessionService sessionService = mock(SessionService.class);
+
+        Session session = new Session();
+        Request request = new Request("test");
+        request.setSession(session);
+
+        Response response = app.process(request, sessionService);
+
+        assertEquals("test", response.getText());
+        assertEquals(SessionStatus.OPEN, response.getSessionStatus());
+
+    }
+    
     @Test
     public void testShutdown() {
         Router router = mock(Router.class);
