@@ -71,6 +71,8 @@ public class Response {
         this.text = response.getText();
         this.payload = response.getPayload();
         this.status = response.getStatus();
+        this.session = response.getSession();
+        this.sessionStatus = response.getSessionStatus();
     }
 
     /**
