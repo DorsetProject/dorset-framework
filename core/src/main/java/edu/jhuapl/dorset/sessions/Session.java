@@ -30,13 +30,23 @@ public class Session {
     public SessionStatus sessionStatus;
     public SessionObject[] sessionHistory;
 
-    public Session(){
+    /**
+     * Create a Session
+     *
+     */
+    public Session() {
         this.id = UUID.randomUUID().toString();
         this.timestamp = new Date();
         this.sessionHistory = new SessionObject[0];
     }
-    
-    public Session(String id){
+
+    /**
+     * Create a Session
+     *
+     * @param id  the session id
+     *
+     */
+    public Session(String id) {
         this.id = id;
         this.timestamp = new Date();
         this.sessionHistory = new SessionObject[0];
