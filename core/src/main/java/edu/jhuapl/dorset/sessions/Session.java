@@ -21,11 +21,13 @@ import java.util.Date;
 
 import com.google.gson.JsonArray;
 
+import edu.jhuapl.dorset.agents.Agent;
+
 public class Session {
 
     public String id;
     public Date timestamp; // should have start date, end date, date last updated?
-    public String primaryAgent;
+    public Agent primaryAgent;
     public SessionStatus sessionStatus;
     public SessionObject[] sessionHistory;
 
@@ -45,11 +47,11 @@ public class Session {
         this.timestamp = timestamp;
     }
 
-    public String getPrimaryAgent() {
+    public Agent getPrimaryAgent() {
         return this.primaryAgent;
     }
 
-    public void setPrimaryAgent(String primaryAgent) {
+    public void setPrimaryAgent(Agent primaryAgent) {
         this.primaryAgent = primaryAgent;
     }
 
