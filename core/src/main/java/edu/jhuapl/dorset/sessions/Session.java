@@ -18,25 +18,32 @@
 package edu.jhuapl.dorset.sessions;
 
 import java.util.Date;
-
-import com.google.gson.JsonArray;
+import java.util.UUID;
 
 import edu.jhuapl.dorset.agents.Agent;
 
 public class Session {
 
-    public String id;
+    public final String id;
     public Date timestamp; // should have start date, end date, date last updated?
     public Agent primaryAgent;
     public SessionStatus sessionStatus;
     public SessionObject[] sessionHistory;
 
+    public Session(){
+        this.id = UUID.randomUUID().toString();
+        this.timestamp = new Date();
+        this.sessionHistory = new SessionObject[0];
+    }
+    
+    public Session(String id){
+        this.id = id;
+        this.timestamp = new Date();
+        this.sessionHistory = new SessionObject[0];
+    }
+    
     public String getId() {
         return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Date getTimestamp() {

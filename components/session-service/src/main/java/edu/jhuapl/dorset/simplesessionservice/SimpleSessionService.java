@@ -39,19 +39,7 @@ public class SimpleSessionService implements SessionService {
     @Override
     public String create() {
         Session session = new Session();
-        
-        String uniqueSessionId = UUID.randomUUID().toString();
-        session.setId(uniqueSessionId);
-        
-        Date timestamp = new Date();
-        session.setTimestamp(timestamp);
-        
-        SessionObject[] sessionHistory = new SessionObject[0];
-        session.setSessionHistory(sessionHistory);
-        
-        this.sessions.put(uniqueSessionId, session);
-        
-        return uniqueSessionId;
+        return session.getId();
     }
 
     // thinking that retrieve should be for pulling out sessions similar to a query
