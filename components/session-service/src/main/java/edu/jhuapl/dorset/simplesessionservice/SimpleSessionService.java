@@ -31,7 +31,6 @@ public class SimpleSessionService implements SessionService {
 
     public SimpleSessionService() {
         this.sessions = new HashMap<String, Session>();
-      
     }
     
     @Override
@@ -42,13 +41,11 @@ public class SimpleSessionService implements SessionService {
 
     @Override
     public void update(String sessionId, SessionObject sessionObject) {
-        
         Session currentSession = this.sessions.get(sessionId);
         SessionObject[] sessionHistory = currentSession.getSessionHistory();
         sessionHistory[sessionHistory.length] = sessionObject;
         currentSession.setSessionHistory(sessionHistory);         
         this.sessions.put(sessionId, currentSession);
-        
     }
 
     @Override
@@ -60,6 +57,4 @@ public class SimpleSessionService implements SessionService {
     public Session getSession(String sessionId) {
         return this.sessions.get(sessionId);
     }
-
-    
 }
