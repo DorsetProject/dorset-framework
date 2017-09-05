@@ -40,14 +40,6 @@ public class SimpleSessionService implements SessionService {
         return session.getId();
     }
 
-    // thinking that retrieve should be for pulling out sessions similar to a query
-    // service and we will need a store session method (e.g., file, db)
-    // @Override
-    // public String retrieve(Properties properties) {
-    // TODO Auto-generated method stub
-    //    return null;
-    //}
-
     @Override
     public void update(String sessionId, SessionObject sessionObject) {
         

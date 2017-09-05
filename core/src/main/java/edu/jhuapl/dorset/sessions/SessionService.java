@@ -25,8 +25,6 @@ package edu.jhuapl.dorset.sessions;
 public interface SessionService {
 
     public String create(); 
-
-    //public String retrieve(Properties properties); 
     
     public void update(String sessionId, SessionObject sesionObject); 
    
