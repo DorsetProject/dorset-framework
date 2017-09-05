@@ -17,10 +17,8 @@
 
 package edu.jhuapl.dorset.simplesessionservice;
  
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import edu.jhuapl.dorset.sessions.Session;
 import edu.jhuapl.dorset.sessions.SessionObject;
