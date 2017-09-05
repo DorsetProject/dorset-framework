@@ -17,7 +17,9 @@
 
 package edu.jhuapl.dorset.sessions;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import edu.jhuapl.dorset.agents.Agent;
@@ -28,7 +30,7 @@ public class Session {
     public Date timestamp; // should have start date, end date, date last updated?
     public Agent primaryAgent;
     public SessionStatus sessionStatus;
-    public SessionObject[] sessionHistory;
+    public List<SessionObject> sessionHistory;
 
     /**
      * Create a Session
@@ -37,7 +39,7 @@ public class Session {
     public Session() {
         this.id = UUID.randomUUID().toString();
         this.timestamp = new Date();
-        this.sessionHistory = new SessionObject[0];
+        this.sessionHistory = new ArrayList();
     }
 
     /**
@@ -49,7 +51,7 @@ public class Session {
     public Session(String id) {
         this.id = id;
         this.timestamp = new Date();
-        this.sessionHistory = new SessionObject[0];
+        this.sessionHistory = new ArrayList();
     }
     
     public String getId() {
@@ -80,11 +82,11 @@ public class Session {
         this.sessionStatus = status;
     }
 
-    public SessionObject[] getSessionHistory() {
+    public List<SessionObject> getSessionHistory() {
         return this.sessionHistory;
     }
 
-    public void setSessionHistory(SessionObject[] sessionHistory) {
+    public void setSessionHistory(List<SessionObject> sessionHistory) {
         this.sessionHistory = sessionHistory;
     }
 
