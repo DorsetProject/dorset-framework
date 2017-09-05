@@ -16,8 +16,9 @@
  */
 
 package edu.jhuapl.dorset.simplesessionservice;
- 
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.jhuapl.dorset.sessions.Session;
@@ -26,25 +27,27 @@ import edu.jhuapl.dorset.sessions.SessionService;
 
 
 public class SimpleSessionService implements SessionService {
-    
+
     private Map<String, Session> sessions;
 
     public SimpleSessionService() {
         this.sessions = new HashMap<String, Session>();
     }
-    
+
     @Override
     public String create() {
         Session session = new Session();
+        this.sessions.put(session.getId(), session);
         return session.getId();
     }
 
     @Override
     public void update(String sessionId, SessionObject sessionObject) {
         Session currentSession = this.sessions.get(sessionId);
-        SessionObject[] sessionHistory = currentSession.getSessionHistory();
-        sessionHistory[sessionHistory.length] = sessionObject;
-        currentSession.setSessionHistory(sessionHistory);         
+        List<SessionObject> sessionHistory = currentSession.getSessionHistory();
+        sessionHistory.add(sessionObject);
+
+        currentSession.setSessionHistory(sessionHistory);
         this.sessions.put(sessionId, currentSession);
     }
 
@@ -57,4 +60,5 @@ public class SimpleSessionService implements SessionService {
     public Session getSession(String sessionId) {
         return this.sessions.get(sessionId);
     }
+
 }
