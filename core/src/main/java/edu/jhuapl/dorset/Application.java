@@ -33,7 +33,7 @@ import edu.jhuapl.dorset.reporting.Report;
 import edu.jhuapl.dorset.reporting.Reporter;
 import edu.jhuapl.dorset.routing.Router;
 import edu.jhuapl.dorset.sessions.Session;
-import edu.jhuapl.dorset.sessions.SessionObject;
+import edu.jhuapl.dorset.sessions.Exchange;
 import edu.jhuapl.dorset.sessions.SessionService;
 import edu.jhuapl.dorset.users.User;
 
@@ -165,7 +165,7 @@ public class Application {
             Response response = this.process(request, this.sessionService);
             return response;
         }
-        
+
         logger.info("Processing request: " + request.getText());
         for (RequestFilter rf : requestFilters) {
             request = rf.filter(request);
@@ -213,7 +213,7 @@ public class Application {
     public Response process(Request request, SessionService sessionService) {
         
         Session currentSession = null; // initialize currentSession 
-        SessionObject sessionObject = new SessionObject();
+        Exchange exchange = new Exchange();
         String sessionId = "";
         if (request.getSession() != null) { // check if it is an ongoing session in the Request
             currentSession = request.getSession(); 
@@ -225,12 +225,12 @@ public class Application {
   
         logger.info("Processing request: " + request.getText());
         
-        sessionObject.setRequestId(request.getId());
-        sessionObject.setRequest(request);
+        exchange.setRequestId(request.getId());
+        exchange.setRequest(request);
         
         for (RequestFilter rf : requestFilters) {
             request = rf.filter(request);  
-            sessionObject.setRequest(request); // replace request with filtered request
+            exchange.setRequest(request); // replace request with filtered request
         }
         Response response = new Response(new ResponseStatus(
                 Code.NO_AVAILABLE_AGENT));
@@ -255,9 +255,9 @@ public class Application {
                 if (agentResponse != null) {
                      
                     response = new Response(agentResponse);
-                    sessionObject.setResponse(response); 
-                    sessionService.update(sessionId, sessionObject);
-                    
+                    exchange.setResponse(response); 
+                    sessionService.update(sessionId, exchange);
+
                     break;
                 }
             }
