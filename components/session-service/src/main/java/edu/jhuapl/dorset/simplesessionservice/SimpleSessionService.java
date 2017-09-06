@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.jhuapl.dorset.sessions.Session;
-import edu.jhuapl.dorset.sessions.SessionObject;
+import edu.jhuapl.dorset.sessions.Exchange;
 import edu.jhuapl.dorset.sessions.SessionService;
 
 
@@ -42,12 +42,12 @@ public class SimpleSessionService implements SessionService {
     }
 
     @Override
-    public void update(String sessionId, SessionObject sessionObject) {
+    public void update(String sessionId, Exchange exchange) {
         Session currentSession = this.sessions.get(sessionId);
-        List<SessionObject> sessionHistory = currentSession.getSessionHistory();
-        sessionHistory.add(sessionObject);
+        List<Exchange> sessionHistory = currentSession.getExchangeHistory();
+        sessionHistory.add(exchange);
 
-        currentSession.setSessionHistory(sessionHistory);
+        currentSession.setExchangeHistory(sessionHistory);
         this.sessions.put(sessionId, currentSession);
     }
 
