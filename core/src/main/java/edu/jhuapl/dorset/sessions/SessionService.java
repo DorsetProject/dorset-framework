@@ -26,7 +26,7 @@ public interface SessionService {
 
     public String create(); 
     
-    public void update(String sessionId, SessionObject sesionObject); 
+    public void update(String sessionId, Exchange exchange); 
    
     public void delete(String id);
     

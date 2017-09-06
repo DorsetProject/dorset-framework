@@ -6,7 +6,7 @@ import edu.jhuapl.dorset.Request;
 import edu.jhuapl.dorset.Response;
 import edu.jhuapl.dorset.sessions.Session.SessionStatus;
 
-public class SessionObject {
+public class Exchange {
     
     public String requestId;
     public Date timestamp;

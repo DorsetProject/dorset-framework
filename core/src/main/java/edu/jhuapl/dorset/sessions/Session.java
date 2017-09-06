@@ -30,7 +30,7 @@ public class Session {
     public Date timestamp; // should have start date, end date, date last updated?
     public Agent primaryAgent;
     public SessionStatus sessionStatus;
-    public List<SessionObject> sessionHistory;
+    public List<Exchange> exchangeHistory;
 
     /**
      * Create a Session
@@ -39,7 +39,7 @@ public class Session {
     public Session() {
         this.id = UUID.randomUUID().toString();
         this.timestamp = new Date();
-        this.sessionHistory = new ArrayList();
+        this.exchangeHistory = new ArrayList<Exchange>();
     }
 
     /**
@@ -51,7 +51,7 @@ public class Session {
     public Session(String id) {
         this.id = id;
         this.timestamp = new Date();
-        this.sessionHistory = new ArrayList();
+        this.exchangeHistory = new ArrayList<Exchange>();
     }
     
     public String getId() {
@@ -82,12 +82,12 @@ public class Session {
         this.sessionStatus = status;
     }
 
-    public List<SessionObject> getSessionHistory() {
-        return this.sessionHistory;
+    public List<Exchange> getExchangeHistory() {
+        return this.exchangeHistory;
     }
 
-    public void setSessionHistory(List<SessionObject> sessionHistory) {
-        this.sessionHistory = sessionHistory;
+    public void setExchangeHistory(List<Exchange> exchangeHistory) {
+        this.exchangeHistory = exchangeHistory;
     }
 
     public String sessionToString() {
