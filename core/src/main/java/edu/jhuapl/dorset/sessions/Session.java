@@ -74,11 +74,11 @@ public class Session {
         this.primaryAgent = primaryAgent;
     }
 
-    public SessionStatus getStatus() {
+    public SessionStatus getSessionStatus() {
         return this.sessionStatus;
     }
 
-    public void setStatus(SessionStatus status) {
+    public void setSessionStatus(SessionStatus status) {
         this.sessionStatus = status;
     }
 
@@ -97,7 +97,7 @@ public class Session {
 
     public enum SessionStatus {
 
-        OPEN, CLOSED, TIMED_OUT, ERROR;
+        NEW, OPEN, CLOSED, TIMED_OUT, ERROR;
 
     }
 
