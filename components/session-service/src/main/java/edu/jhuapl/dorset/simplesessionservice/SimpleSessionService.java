@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.Session.SessionStatus;
 import edu.jhuapl.dorset.sessions.Exchange;
 import edu.jhuapl.dorset.sessions.SessionService;
 
@@ -37,6 +38,7 @@ public class SimpleSessionService implements SessionService {
     @Override
     public String create() {
         Session session = new Session();
+        session.setSessionStatus(SessionStatus.NEW);
         this.sessions.put(session.getId(), session);
         return session.getId();
     }
