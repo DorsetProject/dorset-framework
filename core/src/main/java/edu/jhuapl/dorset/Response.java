@@ -234,7 +234,7 @@ public class Response {
     /**
      * Get the session
      *
-     * @return the session of the request
+     * @return the session
      */
     public Session getSession() {
         return session;
@@ -259,7 +259,7 @@ public class Response {
     }
 
     /**
-     * Set the session
+     * Set the session status
      *
      * @param sessionStatus  the session status
      */
