@@ -8,59 +8,78 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import edu.jhuapl.dorset.Request;
+import edu.jhuapl.dorset.agents.AgentRequest;
 
 public class DuckDuckGoSmartForm {
-   
+
     public String sessionId;
-    public String requestId;
     public Date timestamp;
     public String requestText;
     public List<JsonObject> relatedTopics;
-    public String abstractText;       
-    public int numRelatedTopicsThreshold = 5; 
-   
-    public DuckDuckGoSmartForm () {
-        
+    public String abstractText;
+    public int numRelatedTopicsThreshold = 5;
+
+    /**
+     * 
+     * DuckDuckGoSmartForm
+     * 
+     * 
+     */
+    public DuckDuckGoSmartForm() {
+
     }
-    
-    public DuckDuckGoSmartForm(Request request, String data) {
-        this.requestId = request.getId();
-        this.sessionId = request.getSession().getId();
+
+    /**
+     * 
+     * DuckDuckGoSmartForm
+     * 
+     * @param request  request
+     * @param data  data returned from DuckDuckGo given request
+     *
+     */
+    public DuckDuckGoSmartForm(AgentRequest request, String data) {
+        try {
+            this.sessionId = request.getSession().getId();
+        } catch (NullPointerException e) {
+            this.sessionId = null;
+        }
         this.requestText = request.getText();
-        
+
         Gson gson = new Gson();
         JsonObject jsonObj = gson.fromJson(data, JsonObject.class);
         this.abstractText = jsonObj.get("AbstractText").getAsString();
         JsonArray relatedTopicsArr = jsonObj.get("RelatedTopics").getAsJsonArray();
-        
-        this.relatedTopics = new ArrayList<JsonObject>();
-        
-        for (int index = 0; index < relatedTopicsArr.size(); index++) {
-            if ( index < this.numRelatedTopicsThreshold ) {
-                String relatedTopicURL = relatedTopicsArr.get(index).getAsJsonObject().
-                                get("FirstURL").getAsString();
-                String relatedTopicText = relatedTopicsArr.get(index).getAsJsonObject().
-                                get("Text").getAsString();
-                
-                String[] tokenizedURL = relatedTopicURL.split("/");
-                String relatedText = tokenizedURL[3].replaceAll("_","");
 
-                // parse relatedTopicURL
-                // https://duckduckgo.com/Donald_Trump,
-                
-                JsonObject relatedTopicJsonObj = new JsonObject();
-                relatedTopicJsonObj.addProperty("relatedTopicURL", relatedTopicURL);
-                relatedTopicJsonObj.addProperty("relatedTopicText", relatedTopicText);
-                relatedTopicJsonObj.addProperty("relatedText", relatedText);
-                
-                this.relatedTopics.add(relatedTopicJsonObj);
-                
+        this.relatedTopics = new ArrayList<JsonObject>();
+
+        for (int index = 0; index < relatedTopicsArr.size(); index++) {
+            if (index < this.numRelatedTopicsThreshold) {
+
+                if (relatedTopicsArr.get(index).getAsJsonObject().get("Result") != null) {
+
+                    String relatedTopicUrl = relatedTopicsArr.get(index).getAsJsonObject()
+                                    .get("FirstURL").getAsString();
+                    String relatedTopicText = relatedTopicsArr.get(index).getAsJsonObject()
+                                    .get("Text").getAsString();
+
+                    // parse relatedTopicUrl 'https://duckduckgo.com/Donald_Trump'
+                    String[] tokenizedUrl = relatedTopicUrl.split("/");
+                    String relatedTopic = tokenizedUrl[3].replaceAll("_", " ");
+                    relatedTopic = relatedTopic.replaceAll("%2C", ",");
+
+                    JsonObject relatedTopicJsonObj = new JsonObject();
+                    relatedTopicJsonObj.addProperty("relatedTopic", relatedTopic);
+                    relatedTopicJsonObj.addProperty("relatedTopicText", relatedTopicText);
+                    relatedTopicJsonObj.addProperty("relatedTopicURL", relatedTopicUrl);
+
+                    this.relatedTopics.add(relatedTopicJsonObj);
+
+                }
             }
         }
-        
+
     }
-    
+
     public String getSessionId() {
         return sessionId;
     }
@@ -69,14 +88,6 @@ public class DuckDuckGoSmartForm {
         this.sessionId = sessionId;
     }
 
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-    
     public Date getTimestamp() {
         return this.timestamp;
     }
@@ -84,7 +95,7 @@ public class DuckDuckGoSmartForm {
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
-    
+
     public String getRequestText() {
         return requestText;
     }
@@ -108,7 +119,7 @@ public class DuckDuckGoSmartForm {
     public void setAbstractText(String abstractText) {
         this.abstractText = abstractText;
     }
-    
+
     public int getNumRelatedTopicsThreshold() {
         return numRelatedTopicsThreshold;
     }

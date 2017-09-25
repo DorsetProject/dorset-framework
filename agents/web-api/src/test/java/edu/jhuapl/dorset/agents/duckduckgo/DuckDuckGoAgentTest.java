@@ -16,7 +16,8 @@
  */
 package edu.jhuapl.dorset.agents.duckduckgo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -27,8 +28,9 @@ import edu.jhuapl.dorset.agents.AgentResponse;
 import edu.jhuapl.dorset.agents.FakeHttpClient;
 import edu.jhuapl.dorset.agents.FakeHttpResponse;
 import edu.jhuapl.dorset.agents.FileReader;
-import edu.jhuapl.dorset.agents.duckduckgo.DuckDuckGoAgent;
 import edu.jhuapl.dorset.http.HttpClient;
+import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.Session.SessionStatus;
 
 public class DuckDuckGoAgentTest {
 
@@ -42,7 +44,8 @@ public class DuckDuckGoAgentTest {
         AgentResponse response = agent.process(new AgentRequest(query));
 
         assertTrue(response.isSuccess());
-        assertTrue(response.getText().startsWith("Barack Hussein Obama II is an American politician"));
+        assertTrue(response.getText()
+                        .startsWith("Barack Hussein Obama II is an American politician"));
     }
 
     @Test
@@ -54,7 +57,8 @@ public class DuckDuckGoAgentTest {
         AgentResponse response = agent.process(new AgentRequest("Who is Barack Obama?"));
 
         assertTrue(response.isSuccess());
-        assertTrue(response.getText().startsWith("Barack Hussein Obama II is an American politician"));
+        assertTrue(response.getText()
+                        .startsWith("Barack Hussein Obama II is an American politician"));
     }
 
     @Test
@@ -67,6 +71,46 @@ public class DuckDuckGoAgentTest {
         AgentResponse response = agent.process(new AgentRequest(query));
 
         assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
+        assertEquals("Multiple answers for this question. Did you mean 'Barack Obama', 'Obama, Fukui', "
+                        + " or 'Obama Day'?", response.getStatus().getMessage());
+        assertEquals(SessionStatus.OPEN, response.getSessionStatus());
+
+    }
+
+
+    @Test
+    public void testFollowOnResponseWithSession() {
+
+        String firstQuery = "Obama";
+        String secondQuery = "Barack Obama";
+        String jsonData = FileReader.getFileAsString("duckduckgo/obama.json");
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
+
+        Session session = new Session("1");
+        session.setSessionStatus(SessionStatus.NEW);
+        System.err.println(session.getId());
+
+        Agent agent = new DuckDuckGoAgent(client);
+        AgentRequest agentRequest = new AgentRequest(firstQuery);
+        agentRequest.setSession(session);
+        AgentResponse response = agent.process(agentRequest);
+
+        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
+        assertEquals("Multiple answers for this question. Did you mean 'Barack Obama', "
+                        + "'Obama, Fukui',  or 'Obama Day'?", response.getStatus().getMessage());
+        assertEquals(SessionStatus.OPEN, response.getSessionStatus());
+
+        session.setSessionStatus(SessionStatus.OPEN);
+
+        AgentRequest secondAgentRequest = new AgentRequest(secondQuery);
+        secondAgentRequest.setSession(session);
+
+        response = agent.process(secondAgentRequest);
+
+        assertEquals("Barack Obama The 44th and current President of the United States, "
+                        + "as well as the first African American to...", response.getText());
+        assertEquals(SessionStatus.CLOSED, response.getSessionStatus());
+
     }
 
     @Test

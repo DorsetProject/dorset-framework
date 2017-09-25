@@ -39,13 +39,14 @@ import edu.jhuapl.dorset.http.HttpRequest;
 import edu.jhuapl.dorset.http.HttpResponse;
 import edu.jhuapl.dorset.nlp.RuleBasedTokenizer;
 import edu.jhuapl.dorset.nlp.Tokenizer;
+import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.Session.SessionStatus;
 
 /**
  * DuckduckGo agent
  *
- * Duckduckgo has an instant answers API. It scrapes entity information from
- * data sources like Wikipedia and CrunchBase. Documentation on the api here:
- * https://duckduckgo.com/api
+ * Duckduckgo has an instant answers API. It scrapes entity information from data sources like
+ * Wikipedia and CrunchBase. Documentation on the api here: https://duckduckgo.com/api
  */
 public class DuckDuckGoAgent extends AbstractAgent {
     private static final Logger logger = LoggerFactory.getLogger(DuckDuckGoAgent.class);
@@ -55,26 +56,65 @@ public class DuckDuckGoAgent extends AbstractAgent {
     private static final String EXAMPLE = "Who is Barack Obama?";
 
     private HttpClient client;
+    private SmartFormService smartFormService;
     private Set<String> dictionary = new HashSet<String>(
-            Arrays.asList("what", "who", "is", "are", "a", "an", "the"));
+                    Arrays.asList("what", "who", "is", "are", "a", "an", "the"));
 
     /**
      * Create a duckduckgo agent
      *
-     * @param client  http client
+     * @param client http client
      */
     public DuckDuckGoAgent(HttpClient client) {
         this.client = client;
         this.setDescription(new Description("general answers", SUMMARY, EXAMPLE));
+        this.smartFormService = new SmartFormService();
     }
 
     @Override
     public AgentResponse process(AgentRequest request) {
         logger.debug("Handling the request: " + request.getText());
         String requestText = request.getText();
+        Session session = request.getSession();
+
+        // Check if session is a new session or a follow-up
+        AgentResponse response = null;
         String entityText = extractEntity(requestText);
-        String data = requestData(entityText);
-        return createResponse(data);
+
+        if (session != null) {
+            String data = null;
+
+            if (session.getSessionStatus() == SessionStatus.NEW) {
+                data = requestData(entityText);
+                this.smartFormService.updateHistory(request, data);
+                response = createResponse(data);
+                response.setSession(session);
+
+            } else if (session.getSessionStatus() == SessionStatus.OPEN) {
+                System.err.println("here");
+                String smartResponse = this.smartFormService.querySmartFormHistory(session.getId(),
+                                entityText);
+
+                if (smartResponse != null) {
+                    response = new AgentResponse(smartResponse);
+                    response.setSessionStatus(SessionStatus.CLOSED);
+                } else {
+                    // could not find answer in history - trying duckduckgo directly
+                    data = requestData(entityText);
+                    this.smartFormService.updateHistory(request, data);
+                    response = createResponse(data);
+                }
+
+                response.setSession(session);
+            }
+
+        } else {
+
+            String data = requestData(entityText);
+            this.smartFormService.updateHistory(request, data);
+            response = createResponse(data);
+        }
+        return response;
     }
 
     protected String requestData(String entity) {
@@ -96,12 +136,23 @@ public class DuckDuckGoAgent extends AbstractAgent {
         String abstractText = jsonObj.get("AbstractText").getAsString();
         if (abstractText.equals("")) {
             // most likely a disambiguation page
-            ResponseStatus status =
-                            new ResponseStatus(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
-                                            "Multiple answers for this question");
-            return new AgentResponse(status);
+            List<String> potentialEntities =
+                            this.smartFormService.getCurrentExchangePotentialEntities();
+            String disambiguationReponse = formatDisambiguationResponse(potentialEntities);
+            // AgentResponse agentResponse = new AgentResponse(disambiguationReponse);
+            // agentResponse.setSessionStatus(SessionStatus.OPEN);
+
+            ResponseStatus status = new ResponseStatus(
+                            ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
+                            "Multiple answers for this question. " + disambiguationReponse);
+            AgentResponse agentResponse = new AgentResponse(status);
+            agentResponse.setSessionStatus(SessionStatus.OPEN);
+
+            return agentResponse;
         }
-        return new AgentResponse(abstractText);
+        AgentResponse agentResponse = new AgentResponse(abstractText);
+        agentResponse.setSessionStatus(SessionStatus.CLOSED);
+        return agentResponse;
     }
 
     /**
@@ -143,19 +194,19 @@ public class DuckDuckGoAgent extends AbstractAgent {
         return "http://api.duckduckgo.com/?format=json&q=" + entity;
     }
 
-    protected String formatDisambiguationResponse(List<String> potentialEntities){
+    protected String formatDisambiguationResponse(List<String> potentialEntities) {
         String response = "Did you mean ";
-        
+
         for (int index = 0; index < potentialEntities.size(); index++) {
-            if (index != potentialEntities.size()-1) {
-                response = response + potentialEntities.get(index) + ", ";
+            if (index != potentialEntities.size() - 1) {
+                response = response + "'" + potentialEntities.get(index) + "', ";
 
             } else {
-                response = response + " or " + potentialEntities.get(index) + "?";
+                response = response + " or '" + potentialEntities.get(index) + "'?";
             }
         }
-        
+
         return response;
-        
+
     }
 }
