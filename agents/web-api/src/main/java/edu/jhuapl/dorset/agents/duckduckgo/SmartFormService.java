@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import edu.jhuapl.dorset.agents.AgentRequest;
@@ -14,6 +16,7 @@ import edu.jhuapl.dorset.agents.AgentRequest;
 public class SmartFormService {
 
     public int historyThreshold = 20;
+    public int numRelatedTopicsThreshold = 5;
     public List<DuckDuckGoSmartForm> smartFormHistory;
 
     /**
@@ -44,6 +47,27 @@ public class SmartFormService {
     public void setHistoryThreshold(int historyThreshold) {
         this.historyThreshold = historyThreshold;
     }
+    
+    /**
+     * Get number of related topics threshold
+     *
+     * @return numRelatedTopicsThreshold
+     *
+     */
+    public int getNumRelatedTopicsThreshold() {
+        return numRelatedTopicsThreshold;
+    }
+
+    /**
+     * Set number of related topics threshold
+     *
+     * @param numRelatedTopicsThreshold  
+     *
+     */
+    public void setNumRelatedTopicsThreshold(int numRelatedTopicsThreshold) {
+        this.numRelatedTopicsThreshold = numRelatedTopicsThreshold;
+    }
+    
     // test
     /**
      * Update history
@@ -53,7 +77,9 @@ public class SmartFormService {
      *
      */
     public void updateHistory(AgentRequest request, String data) {
-        DuckDuckGoSmartForm ddgSmartForm = new DuckDuckGoSmartForm(request, data);
+        List<JsonObject> relatedTopics = formatDdgData(data, this.numRelatedTopicsThreshold);
+        
+        DuckDuckGoSmartForm ddgSmartForm = new DuckDuckGoSmartForm(request, relatedTopics);
 
         if (this.smartFormHistory.size() < this.historyThreshold) {
             this.smartFormHistory.add(ddgSmartForm);
@@ -170,5 +196,50 @@ public class SmartFormService {
             potentialEntities.add(relatedTopics.get(index).get("relatedTopic").getAsString());
         }
         return potentialEntities;
+    }
+    
+    /**
+     * Format duckduckgo data response 
+     *
+     *@param 
+     * @return relatedTopic  
+     *
+     */
+    public List<JsonObject> formatDdgData(String data, int numRelatedTopicsThreshold) {
+        List<JsonObject> relatedTopics = new ArrayList<JsonObject>();
+        
+        Gson gson = new Gson();
+
+        JsonObject jsonObj = gson.fromJson(data, JsonObject.class);
+
+        JsonArray relatedTopicsArr = jsonObj.get("RelatedTopics").getAsJsonArray();
+
+        for (int index = 0; index < relatedTopicsArr.size(); index++) {
+            if (index < numRelatedTopicsThreshold) {
+
+                if (relatedTopicsArr.get(index).getAsJsonObject().get("Result") != null) {
+
+                    String relatedTopicUrl = relatedTopicsArr.get(index).getAsJsonObject()
+                                    .get("FirstURL").getAsString();
+                    String relatedTopicText = relatedTopicsArr.get(index).getAsJsonObject()
+                                    .get("Text").getAsString();
+
+                    // parse relatedTopicUrl 'https://duckduckgo.com/Donald_Trump'
+                    String[] tokenizedUrl = relatedTopicUrl.split("/");
+                    String relatedTopic = tokenizedUrl[3].replaceAll("_", " ");
+                    relatedTopic = relatedTopic.replaceAll("%2C", ",");
+
+                    JsonObject relatedTopicJsonObj = new JsonObject();
+                    relatedTopicJsonObj.addProperty("relatedTopic", relatedTopic);
+                    relatedTopicJsonObj.addProperty("relatedTopicText", relatedTopicText);
+                    relatedTopicJsonObj.addProperty("relatedTopicURL", relatedTopicUrl);
+
+                    relatedTopics.add(relatedTopicJsonObj);
+
+                }
+            }
+        }
+        
+        return relatedTopics;
     }
 }
