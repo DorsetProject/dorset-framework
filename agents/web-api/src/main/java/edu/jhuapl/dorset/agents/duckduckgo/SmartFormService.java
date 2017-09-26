@@ -68,7 +68,6 @@ public class SmartFormService {
         this.numRelatedTopicsThreshold = numRelatedTopicsThreshold;
     }
     
-    // test
     /**
      * Update history
      *

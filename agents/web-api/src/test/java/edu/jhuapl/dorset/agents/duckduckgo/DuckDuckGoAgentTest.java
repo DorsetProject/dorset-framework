@@ -77,6 +77,23 @@ public class DuckDuckGoAgentTest {
 
     }
 
+    @Test
+    public void testGetEmptyResponse() {
+        String query = "zergblah";
+        String jsonData = FileReader.getFileAsString("duckduckgo/zergblah.json");
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
+
+        Agent agent = new DuckDuckGoAgent(client);
+        AgentResponse response = agent.process(new AgentRequest(query));
+
+        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
+    }
+
+    @Test
+    public void testUrlEncoding() {
+        String urlBase = "http://api.duckduckgo.com/?format=json&q=";
+        assertEquals(urlBase + "Barack+Obama", DuckDuckGoAgent.createUrl("Barack Obama"));
+    }
 
     @Test
     public void testFollowOnResponseWithSession() {
@@ -87,7 +104,6 @@ public class DuckDuckGoAgentTest {
 
         Session session = new Session("1");
         session.setSessionStatus(SessionStatus.NEW);
-        System.err.println(session.getId());
 
         Agent agent = new DuckDuckGoAgent(client);
         AgentRequest agentRequest = new AgentRequest(firstQuery);
@@ -109,24 +125,6 @@ public class DuckDuckGoAgentTest {
         assertEquals("Barack Obama The 44th and current President of the United States, "
                         + "as well as the first African American to...", response.getText());
         assertEquals(SessionStatus.CLOSED, response.getSessionStatus());
-    }
-
-    @Test
-    public void testGetEmptyResponse() {
-        String query = "zergblah";
-        String jsonData = FileReader.getFileAsString("duckduckgo/zergblah.json");
-        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
-
-        Agent agent = new DuckDuckGoAgent(client);
-        AgentResponse response = agent.process(new AgentRequest(query));
-
-        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
-    }
-
-    @Test
-    public void testUrlEncoding() {
-        String urlBase = "http://api.duckduckgo.com/?format=json&q=";
-        assertEquals(urlBase + "Barack+Obama", DuckDuckGoAgent.createUrl("Barack Obama"));
     }
 
 }
