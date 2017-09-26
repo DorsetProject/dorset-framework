@@ -200,8 +200,9 @@ public class SmartFormService {
     /**
      * Format duckduckgo data response 
      *
-     *@param 
-     * @return relatedTopic  
+     * @param data  data returned from DuckDuckGo given request
+     * @param numRelatedTopicsThreshold  threshold for number of related topics
+     * @return relatedTopic list of objects containing related topic information
      *
      */
     public List<JsonObject> formatDdgData(String data, int numRelatedTopicsThreshold) {

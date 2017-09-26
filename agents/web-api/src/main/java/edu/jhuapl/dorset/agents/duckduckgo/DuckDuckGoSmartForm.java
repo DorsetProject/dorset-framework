@@ -33,7 +33,7 @@ public class DuckDuckGoSmartForm {
      * DuckDuckGoSmartForm
      * 
      * @param request  request
-     * @param data  data returned from DuckDuckGo given request
+     * @param relatedTopics  related topics returned from DuckDuckGo given request
      *
      */
     public DuckDuckGoSmartForm(AgentRequest request, List<JsonObject> relatedTopics) {
