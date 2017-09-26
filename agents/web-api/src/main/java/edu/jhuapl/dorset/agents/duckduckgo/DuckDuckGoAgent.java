@@ -80,41 +80,35 @@ public class DuckDuckGoAgent extends AbstractAgent {
         // Check if session is a new session or a follow-up
         AgentResponse response = null;
         String entityText = extractEntity(requestText);
-
-        
+        String data = null;
         if (session != null) {
-            String data = null;
 
             if (session.getSessionStatus() == SessionStatus.NEW) {
                 data = requestData(entityText);
-                this.smartFormService.updateHistory(request, data);
                 response = createResponse(data);
                 response.setSession(session);
 
             } else if (session.getSessionStatus() == SessionStatus.OPEN) {
-                System.err.println("here");
                 String smartResponse = this.smartFormService.querySmartFormHistory(session.getId(),
                                 entityText);
 
                 if (smartResponse != null) {
                     response = new AgentResponse(smartResponse);
                     response.setSessionStatus(SessionStatus.CLOSED);
+                    return response;
                 } else {
                     // could not find answer in history - trying duckduckgo directly
                     data = requestData(entityText);
                     this.smartFormService.updateHistory(request, data);
                     response = createResponse(data);
                 }
-
                 response.setSession(session);
             }
-
         } else {
-
-            String data = requestData(entityText);
-            this.smartFormService.updateHistory(request, data);
+            data = requestData(entityText);
             response = createResponse(data);
         }
+        this.smartFormService.updateHistory(request, data);
         return response;
     }
 
