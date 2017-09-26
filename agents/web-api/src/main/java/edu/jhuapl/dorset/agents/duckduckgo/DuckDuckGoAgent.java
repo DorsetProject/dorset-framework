@@ -81,15 +81,15 @@ public class DuckDuckGoAgent extends AbstractAgent {
         Session session = request.getSession();
 
         // check if session is a new session or a follow-up
-        AgentResponse response = null;
+        AgentResponse agentResponse = null;
         String entityText = extractEntity(requestText);
         String data = null;
         if (session != null) {
 
             if (session.getSessionStatus() == SessionStatus.NEW) {
                 data = requestData(entityText);
-                response = createResponse(data);
-                response.setSession(session);
+                agentResponse = createResponse(data);
+                agentResponse.setSession(session);
 
             } else if (session.getSessionStatus() == SessionStatus.OPEN) {
                 this.numFollowUpAttempts = this.numFollowUpAttempts + 1;
@@ -97,10 +97,10 @@ public class DuckDuckGoAgent extends AbstractAgent {
                                 entityText);
 
                 if (smartResponse != null) {
-                    response = new AgentResponse(smartResponse);
-                    response.setSessionStatus(SessionStatus.CLOSED);
-                    response.setSession(session);
-                    return response;
+                    agentResponse = new AgentResponse(smartResponse);
+                    agentResponse.setSessionStatus(SessionStatus.CLOSED);
+                    agentResponse.setSession(session);
+                    return agentResponse;
                 } else {
                     // could not find answer in history
 
@@ -114,7 +114,7 @@ public class DuckDuckGoAgent extends AbstractAgent {
                                                         "I am sorry, I am still unsure what you are asking about."
                                                                         + " The options are: "
                                                                         + disambiguationResponse);
-                        AgentResponse agentResponse = new AgentResponse(responseStatus);
+                        agentResponse = new AgentResponse(responseStatus);
                         agentResponse.setSessionStatus(SessionStatus.OPEN);
                         agentResponse.setSession(session);
 
@@ -125,7 +125,7 @@ public class DuckDuckGoAgent extends AbstractAgent {
                         ResponseStatus responseStatus = new ResponseStatus(
                                         ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
                                         "The agent did not know the answer. Session is now closed, please try again.");
-                        AgentResponse agentResponse = new AgentResponse(responseStatus);
+                        agentResponse = new AgentResponse(responseStatus);
                         agentResponse.setSessionStatus(SessionStatus.CLOSED);
                         agentResponse.setSession(session);
 
@@ -135,11 +135,11 @@ public class DuckDuckGoAgent extends AbstractAgent {
             }
         } else {
             data = requestData(entityText);
-            response = createResponse(data);
+            agentResponse = createResponse(data);
         }
         this.smartFormService.updateHistory(request, data);
         this.numFollowUpAttempts = 0;
-        return response;
+        return agentResponse;
     }
 
     protected String requestData(String entity) {
