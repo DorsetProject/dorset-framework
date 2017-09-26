@@ -57,6 +57,9 @@ public class DuckDuckGoAgent extends AbstractAgent {
 
     private HttpClient client;
     private SmartFormService smartFormService;
+    private int numFollowUpAttemptsThreshold = 2;
+    private int numFollowUpAttempts;
+
     private Set<String> dictionary = new HashSet<String>(
                     Arrays.asList("what", "who", "is", "are", "a", "an", "the"));
 
@@ -89,26 +92,53 @@ public class DuckDuckGoAgent extends AbstractAgent {
                 response.setSession(session);
 
             } else if (session.getSessionStatus() == SessionStatus.OPEN) {
+                this.numFollowUpAttempts = this.numFollowUpAttempts + 1;
                 String smartResponse = this.smartFormService.querySmartFormHistory(session.getId(),
                                 entityText);
 
                 if (smartResponse != null) {
                     response = new AgentResponse(smartResponse);
                     response.setSessionStatus(SessionStatus.CLOSED);
+                    response.setSession(session);
                     return response;
                 } else {
-                    // could not find answer in history - trying duckduckgo directly
-                    data = requestData(entityText);
-                    this.smartFormService.updateHistory(request, data);
-                    response = createResponse(data);
+                    // could not find answer in history
+
+                    if (this.numFollowUpAttempts < this.numFollowUpAttemptsThreshold) {
+                        // send the disambiguation response again
+                        String disambiguationResponse =
+                                        this.smartFormService.getLastDisambiguationResponse();
+
+                        ResponseStatus responseStatus =
+                                        new ResponseStatus(ResponseStatus.Code.NEEDS_REFINEMENT,
+                                                        "I am sorry, I am still unsure what you are asking about."
+                                                                        + " The options are: "
+                                                                        + disambiguationResponse);
+                        AgentResponse agentResponse = new AgentResponse(responseStatus);
+                        agentResponse.setSessionStatus(SessionStatus.OPEN);
+                        agentResponse.setSession(session);
+
+                        return agentResponse;
+
+                    } else {
+                        // send could not answer request message
+                        ResponseStatus responseStatus = new ResponseStatus(
+                                        ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
+                                        "The agent did not know the answer. Session is now closed, please try again.");
+                        AgentResponse agentResponse = new AgentResponse(responseStatus);
+                        agentResponse.setSessionStatus(SessionStatus.CLOSED);
+                        agentResponse.setSession(session);
+
+                        return agentResponse;
+                    }
                 }
-                response.setSession(session);
             }
         } else {
             data = requestData(entityText);
             response = createResponse(data);
         }
         this.smartFormService.updateHistory(request, data);
+        this.numFollowUpAttempts = 0;
         return response;
     }
 
@@ -126,21 +156,23 @@ public class DuckDuckGoAgent extends AbstractAgent {
         String heading = jsonObj.get("Heading").getAsString();
         if (heading.equals("")) {
             // duckduckgo does not know
-            return new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
+            AgentResponse agentResponse =
+                            new AgentResponse(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER);
+            agentResponse.setSessionStatus(SessionStatus.CLOSED);
+            return agentResponse;
         }
         String abstractText = jsonObj.get("AbstractText").getAsString();
         if (abstractText.equals("")) {
             // most likely a disambiguation page
             List<String> potentialEntities =
                             this.smartFormService.getCurrentExchangePotentialEntities(json);
-            String disambiguationReponse = formatDisambiguationResponse(potentialEntities);
-            // AgentResponse agentResponse = new AgentResponse(disambiguationReponse);
-            // agentResponse.setSessionStatus(SessionStatus.OPEN);
+            String disambiguationResponse =
+                            this.smartFormService.formatDisambiguationResponse(potentialEntities);
 
-            ResponseStatus status = new ResponseStatus(
-                            ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER,
-                            "Multiple answers for this question. " + disambiguationReponse);
-            AgentResponse agentResponse = new AgentResponse(status);
+            ResponseStatus responseStatus = new ResponseStatus(ResponseStatus.Code.NEEDS_REFINEMENT,
+                            "Multiple answers for this question. " + disambiguationResponse);
+
+            AgentResponse agentResponse = new AgentResponse(responseStatus);
             agentResponse.setSessionStatus(SessionStatus.OPEN);
 
             return agentResponse;
@@ -189,16 +221,11 @@ public class DuckDuckGoAgent extends AbstractAgent {
         return "http://api.duckduckgo.com/?format=json&q=" + entity;
     }
 
-    protected String formatDisambiguationResponse(List<String> potentialEntities) {
-        String response = "Did you mean ";
-        for (int index = 0; index < potentialEntities.size(); index++) {
-            if (index != potentialEntities.size() - 1) {
-                response = response + "'" + potentialEntities.get(index) + "', ";
+    public int getNumFollowUpAttemptsThreshold() {
+        return this.numFollowUpAttemptsThreshold;
+    }
 
-            } else {
-                response = response + " or '" + potentialEntities.get(index) + "'?";
-            }
-        }
-        return response;
+    public void setNumFollowUpAttemptsThreshold(int numFollowUpAttemptsThreshold) {
+        this.numFollowUpAttemptsThreshold = numFollowUpAttemptsThreshold;
     }
 }

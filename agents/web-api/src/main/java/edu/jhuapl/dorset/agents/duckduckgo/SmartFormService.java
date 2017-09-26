@@ -76,7 +76,7 @@ public class SmartFormService {
      *
      */
     public void updateHistory(AgentRequest request, String data) {
-        List<JsonObject> relatedTopics = formatDdgData(data, this.numRelatedTopicsThreshold);
+        List<JsonObject> relatedTopics = extractDdgData(data, this.numRelatedTopicsThreshold);
         
         DuckDuckGoSmartForm ddgSmartForm = new DuckDuckGoSmartForm(request, relatedTopics);
 
@@ -181,13 +181,14 @@ public class SmartFormService {
     /**
      * Get current exchange potential entities
      *
+     * @param data  data returned from DuckDuckGo given request
      * @return potentialEntities  
      *
      */
     public List<String> getCurrentExchangePotentialEntities(String data) {
         List<String> potentialEntities = new ArrayList<String>();
 
-        List<JsonObject> relatedTopics = formatDdgData(data, this.numRelatedTopicsThreshold);
+        List<JsonObject> relatedTopics = extractDdgData(data, this.numRelatedTopicsThreshold);
         for (int index = 0; index < relatedTopics.size(); index++) {
             potentialEntities.add(relatedTopics.get(index).get("relatedTopic").getAsString());
         }
@@ -195,14 +196,29 @@ public class SmartFormService {
     }
     
     /**
-     * Format duckduckgo data response 
+     * Get current exchange potential entities
+     *
+     * @param relatedTopics  list of related topics extracted from DuckDuckGo given request
+     * @return potentialEntities  
+     *
+     */
+    public List<String> getCurrentExchangePotentialEntities(List<JsonObject> relatedTopics) {
+        List<String> potentialEntities = new ArrayList<String>();
+
+        for (int index = 0; index < relatedTopics.size(); index++) {
+            potentialEntities.add(relatedTopics.get(index).get("relatedTopic").getAsString());
+        }
+        return potentialEntities;
+    }
+    /**
+     * Extract duckduckgo data response 
      *
      * @param data  data returned from DuckDuckGo given request
      * @param numRelatedTopicsThreshold  threshold for number of related topics
      * @return relatedTopic list of objects containing related topic information
      *
      */
-    public List<JsonObject> formatDdgData(String data, int numRelatedTopicsThreshold) {
+    public List<JsonObject> extractDdgData(String data, int numRelatedTopicsThreshold) {
         List<JsonObject> relatedTopics = new ArrayList<JsonObject>();
         
         Gson gson = new Gson();
@@ -238,5 +254,35 @@ public class SmartFormService {
         }
         
         return relatedTopics;
+    }
+    
+    /**
+     * 
+     * 
+     */
+    public String formatDisambiguationResponse(List<String> potentialEntities) {
+        String response = "Did you mean ";
+        for (int index = 0; index < potentialEntities.size(); index++) {
+            if (index != potentialEntities.size() - 1) {
+                response = response + "'" + potentialEntities.get(index) + "', ";
+
+            } else {
+                response = response + " or '" + potentialEntities.get(index) + "'?";
+            }
+        }
+        return response;
+    }
+    
+    /**
+     * 
+     * 
+     */
+    public String getLastDisambiguationResponse() {
+        List<JsonObject> relatedTopics = this.smartFormHistory.get(this.smartFormHistory.size() - 1).getRelatedTopics();
+        List<String> potentialEntities =
+                        this.getCurrentExchangePotentialEntities(relatedTopics);
+        String disambiguationReponse = 
+                        this.formatDisambiguationResponse(potentialEntities);
+        return disambiguationReponse;  
     }
 }
