@@ -70,7 +70,7 @@ public class DuckDuckGoAgentTest {
         Agent agent = new DuckDuckGoAgent(client);
         AgentResponse response = agent.process(new AgentRequest(query));
 
-        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
+        assertEquals(ResponseStatus.Code.NEEDS_REFINEMENT, response.getStatus().getCode());
         assertEquals("Multiple answers for this question. Did you mean 'Barack Obama', 'Obama, Fukui', "
                         + " or 'Obama Day'?", response.getStatus().getMessage());
         assertEquals(SessionStatus.OPEN, response.getSessionStatus());
@@ -110,7 +110,7 @@ public class DuckDuckGoAgentTest {
         agentRequest.setSession(session);
         AgentResponse response = agent.process(agentRequest);
 
-        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
+        assertEquals(ResponseStatus.Code.NEEDS_REFINEMENT, response.getStatus().getCode());
         assertEquals("Multiple answers for this question. Did you mean 'Barack Obama', "
                         + "'Obama, Fukui',  or 'Obama Day'?", response.getStatus().getMessage());
         assertEquals(SessionStatus.OPEN, response.getSessionStatus());
@@ -127,4 +127,48 @@ public class DuckDuckGoAgentTest {
         assertEquals(SessionStatus.CLOSED, response.getSessionStatus());
     }
 
+    @Test
+    public void testMultipleFollowOnResponseWithSession() {
+        String firstQuery = "Obama";
+        String followUpQuery = "off-topic request";
+        String jsonData = FileReader.getFileAsString("duckduckgo/obama.json");
+        HttpClient client = new FakeHttpClient(new FakeHttpResponse(jsonData));
+
+        Session session = new Session("1");
+        session.setSessionStatus(SessionStatus.NEW);
+
+        DuckDuckGoAgent agent = new DuckDuckGoAgent(client);
+        int numFollowUpAttemptsThreshold = 2;
+        agent.setNumFollowUpAttemptsThreshold(numFollowUpAttemptsThreshold);
+        
+        AgentRequest agentRequest = new AgentRequest(firstQuery);
+        agentRequest.setSession(session);
+        AgentResponse response = agent.process(agentRequest);
+
+        assertEquals(ResponseStatus.Code.NEEDS_REFINEMENT, response.getStatus().getCode());
+        assertEquals("Multiple answers for this question. Did you mean 'Barack Obama', "
+                        + "'Obama, Fukui',  or 'Obama Day'?", response.getStatus().getMessage());
+        assertEquals(SessionStatus.OPEN, response.getSessionStatus());
+
+        session.setSessionStatus(SessionStatus.OPEN);
+        for (int i = 0; i < numFollowUpAttemptsThreshold - 1; i++){
+            AgentRequest followUpAgentRequest = new AgentRequest(followUpQuery);
+            followUpAgentRequest.setSession(session);
+            response = agent.process(followUpAgentRequest);
+            
+            assertEquals(ResponseStatus.Code.NEEDS_REFINEMENT, response.getStatus().getCode());
+            assertEquals("I am sorry, I am still unsure what you are asking about. The options are: "
+                            + "Did you mean 'Barack Obama', 'Obama, Fukui',  or 'Obama Day'?", response.getStatus().getMessage());
+            assertEquals(SessionStatus.OPEN, response.getSessionStatus());
+        }
+
+        AgentRequest followUpAgentRequest = new AgentRequest(followUpQuery);
+        followUpAgentRequest.setSession(session);
+        response = agent.process(followUpAgentRequest);
+        
+        assertEquals(ResponseStatus.Code.AGENT_DID_NOT_KNOW_ANSWER, response.getStatus().getCode());
+        assertEquals("The agent did not know the answer. Session is now closed, "
+                        + "please try again.", response.getStatus().getMessage());
+        assertEquals(SessionStatus.CLOSED, response.getSessionStatus());
+    }
 }
