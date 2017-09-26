@@ -19,6 +19,9 @@ package edu.jhuapl.dorset;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.jhuapl.dorset.sessions.Session;
+import edu.jhuapl.dorset.sessions.Session.SessionStatus;
+
 /**
  * Response status
  * <p>
@@ -28,7 +31,9 @@ import java.util.Map;
 public class ResponseStatus {
     private final Code code;
     private final String message;
-
+    private Session session;
+    private SessionStatus sessionStatus;
+    
     /**
      * Create a response status based on a code
      * <p>
@@ -79,6 +84,42 @@ public class ResponseStatus {
         return message;
     }
 
+    /**
+     * Get the session
+     *
+     * @return the session 
+     */
+    public Session getSession() {
+        return session;
+    }
+
+    /**
+     * Set the session
+     *
+     * @param session  the session
+     */
+    public void setSession(Session session) {
+        this.session = session;
+    }
+    
+    /**
+     * Get the session status
+     *
+     * @param sessionStatus  the session status
+     */
+    public SessionStatus getSessionStatus() {
+        return sessionStatus;
+    }
+
+    /**
+     * Set the session status
+     *
+     * @param sessionStatus  the session status
+     */
+    public void setSessionStatus(SessionStatus sessionStatus) {
+        this.sessionStatus = sessionStatus;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ResponseStatus && ((ResponseStatus) obj).getCode() == this.getCode()
@@ -109,6 +150,7 @@ public class ResponseStatus {
      */
     public enum Code {
         SUCCESS(0),
+        NEEDS_REFINEMENT(1),
         INTERNAL_ERROR(100),
         NO_AVAILABLE_AGENT(101),
         NO_RESPONSE_FROM_AGENT(102),
@@ -152,6 +194,7 @@ public class ResponseStatus {
     private static final Map<Code, String> messageMap = new HashMap<Code, String>();
     static {
         messageMap.put(Code.SUCCESS, "Success");
+        messageMap.put(Code.NEEDS_REFINEMENT, "Request needs further information.");
         messageMap.put(Code.INTERNAL_ERROR, "Something failed with this request.");
         messageMap.put(Code.NO_AVAILABLE_AGENT, "No agent was available to handle this request.");
         messageMap.put(Code.NO_RESPONSE_FROM_AGENT, "The agent did not provide a response.");

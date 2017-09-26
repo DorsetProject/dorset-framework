@@ -19,6 +19,7 @@
     <module>reporters</module>
     <module>tools</module>
     <module>user-service</module>
+    <module>session-service</module>
   </modules>
 
   <dependencies>
