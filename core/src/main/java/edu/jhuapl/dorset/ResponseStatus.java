@@ -150,6 +150,7 @@ public class ResponseStatus {
      */
     public enum Code {
         SUCCESS(0),
+        NEEDS_REFINEMENT(1),
         INTERNAL_ERROR(100),
         NO_AVAILABLE_AGENT(101),
         NO_RESPONSE_FROM_AGENT(102),
@@ -193,6 +194,7 @@ public class ResponseStatus {
     private static final Map<Code, String> messageMap = new HashMap<Code, String>();
     static {
         messageMap.put(Code.SUCCESS, "Success");
+        messageMap.put(Code.NEEDS_REFINEMENT, "Request needs further information.");
         messageMap.put(Code.INTERNAL_ERROR, "Something failed with this request.");
         messageMap.put(Code.NO_AVAILABLE_AGENT, "No agent was available to handle this request.");
         messageMap.put(Code.NO_RESPONSE_FROM_AGENT, "The agent did not provide a response.");
