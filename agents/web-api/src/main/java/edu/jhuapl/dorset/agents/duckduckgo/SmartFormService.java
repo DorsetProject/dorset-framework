@@ -187,11 +187,10 @@ public class SmartFormService {
      * @return potentialEntities  
      *
      */
-    public List<String> getCurrentExchangePotentialEntities() {
+    public List<String> getCurrentExchangePotentialEntities(String data) {
         List<String> potentialEntities = new ArrayList<String>();
 
-        List<JsonObject> relatedTopics = this.smartFormHistory.get(this.smartFormHistory.size() - 1)
-                        .getRelatedTopics();
+        List<JsonObject> relatedTopics = formatDdgData(data, this.numRelatedTopicsThreshold);
         for (int index = 0; index < relatedTopics.size(); index++) {
             potentialEntities.add(relatedTopics.get(index).get("relatedTopic").getAsString());
         }

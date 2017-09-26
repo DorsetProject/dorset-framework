@@ -81,6 +81,7 @@ public class DuckDuckGoAgent extends AbstractAgent {
         AgentResponse response = null;
         String entityText = extractEntity(requestText);
 
+        
         if (session != null) {
             String data = null;
 
@@ -137,7 +138,7 @@ public class DuckDuckGoAgent extends AbstractAgent {
         if (abstractText.equals("")) {
             // most likely a disambiguation page
             List<String> potentialEntities =
-                            this.smartFormService.getCurrentExchangePotentialEntities();
+                            this.smartFormService.getCurrentExchangePotentialEntities(json);
             String disambiguationReponse = formatDisambiguationResponse(potentialEntities);
             // AgentResponse agentResponse = new AgentResponse(disambiguationReponse);
             // agentResponse.setSessionStatus(SessionStatus.OPEN);
