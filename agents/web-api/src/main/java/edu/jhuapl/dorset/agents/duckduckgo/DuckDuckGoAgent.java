@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 The Johns Hopkins University Applied Physics Laboratory LLC
+ * Copyright 2017 The Johns Hopkins University Applied Physics Laboratory LLC
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,7 +77,7 @@ public class DuckDuckGoAgent extends AbstractAgent {
         String requestText = request.getText();
         Session session = request.getSession();
 
-        // Check if session is a new session or a follow-up
+        // check if session is a new session or a follow-up
         AgentResponse response = null;
         String entityText = extractEntity(requestText);
         String data = null;
@@ -191,7 +191,6 @@ public class DuckDuckGoAgent extends AbstractAgent {
 
     protected String formatDisambiguationResponse(List<String> potentialEntities) {
         String response = "Did you mean ";
-
         for (int index = 0; index < potentialEntities.size(); index++) {
             if (index != potentialEntities.size() - 1) {
                 response = response + "'" + potentialEntities.get(index) + "', ";
@@ -200,8 +199,6 @@ public class DuckDuckGoAgent extends AbstractAgent {
                 response = response + " or '" + potentialEntities.get(index) + "'?";
             }
         }
-
         return response;
-
     }
 }

@@ -1,11 +1,8 @@
 package edu.jhuapl.dorset.agents.duckduckgo;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import edu.jhuapl.dorset.agents.AgentRequest;

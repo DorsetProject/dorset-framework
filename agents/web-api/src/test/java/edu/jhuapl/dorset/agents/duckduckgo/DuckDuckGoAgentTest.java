@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 The Johns Hopkins University Applied Physics Laboratory LLC
+ * Copyright 2017 The Johns Hopkins University Applied Physics Laboratory LLC
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,7 +80,6 @@ public class DuckDuckGoAgentTest {
 
     @Test
     public void testFollowOnResponseWithSession() {
-
         String firstQuery = "Obama";
         String secondQuery = "Barack Obama";
         String jsonData = FileReader.getFileAsString("duckduckgo/obama.json");
@@ -110,7 +109,6 @@ public class DuckDuckGoAgentTest {
         assertEquals("Barack Obama The 44th and current President of the United States, "
                         + "as well as the first African American to...", response.getText());
         assertEquals(SessionStatus.CLOSED, response.getSessionStatus());
-
     }
 
     @Test

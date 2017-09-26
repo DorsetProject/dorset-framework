@@ -130,9 +130,7 @@ public class SmartFormService {
                     innerDistances.add(distance);
                 }
             }
-
             distances.add(innerDistances);
-
         }
 
         if (maxDistance == 0.0) {
